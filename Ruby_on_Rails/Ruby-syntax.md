@@ -1,4 +1,5 @@
 ###Ruby 문법 중 다른 언어와는 조금 달라 신기했고 기억해야 할 부분을 모아뒀다.
+powered by Codecademy
 =========================
 
 ####기본 of 기본
@@ -62,7 +63,7 @@ list.sort { |first, second| first <=> second }
 - 콤마 마지막에 찍어도 오케이. 루비에서는 해쉬나 리스트를 생성할 때 마지막 원소 뒤에 콤마(,) 찍어도 에러 안난다.
 - 심볼과 스트링의 전환은 쉽다. .to_s .to_sym 메소드를 각각 쓰면 된다. 심볼화할 때 .intern 써도됨. internalize 한다는 의미라고 함.
 
-####업업 기본
+####기본 추가
 - 리스트 .push, <<, +
     - 리스트에 마지막에 원소 추가할 때 파이썬과 다르게 append 없다. push 써야함.
     - 재밌는건 이것도 된다. [1, 2, 3, 4] << 5 이렇게 적으면 [1, 2, 3, 4].push(5) 와 같은 의미. 문자열에서도 동일하게 먹힌다.
@@ -84,4 +85,189 @@ symbol_time = Benchmark.realtime do
 end
 puts "String time: #{string_time} seconds."
 puts "Symbol time: #{symbol_time} seconds."
+```
+
+- Hash에서 검색할 때 .select 쓰면 된다. 블락에서 sort 기준 수정하는 거랑 비슷.
+```ruby
+grades = { alice: 100, bob: 92, chris: 95, dave: 97 }
+grades.select {|name, grade| grade < 97}
+# ==> {:bob=>92, :chris=>95}
+
+grades.select { |k, v| k == :alice }
+# ==> {:alice=>100}
+good_movies = movie_ratings.select { |k, v| v > 3 }
+```
+Hash에서 호출하면 리턴값이 Hash, 리스트에서 호출했으면 리턴값 리스트다.
+- Hash에서 .each_key .each_value 이런식으로 호출할 수도 있다. 이게 좋네.
+- case 문이 있다. case when when when else end 형태.
+```ruby
+case language
+when "JS"
+  puts "Websites!"
+when "Python"
+  puts "Science!"
+when "Ruby"
+  puts "Web apps!"
+else
+  puts "I don't know!"
+end
+```
+근데 여기서 실행 부분을 then을 써서 한 줄로 표현할 수 있다.
+```ruby
+case language
+  when "JS" then puts "Websites!"
+  when "Python" then puts "Science!"
+  when "Ruby" then puts "Web apps!"
+  else puts "I don't know!"
+end
+```
+- Hash에서 키와 값을 지우려면 hash_name.delete(key)
+- 한 줄 쓰기 Do something if ~~~, Do unless ~~~ 여기까진 되는거고, 다음처럼 반대로 적는건 안된다. unless ~~~ DO if ~~~ Do,
+- 3항 연산자. 참이면 왼쪽, 거짓이면 오른쪽을 리턴한다는 의미. 그래서 puts를 할거면 boolean 왼쪽에다가 넣어야 함. 중간에 넣으면 에러 터짐
+boolean ? Do this if true: Do this if false
+- ||= 이 기호는 변수에 대입할 때 아무것도 변수에 대입이 안돼있을 때만 대입을 하는 것. 이미 값이 있다면 대입 안된다. 기존 것 유지. aaa = nil 이 상태에선 대입 오케이.
+- impicit return 메소드에서 리턴을 명확하게 정하지 않으면 자바스크립트에선 자동으로 undefined, 파이썬에선 None을 디폴트로 리턴한다. 근데 루비는 마지막 expression을 리턴함. 이게 implicit return. 하지만 명확하게 표현해주는게 더 좋을 것 같다. 내 생각.
+- .upto(), .downto() 마지막 포함. 5.upto(10){|a| puts a} 알파벳도 마찬가지 적용 가능
+- .respond_to?(심볼) 이 메소드는 앞에 오는 객체가 매개변수로 오는 심볼과 같은 이름의 메소드에 반응하는지 알아보는 메소드다. 즉 [1, 2, 3].respond_to?(:push) 를 하면 true가 리턴된다. 배열에 push는 먹히는 메소드니까. 존재하니까. 하지만 to_sym은 안된다. 배열은 심볼화 안됨.
+- 단순 for 루프. for num in (1..10) ~~~ end
+- $VERBOSE = nil ———> 이 코드의 의미는 루비 1.8 버전의 것을 쓰겠다라는 의미. 첫줄에. prime = Prime.new 같은. 요즘엔 prime = Prime.instance 이렇게 쓴다. 루비 코드카데미 코드 보면 이렇게 코드를 다르게 썼을 때 달라지는 점. 배열이 자동 빌트인이다.
+```ruby
+$VERBOSE = nil    # We'll explain this at the end of the lesson.
+require 'prime'   # This is a module. We'll cover these soon!
+def first_n_primes(n)
+  return "n must be an integer." unless n.is_a? Integer
+  return "n must be greater than 0." if n <= 0
+
+  prime_array ||= []
+  prime = Prime.new
+  n.times { prime_array << prime.next }
+  prime_array
+end
+first_n_primes(10)
+# --------------------------------------------------
+require 'prime'
+def first_n_primes(n)
+  "n must be an integer" unless n.is_a? Integer
+  "n must be greater than 0" if n <= 0
+
+  # The Ruby 1.9 Prime class makes the array automatically!
+  prime = Prime.instance
+  prime.first n
+end
+first_n_primes(10)
+```
+- select와 collect 차이점
+    - select{} 는 배열이나 리스트에 호출했을 때 조건에 맞는 놈을 각 객체 타입과 동일하게 골라서 리턴해준다
+    - 근데 .collect{}는 무조건 리스트 리턴이고, { } 안에 들어가는 조건식의 ‘리턴 값’을 리스트에 넣어서 리턴해준다는게 다르다.
+- collect { } .map { } 배열이나 해쉬에 이 메소드를 적용하면 배열을 리턴한다.
+    - [1, 2, 3].collect {|num| num*2 } 이렇게 하면 [2, 4, 6] 배열을 리턴한다. 즉 블록 안에 들어간게 각 원소 위치에서 그 값이 된다는 것. 1 원소 차례에선 1*2가 원소가 되는 것이다. 배열을 직접 바꾸는게 아니라 변형된 배열을 새로 만들어서 리턴. 바로 바꾸고 싶으면 collect! 하면 된다.
+    - hash도 역시 비슷하다. 기본적으로 hash에서  iterate 하려면 변수를 k,v 2개 받아야 한다. 그래서 각 원소별로 반복할 때 역시 k, v를 받아서 작업해주면 된다. 그리고 한 줄짜리 if 문. Do if ~~ 이런식으로 작업하면 조건도 걸 수 있다. 만약 그냥 k==:aaa 이런식으로 넣으면 리턴되는 배열은 [true, false, false] 이런식으로 됨.
+    - 그럼 만약에 변수를 하나만 받았다면? 여기서 기억하면 좋을 것이 |a, b, c|  이런식으로 변수를 넣어서 받는다는게 [a, b, c]라는 의미다.
+    - Hash를 iterate 할 때 |a| 한개로 받으면 재밌게도 키, 밸류 쌍으로 2개 원소인 리스트가 받아진다. 즉 다시 말하면 Hash에서 iterate 하면 한 번에 내뱉는 원소 타입이 [key, value]의 2개 원소 리스트인거다. 즉 하나로 받으면 저렇게 2개 원소 리스트가 툭 튀어나오고, 2개로 받으면 [a, b] 이렇게 받으니까 정확하게 저 원소개수랑 맞아떨어진다. 그래서 속의 원소를 가리키는 a, b가 매칭되서 a는 키, b는 밸류로 받아올 수 있는 것. 그럼 만약에 3개 이상으로 받아버리면 어떻게 될까. 간단하다. 애초에 한 번에 2개값만 해시에서 받아올 수 있다. 그래서 만약 |a, b, c, d, e|라면 [a, b, c, d, e]이고 여기서 a, b에만 값이 대입되고(키, 밸류 순서대로) 나머지 c, d, e에는 아무 것도 대입되지 않고 끝난다. 즉 nil값이 들어간다.
+- yield. 메소드 안에 yield 써놓고 이 메소드 호출할 때 { } 안에 작업하면 요 작업이 중간에 호출된다. 만약에 { }을 적어주지 않으면 에러 난다. 블록이 없다고. 그리고 sort에서 리턴값 조정으로 정렬 방식 조정할 때는 블락 안의 리턴값이 메소드 안의 yield의 리턴값이다. new_a = yield a 이런식으로 하면 된다.
+```ruby
+def block_test
+  puts "We're in the method!"
+  puts "Yielding to the block..."
+  yield
+  puts "We're back in the method!"
+end
+block_test { puts ">>> We're in the block!" }
+# ---------------------------------
+# 또한 yield할 때 값을 전달할 수도 있다.
+def yield_name(name)
+  puts "In the method! Let's yield."
+  yield("Kim")
+  puts "In between the yields!"
+  yield(name)
+  puts "Block complete! Back in the method."
+end
+yield_name("Eric") { |n| puts "My name is #{n}." }
+```
+- Proc. proc은 한 마디로 코드의 군집이다. 얘네는 객체는 아니다. 루비에서 모든 것은 객체다! 할 때 몇 안되는 반례.
+    - proc_name = Proc.new { } 하면 된다. 그리고 사용할 때는 select(&proc_name) 하면 됨.
+    - 그리고 일반 메소드에서처럼 select와 (&~~~) 를 띄워쓰면 에러난다. select(&~~) 이렇게 붙여써야함.
+    - 만약 메소드가 인자를 받는 형태라면. select(인자, &proc_name) 하면 된다. 괄호 안에 다 써주면 됨. 다만 마지막에 써줘야한다.
+    - proc_name.call 하면 블락 안의 내용이 실행된다.
+```ruby
+multiples_of_3 = Proc.new do |n|
+  n % 3 == 0
+end
+(1..100).to_a.select(&multiples_of_3)
+```
+--- Proc, Symbol :  method는 symbol형태로 호출될 수 있다. 이어서 symbol은 &을 통해서 proc처럼 활용할 수 있다. 즉 다음 코드.
+```ruby
+strings = ["1", "2", "3"]
+nums = strings.map(&:to_i)
+```
+결과는 [1, 2, 3] 이렇게 나온다. 하지만 기억할 것은 저렇게 메소드를 심볼 형태로 블락 대신 호출한다면 메소드의 호출 대상은 위 strings 배열의 원소들이다. 즉 “1”.to_i 가 된다는 것. 만약 내가 어떤 메소드를 새로 만들어서 저런식으로 대입한다고 하면 문자열 객체가 호출할 수 있도록 만들어야 한다. 아직 루비에서는 어떻게 하는지 모르겠고 자바스크립트에선 String.prototype.something 이런식으로 문자열 프로토타입에다가 메소드를 만들면 된다. 루비도 비슷하지 않을까.
+- lambda. 아래 코드가 신택스다. lambda_example = lambda { |param| puts param} 이런식으로 람다 만들어서 쓰면 됨. 더 아래 코드에서 볼 수 있듯이 yield가 아니라 call을 써주면 된다. 이렇게 변수 형태로 쓸거면 Proc에서처럼 & 써야 함.
+```ruby
+lambda { |param| block }
+def lambda_demo(a_lambda)
+  puts "I'm the method!"
+  a_lambda.call
+end
+lambda_demo(lambda { puts "I'm the lambda!" })
+```
+즉 이 활용 방식은 ‘메소드 내부에서 람다 활용 방법’이다. 위에서까지는 기존 만들어져있던 라이브러리의 메소드를 활용할 때 메소드 호출 뒤에 {} 를 붙여서 Proc이나 람다를 활용했다. 하지만 이거는 내가 어떤 메소드를 작성할 때 거기서 람다를 활용하는 방식이다. 즉 이전까지는 yield를 써서 내 메소드에서 블락을 호출했지만 람다는 lambda.call을 써야한다는 것.
+- lambda, proc의 차이점
+    - 첫째. 람다는 들어오는 arguments의 개수를 체크한다. 프록은 안그런다. 즉 람다는 잘못된 argument 개수가 들어오면 에러를 발생시킨다는 것. 프록은 신경 안쓰고 nil을 대입한다. First, a lambda checks the number of arguments passed to it, while a proc does not. This means that a lambda will throw an error if you pass it the wrong number of arguments, whereas a proc will ignore unexpected arguments and assign nil to any that are missing.
+    - 둘째. 람다의 리턴은 함수로의 리턴이고, 프록의 리턴은 함수 전체 범위에서 리턴이다. 아래 예제에 나와있다. Second, when a lambda returns, it passes control back to the calling method; when a proc returns, it does so immediately, without going back to the calling method.
+```ruby
+def batman_ironman_proc
+  victor = Proc.new { return "Batman will win!" }
+  victor.call
+  "Iron Man will win!"
+end
+puts batman_ironman_proc    #Batman will win
+
+def batman_ironman_lambda
+  victor = lambda { return "Batman will win!" }
+  victor.call
+  "Iron Man will win!"
+end
+puts batman_ironman_lambda    #Iron Man will win!
+```
+- 객체 타입 확인하기: :hello.is_a? Symbol 이렇게 쓰면 :hello가 심볼이기 때문에 true를 리턴한다.
+- 알파벳 순서 적용하기: 아래처럼 < “M” 라고 하는 것만으로도 M 알파벳 이전 알파벳으로 시작하는 단어들을 골라낼 수 있다.
+```ruby
+crew = {
+  captain: "Picard",
+  first_officer: "Riker",
+  lt_cdr: "Data",
+  lt: "Worf",
+  ensign: "Ro",
+  counselor: "Troi",
+  chief_engineer: "LaForge",
+  doctor: "Crusher"
+}
+first_half = lambda {|key, value| value < "M"}
+a_to_m = crew.select(&first_half)
+```
+- Class:  클래스는 아래 신택스로 생성한다. 그리고 클래스 이름은 _를 쓰는게 아니라 CamelCase형태로 쓴다.
+    - NewClass.new(~~) 이렇게 생성할 때 안에 인자를 넣을 수 있도록 한 것이 def initialize end 이다.
+    - 변수 앞에 @가 붙으면 이건 instance 변수라는 의미. 즉 이 클래스를 활용해 만든 인스턴스들 각각에 생성된대로 다르게 드러가는 속성이라는 의미다.
+```ruby
+class Car
+  def initialize(make, model)
+    @make = make
+    @model = model
+  end
+end
+```
+- Scope
+    - $ global variable: 전역변수. 정의해두면 어디든지 얘를 사용할 수 있음. 저렇게 $를 붙이거나, 클래스나 메소드 밖에서 그냥 변수 선언하거나 하면 전역변수다.
+    - local variable: 지역변수.
+    - @@ class variable: 클래스 변수. 인스턴스 생성 없이 클래스.클래스변수명 으로 활용 가능. Math의 Pi같은게 이런거라고나 할까.
+    - @ instance variable: 인스턴스 변수. 인스턴스 각각에 따로따로 만들어지고 정의되는 변수들.
+- Scope 추가
+    - $a 와 a는 다르다. 한 번 $를 써주면 끝까지 써줘야.
+    - 전역변수를 많이 사용하는 것은 좋지 않다.
+    - 클래스 변수는 단 하나만 존재한다. 그래서 이걸 인스턴스의 개수를 저장하는 용도로 사용하는 경우도 있다.
+- 상속. inherit. 클래스 선언 옆에 새로만들클래스 < 상속할부모클래스 요렇게 적어주면 됨.
+```ruby
+class DerivedClass < BaseClass
+  # Some stuff!
+end
 ```
