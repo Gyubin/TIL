@@ -195,7 +195,7 @@ multiples_of_3 = Proc.new do |n|
 end
 (1..100).to_a.select(&multiples_of_3)
 ```
---- Proc, Symbol :  method는 symbol형태로 호출될 수 있다. 이어서 symbol은 &을 통해서 proc처럼 활용할 수 있다. 즉 다음 코드.
+- Proc, Symbol :  method는 symbol형태로 호출될 수 있다. 이어서 symbol은 &을 통해서 proc처럼 활용할 수 있다. 즉 다음 코드.
 ```ruby
 strings = ["1", "2", "3"]
 nums = strings.map(&:to_i)
