@@ -271,3 +271,82 @@ class DerivedClass < BaseClass
   # Some stuff!
 end
 ```
+- super: super class의 속성들을 상속받을 수 있다. 만약 부모 클래스에서 hi라는 메소드가 있고 자식 클래스가 이를 오버라이드한다고 치자. 그런데 가볍게 몇 개만 추가할 예정이고 기존 hi 메소드의 속성들은 그대로 사용해야할 상황이라면 자식 클래스의 hi 메소드 안에 super 라고 한 줄 적어주기만 하면 된다.
+- end 한 줄에 쓰기: ex) class Dragon < Creature; end
+- 다른 언어와 다르게 루비는 여러 부모 클래스를 가질 수 없다. 그럼 어떻게 해야하나. 이런 상황에선?
+- 인스턴스 변수가 있는 클래스를 상속할 때 initialize 메소드 오버라이드하기.
+    - super는 정말 단순히 그 메소드 내의 구문 자체만 가져온다. 아래 코드의 Email 클래스에서처럼 initialize의 매개변수는 이름이 뭐여도 상관없다. 그리고 super에서 따로 super(hihihi, hellohello)와 같이 매개변수 안넣어줘도 된다. 매개변수의 순서를 기억하는 것 같다. 그러면 Message 클래스의 인스턴스 변수와 똑같은 이름을 가진 @from, @to에다가 인자로 들어온 값을 할당한다.
+    - super가 다 해주진 않는다. 단순히 그 메소드 내의 구문만 가져오는 것이므로 오버라이드 하려면 initialize 메소드에 꼭 매개변수를 숫자에 맞게 넣어줘야 한다. 만약 initialize 메소드에 인자를 적게 넣고 super를 쓴다면. 객체 생성할 때 인자에 1개 넣으면 2개 넣으라고 에러 나고, 2개 넣으면 1개 넣으라고 에러난다.
+    - 오버라이드 해서 더 적은 인스턴스 변수를 사용하고 싶으면 super를 안쓰면 되고, 기존꺼에서 더 추가해서 쓰고 싶으면 아래 코드처럼 subject를 추가하면 된다.
+```ruby
+class Message
+  @@messages_sent = 0
+  def initialize(from, to)
+    @from = from
+    @to = to
+    @@messages_sent += 1
+  end
+end
+
+class Email < Message
+  def initialize(hihihi, hellohello, subject)
+    super
+    @subject = subject
+  end
+end
+```
+- 클래스 메소드
+```ruby
+class Machine
+  def Machine.hello
+    puts "Hello from the machine!"
+  end
+end
+```
+- public, private
+    - default로 public이다. class 시작과 end 사이에서 public, private를 적어주면 거기부터 class의 end까지는 적어준게 적용된다.
+    - private은 객체 내에서만 사용할 수 있는 코드다. 클래스 외부에서 사용될 수 없다. 다르게 말하면 명시적 리시버(explicit receiver)를 쓸 수 없다는 의미. 여기서 리시버란 object.method 형태에서 object가 method의 리시버이다. 그래서 이런 private 정보에 접근하려면 이 private에 접근하는 다른 public 메소드가 있어야 한다.
+    - 인스턴스 변수와 같은 이름으로 메소드를 만들어서 인스턴스 변수를 리턴하거나 수정할 수 있다.
+    - attr_reader, attr_writer, attr_accessor를 사용해도 된다.
+```ruby
+class ClassName
+  public
+  def public_method; end
+  private
+  def private_method; end
+end
+```
+- reader, writer, accessor: 최고의 설명. http://stackoverflow.com/questions/4370960/what-is-attr-accessor-in-ruby
+
+```ruby
+class Person
+  attr_reader :name
+  attr_writer :name
+  def initialize(name)
+    @name = name
+  end
+end
+# 위의 attr~~ 두 줄이 아래 두 메소드와 같다.
+def name
+  @name
+end
+def name=(value)
+  @name = value
+end
+```
+- module 기본
+    - 라이브러리같은 것으로 이해하면 될 것 같다. 클래스랑 비슷한데 객체를 만들 수도 없고 클래스도 아니고 상속도 안된다. 단지 코드를 저장해놓은 곳.
+    - 다른 것들과 마찬가지로 module NAME ~~ end 형태로 구성된다. 클래스와 마찬가지로 모듈 이름은 CamelCase 형태로.
+    - 상수 개념. 모듈에 상수가 들어가면 편리하다. 파이(3.14…)같은 숫자. 루비 자체에서 더이상 값을 변하지 않게 하는 기능을 제공하진 않지만 다음처럼 변수명을 정하면 값이 변할 때 경고를 해줄 수 있다. 모두 대문자 + 단어 구분은 언더바( _ )
+- module namespacing
+    - 모듈의 가장 큰 목적은 메소드와 변수를 named space에 맞게 각각 분리하기 위함이다. 이걸 namespacing 이라고 일컫는다. Math::PI 와 Circle::PI 를 구분 가능.
+    - 현재 만약 내가 Circle 이라는 모듈을 만들어서 안에 PI 상수를 만들었다고 치자. 이 상황에서라면 Math와 Circle 두 모듈 모두가 포함 된 상황이다. 여기서 포함되어있다고 PI 라고만 입력하면 값이 출력되지 않는다. 메소드 역시 마찬가지. 여기서 유추해보면 모듈에서 내부 attributes를 사용하려면 namespacing이 꼭 필요하다는 의미가 된다. 또한 추가로 모듈에서 네임스페이싱을 활용해서(Math::something) 내부 속성들을 사용하려면 변수는 꼭 ‘상수’여야 하고 메소드는 꼭 앞에 ModuleName.method 이렇게 모듈명을 붙여줘야한다. 그래야 쓸 수 있다. 이런 :: 기호를 scope resolution operator라고 한다.
+- require, include, extend
+    - Math와 다르게 디폴트로 포함되지 않은 모듈은 require를 통해 불러와야 한다. require ‘module name’ 이다. Date는 이렇게 불러와야 쓸 수 있다. require 하지 않은 상황에서 Date. ~~~ 하면 에러난다.
+    - include는 class 내에서 호출할 수 있다. 이건 아예 삽입한다고 생각하면 된다. include를 한 이후에는 Math::PI 로 안쓰고 그냥 PI라고 써도 Math의 PI로 인식한다. 또한 모듈명을 앞에 쓰지 않고 그냥 일반적으로 정의한 메소드가 자연스럽게 인스턴스 메소드가 된다.
+    - extend 역시 class 내에서 호출한다. 여기선 include와 다르게 모듈 명 없이 선언한 메소드가 인스턴스 메소드가 아니라 클래스 메소드가 된다. 클래스에서만 호출 가능.
+- module 의문
+    - require ‘Date’를 했을 때 Date.today 이런식으로 쓸 수가 있다. Date::today 와 같은 형식이 아니라. 이건 무슨 원리로 가능한걸까. http://stackoverflow.com/questions/5417209/ruby-module-method-access 를 보면 나온다. 이 때는 아마 today가 메소드일 것이며 선언될 때 def self.today 와 같을 것이다. 이러면 모듈명.메소드 이런식으로 호출 가능하다.
+
+    - 안에 변수, 메소드 들어갈 수 있다. 그러면 gem은 module이랑 뭐가 다른걸까.
+
