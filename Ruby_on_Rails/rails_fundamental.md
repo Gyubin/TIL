@@ -9,6 +9,7 @@ rails server            # 서버 스타트. localhost:8000 에서 동작 가능�
 ```
 ##request/response cyle(중요)
 https://www.codecademy.com/articles 여기서 Ruby를 선택하면 좋은 아티클들 정말 많다. 하나하나 번역해봐야겠다. 새로운 TIL 건수 발견.
+
 1. 브라우저에 http://localhost:8000/welcome 을 입력하는 것은 저 도메인의 프로젝트에 /welcome 이라는 request를 날리는 것을 의미한다.
 2. request는 /config/routes.rb의 **router**를 만나게 된다.
 3. router는 routes.rb에 적힌대로 URL을 구분하여 맞는 controller로 request를 보낸다.
@@ -37,10 +38,12 @@ rake db:seed        # db/seeds.rb 파일에 적혀진 데이터를 입력하는 
 generate model 코드를  터미널에서 실행하면 다음 두 개의 파일을 생성한다.
 - 모델 파일을 app/models/message.rb 처럼 생성한다. 모델은 데이터베이스에서 하나의 **테이블**을 의미한다.
 - migration 파일을 db/migrate/ 디렉토리에 생성한다. 파일 이름은 연월일시간+메소드이름들로 이루어져있다. migration은 데이터베이스를 변경하는 방법 중 하나다.
+
 #### migration 파일에 대해.
 - db/migrate 폴더 안에 새로 생긴 migration 파일은 안에 change method를 가지고 있다. 체인지 메소드는 레일즈에게 데이터베이스를 이러이러하게 바꾸라고 말해주는 역할을 한다. 기본적으로 체인지 메소드는 내부에 create_table 메소드를 가지고 있는데 새로운 테이블을 만들 때 사용한다.
 - t.text :content 라는 코드의 의미는 텍스트를 저장하는 컬럼을 만들고 그걸 content라고 지칭하겠다라는 것이다. t.text 말고도 다양한 컬럼 종류가 존재한다. 예를 들어 t.timestamps는 생성시각과 수정시각을 저장하는 컬럼을 의미한다. 만들어지는 두 개 컬럼은 자동으로 데이터가 들어가게 된다. 우리가 따로 조작을 안해도.
 - rake db:migrate 이 명령어는 방금 전에 만든 데이터 모델에 따라서 데이터베이스를 update 하라는 의미다. 근데 한 번 명령어를 통해 데이터베이스를 업데이트한 상황에서 마이그레이션 파일의 테이블을 살짝 수정하고, 다시 명령어를 실행하면 모두 뒤엎어버릴까? 아니다. 명령어는 먹히지 않는다. 한 번 migrate된 상황에서 마이그레이션 파일을 바꾸고 적용하려면 rake db:drop 을 통해 디비를 모두 날린 후에 다시 migration을 해야 한다. 만약 컬럼을 추가하고 드롭하지 않고 마이그레이션을 하면 적용이 안돼서 있는 컬럼인데도 불구하고 없는 메소드라고 오류 메시지를 띄울 것이다.
+
 ## 기타
 - 컨트롤러와 모델을 rails 명령어로 생성할 때는 첫글자를 대문자로 하는 것 같다.
 - ERB 같은 파일을 웹 템플릿이라고 한다. HTML에 특정 언어 변수나 플로우가 포함돼있는 것을 말한다.
