@@ -11,7 +11,7 @@ html form에서 각 태그에 id값을 지정하고, controller에서 params로 
   <%= submit_tag("GO") %>
 <% end %>
 ```
-현재 파일의 구조는 **hiforms 컨트롤러**와 **hi.erb 뷰 파일**, **search.erb 뷰 파일**을 가지고 있으며 각 파일의 내용은 다음과 같다.
+현재 파일의 구조는 **hiforms 컨트롤러**와 **hi.erb 뷰 파일**, **search.erb 뷰 파일**, 내부에 name이라는 텍스트 필드를 가지고 있는 Person 모델을 가지고 있으며 각 파일의 내용은 다음과 같다.
 ```ruby
 # routes.rb
 get 'form-test' => 'hiforms#hi'
