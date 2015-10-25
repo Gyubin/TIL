@@ -1,7 +1,7 @@
 #Remove Duplicates
 정수 배열을 받아서 중복된 숫자만 제거하는 함수를 만들라는 문제다.
 
-## A. 내 코드
+## 1. 내 코드
 카이스트 기계학습 과정에서 Bag of Words 기본 개념 배울 때 dict를 썼던 것이 생각나서 필요한 것만 뽑아서 해봤다. 막상 하다보니 'not in'만 쓰면 됐던 것 같다. dict까지 쓸 필요도 없이.
 
 ```python
@@ -24,9 +24,9 @@ def unique(integers):
     return result
 ```
 
-## B. 다른사람 코드
+## 2. 다른사람 코드
 
-### 1. OrderedDict 활용
+### A. OrderedDict 활용
 collections 모듈에 들어있는 dict의 서브클래스다. 리스트 안에 key, value 쌍으로 이루어진 튜플이 여러개 들어있는 구조다. 완전 새로운 데이터타입이 아니라 기존 것을 활용해서 만든 것으로 보인다.
 
 fromkeys 메소드로 정수형 리스트를 받으면 value 값은 None이 되고 리스트의 원소가 키가 된다. 아래 해답은 이 OrderedList 객체를 list 화 해서 리턴했다.
@@ -37,9 +37,9 @@ def unique(integers):
     return list(OrderedDict.fromkeys(integers))
 ```
 
-### 2. reduce, lambda 활용
+### B. reduce, lambda 활용
 
-#### a. 해답 코드 해석
+#### 1) 해답 코드 해석
 
 - reduce: 함수, iterable, initializer 세 가지 인자를 받는다. 함수는 lambda를, iterable은 integers를, initializer는 []로 받았다.
 - lambda: acc, val을 인자로 받는다. val이 acc에 속해있으면 acc를 리턴하고, 아니면 acc에 val을 append시켜서 리턴한다. initializer가 빈 리스트 [] 이므로 첫 acc, val은 [], integers[0]이고 다음부터 차례로 결과값, integers[1] 식으로 넘어간다.
@@ -50,14 +50,14 @@ def unique(integers):
     return reduce(lambda acc, val: acc if val in acc else acc + [val], integers, [])
 ```
 
-#### b. lambda에 대하여
+#### 2) lambda에 대하여
 anonymous function이다. (인자: 표현식) 형태로 구성되며 아래 코드처럼 뒤에 괄호로 인자를 받을 수 있다. 인자를 설정한 만큼만 넣어야되고 만약 아래 코드에서 인자를 3개 이상 넣으면 너무 많이 넣었다고 에러 뜬다.
 
 ```python
 (lambda x, y: x + y)(10, 20)
 ```
 
-#### c. reduce 함수 사용법
+#### 3) reduce 함수 사용법
 
 ```python
 def reduce(function, iterable, initializer=None):
