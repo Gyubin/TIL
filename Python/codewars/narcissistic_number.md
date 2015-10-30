@@ -1,4 +1,4 @@
-#Narcissistic Number check
+# #10 Narcissistic Number check
 각 자리의 숫자들을 원래 수의 자리수로 제곱한다. 즉 세 자리 수면 각 자리 수를 3제곱하고, 4자리 수면 4제곱한다. 이 제곱된 수의 합이 원래 수와 같으면 narcissistic number이다. 이걸 체크하는 함수.
 
 ## 1. 내 코드

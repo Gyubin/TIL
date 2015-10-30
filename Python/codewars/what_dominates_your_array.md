@@ -1,4 +1,4 @@
-#What dominates your array?
+# #4 What dominates your array?
 정수로 이루어진 배열을 받는다. 원소 전체 개수의 과반수를 차지하는 원소를 리턴하면 된다. 과반수가 없다면 -1을 리턴한다.
 
 ## 1. 내 코드

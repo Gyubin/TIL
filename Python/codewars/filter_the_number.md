@@ -1,4 +1,4 @@
-# Filter the number
+# #1 Filter the number
 
 입력받은 문자열에서 숫자만 뽑아내어 연결시킨 수를 리턴한다. 'a1b2c3'이면 123을 리턴하는 방식.
 

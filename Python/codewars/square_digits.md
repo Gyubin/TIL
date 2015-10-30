@@ -1,4 +1,4 @@
-#Square Every Digit
+# #2 Square Every Digit
 
 각 자리 숫자를 제곱한 수로 연결된 숫자. 9119 -> 811181
 

@@ -1,4 +1,4 @@
-# Find the longest gap
+# #5 Find the longest gap
 정수를 매개변수로 받아서 2진수로 변환한 후 1과 1 사이의 간격 중 가장 큰 수치를 리턴하는 함수를 짜는 문제.
 
 ## 1. 내 코드

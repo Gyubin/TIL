@@ -1,4 +1,4 @@
-# You're a square!
+# #6 You're a square!
 매개변수로 받은 정수가 어떤 수의 제곱수인지 검증하는 함수
 
 ## 1. 내 코드

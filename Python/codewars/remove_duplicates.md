@@ -1,4 +1,4 @@
-#Remove Duplicates
+# #3 Remove Duplicates
 정수 배열을 받아서 중복된 숫자만 제거하는 함수를 만들라는 문제다.
 
 ## 1. 내 코드

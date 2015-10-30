@@ -1,4 +1,4 @@
-# Linked Lists - Get Nth Node
+# #9 Linked Lists - Get Nth Node
 Node라는 클래스가 있다. 인스턴스 변수로 data와 next를 가지고 있고 next는 다음 노드를 가리킨다. 즉 linked list이다. get_nth 함수는 노드 객체와 index 정수 변수를 받아서 linked list의 index 번째 노드를 리턴하는 함수다.
 
 추가로 리스트에 없는 인덱스를 입력하는 경우, node 객체 대신 빈 객체를 입력하는 경우엔 에러를 띄워야한다.
