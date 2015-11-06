@@ -17,27 +17,12 @@ def to_camel_case(text):
 
 - 정규표현식을 사용했다. 정규표현식에 split이 있었다. 그냥 split에 어떻게 정규표현식을 적용하지 고민했었는데 여기에 답이 있었다. re.split(pattern, text) 형태로 넣어주면 된다.
 - reduce 역시 사용하고자 했는데 앞에 함수 부분에 join이나 capitalize를 어떻게 넣어야할지 고민했다. 람다를 사용하면 됐다.
-    + reduce는 function, iterable, initializer 세 가지 매개변수를 받는다. 순서대로 lambda, re.split 결과물, 매개변수 text가 적용됐다.
-    + 
+    + reduce는 function, iterable, initializer 세 가지 매개변수를 받는다. 이 중에서 function과 iterable만 매개변수로 들어왔다.
+    + iterable의 첫, 두번째 원소가 p, n으로 적용된다. p는 그냥 두고, n만 capitalize 해준다. 그리고 이 두 문자열을 + 연산한 값이 다음 p로 들어가고, iterable의 그 다음 원소가 n으로 되서 끝까지 반복한다.
 
 ```python
 import re
 def to_camel_case(text):
-    return reduce(lambda p, n: p + n[0].upper() + n[1:], re.split('[-_]', text))
-#########################
-from re import compile as reCompile
-PATTERN = reCompile(r'(?i)[-_]([a-z])')
-
-def to_camel_case(text):
-    return PATTERN.sub(lambda m: m.group(1).upper(), text)
-#########################
-import re
-
-def to_camel_case(text):
-    #your code here
-    wds = re.split('_|-', text)
-    if len(wds) <= 1:
-        return text
-    else:
-        return wds[0] + "".join(wds[i].capitalize() for i in range(1,len(wds)))
+    return reduce(lambda p,n: p + n[0].upper() + n[1:], re.split('[-_]', text))
+    # 패턴을 이렇게 해도 된다. re.split('_|-', text)
 ```
