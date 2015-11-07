@@ -1,4 +1,4 @@
-# #18 Vector Class
+# #19 Vector Class
 Vector에 관한 클래스를 만드는 문제다. 리스트를 매개변수로 받는 것과 벡터 합, 뺄셈, 내적, norm 값을 구하는 메소드를 구현한다.
 
 ## 1. 내 코드
@@ -59,7 +59,7 @@ class Vector:
 - ```__len__(self)``` : 내부에서 원하는 데이터의 길이를 len 함수로 구한 후 리턴하면 된다. 그러면 인스턴스를 바로 len(instance) 해서 길이를 구할 수 있다.
 - ```__iter__(self)``` : 내가 만든 클래스에서 iter 함수를 구현하면 클래스가 iterator가 된다. 아래 코드에서처럼 self를 매개변수에 넣고, 반복하고싶은 데이터를 iter 함수에 담아 리턴하면 된다.
 - ```__getitem__(self, index)``` : iter와 마찬가지로 이 함수를 클래스 내에 구현하면 ```my_instance[index]``` 형태로 데이터를 꺼낼 수 있다. 딕셔너리든 리스트든 안에 getitem 함수 안에 구현하는 형태에 따른다.
-- decorator(a.k.a. wrapper) 사용: 다른 설명글에서 곧 설명할 것임.
+- decorator(a.k.a. wrapper) 사용: [다른 글](https://github.com/Gyubin/TIL/blob/master/Python/decorator_wrapper.md)에서 설명
 
 ```python
 from math import sqrt

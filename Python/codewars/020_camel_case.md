@@ -1,4 +1,4 @@
-# #19 Convert string to camel case
+# #20 Convert string to camel case
 '-', '_'를 기준으로 camel case 형태로 문자열을 바꿔서 리턴하는 문제다. 맨 앞 글자는 굳이 대문자로 바꾸지 않고 원래 형태를 따른다.
 
 ## 1. 내 코드
