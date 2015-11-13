@@ -374,6 +374,9 @@ class MyClass(parent):
 - Universal Imports: ```from math import *``` 이렇게 하면된다. 썩 좋은 방법은 아님. 왜냐면 기본적으로 이미 import돼있는 수많은 변수나 함수가 존재한다. 근데 저렇게 math의 모든 것을 import 해버리면, 뭔가가 겹칠 수 있다. 같은 이름의 변수나 같은 이름의 함수들이. 좋은 방법이 아니다.
 - 만약 모듈에 함수나 변수만 덩그러니 있는게 아니라 실제 실행되는 명령어가 있다고 치자. 예를 들어 print문이 있다고 하면 import abc를 했을 때 그 코드들이 실행이 되게된다. import했을 때는 실행이 안되도록 하려면 ```if __name__ == "__main__": ``` 이 if 블락 안에 실행문들을 넣으면 된다. 실제 python 명령어로 실행됐을 때만 실행 코드들이 동작하도록 만드는 조건이다.
 - 다른 모듈 사용할 때 import는 클래스 밖에서: vector.py 모듈과 모듈 내의 Vector class를 직접 만들었다고 하자. 이 Vector 클래스는 norm이라는 메소드를 갖는데 이 메소드가 math 모듈의 sqrt 메소드를 사용한다. 이럴 경우 import math를 클래스 내부에서 선언하면 norm 메소드가 동작하지 않는다. 클래서 definition 바깥에서 import 해줘야 한다.
+- 파이썬 모듈 저장 디렉토리 추가하기
+    + 터미널에서 파이썬 repl을 실행한 후 `import sys` 한다. 그리고 `sys.path`를 입력해보면 리스트 형태로 경로들이 존재한다. 여기에 리스트이므로 append 함수로 경로를 문자열로 추가해주면 그 경로에 위치한 모듈은 바로 import해서 쓸 수 있다.
+    + 혹은 터미널에서 `set PYTHONPATH = C:\Python\Mymodules` 형태로 지정해줄 수도 있다.
 
 ## 7. 2진수
 
@@ -404,6 +407,55 @@ def flip_bit(number, n):
 - str.lower(), str.upper()는 호출되는 대상을 바꾸지 않는다. 다시 대입해줘야.
 - filter(function, iterable) : iterable의 원소를 하나하나 빼내서 function에 적용한 후 리턴값이 True이면 리스트에 집어넣는다. 그리고 최종적으로 리스트를 리턴한다.
 - `locals()` : 함수 내에서 실행하면 함수의 로컬 변수들을 딕셔너리 형태로 리턴한다.
+
+## 9. 예외처리
+
+### A. 에러 처리 기본
+
+```python
+try: 
+    ...
+except [발생에러[as 에러메시지변수]]: # []는 생략해도 된다는 의미
+    pass  # 에러 나든 말든 넘기고 싶으면 pass
+else:
+    ...
+finally:
+    f.close()
+```
+
+- 에러가 날 수 있는 코드를 try에 넣고, 에러가 났을 때 처리를 except에 넣는다. 에러가 발생하지 않았을 경우 실행되는 코드는 else안에 둔다. finally는 에러가 나든 안나든 무조건 실행해주는 코드로 주로 파일 스트림 객체를 닫는데 쓰인다.
+- []는 생략해도 된다는 코드다. 그냥 except만 적어도 되고, 에러를 명시해줘도 되고, 그 에러를 내 입맛에 맞게 바꿔불러도 된다.
+
+```python
+try:
+    4 / 0 
+except ZeroDivisionError as e: 
+    print(e)
+# => 출력: division by zero
+```
+
+### B. 에러 일으키기 raise
+
+다음은 Bird 클래스를 상속하는 자식 클래스는 무조건 fly 메소드를 오버라이드 해야한다는 의미의 코드다.
+
+```python
+class Bird:
+    def fly(self):
+        raise NotImplementedError
+
+class Eagle(Bird):
+    pass
+
+eagle = Eagle()
+eagle.fly()
+
+class Eagle(Bird):
+    def fly(self):
+        print("very fast")
+
+eagle = Eagle()
+eagle.fly()
+```
 
 ## 기타
 
