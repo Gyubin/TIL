@@ -457,6 +457,37 @@ eagle = Eagle()
 eagle.fly()
 ```
 
+## 10. 패키지
+
+복잡한 혹은 큰 규모의 파이썬 프로그램이라면 패키지를 만들어서 관리하는게 유용하다. 예를 들어 다음과 같은 구조가 있다.
+
+```python
+game/
+    __init__.py
+    sound/
+        __init__.py
+        echo.py
+        wav.py
+    graphic/
+        __init__.py
+        screen.py
+        render.py
+    play/
+        __init__.py
+        run.py
+        test.py
+```
+
+위 패키지 중 echo.py 모듈을 import하려면 
+- `import game.sound.echo` 한 다음에 `game.sound.echo.원하는함수호출` 형태로 사용할 수도 있고
+- 편하게 `from game.sound import echo` 하고 `echo.함수호출` 할 수도 있다.
+- 더 간결하게 하려면 `from game.sound.echo import echo_test` 함수까지 import해서 함수를 바로 사용하는 방법도 있다.
+
+하지만 디렉토리 자체를 import할 순 없다. 예를 들어 `import game` 한 후에 `from game.sound.echo import echo_test` 사용은 불가하다. 이렇게 디렉토리를 import 하는 경우는 `__init__.py`의 내용만 가져온다.
+
+
+
+
 ## 기타
 
 - [로또 실습 예제](http://luckyyowu.tistory.com/209)
