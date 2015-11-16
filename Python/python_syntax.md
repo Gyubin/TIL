@@ -19,7 +19,7 @@
 | 8진수  | 0o45, 0O42        |
 | 16진수 | 0xA1, OXFF        |
 
-- 지수 표현하기: 1의 자리 수와 소수로만 표현한다. 그리고 뒤에 e(E 동일)를 붙여서 10의 제곱수를 곱해서 표현한다. 1.23e10은 1.23에 10의 10승을 곱한 것이고, 3.45e-10은 3.45에 10의 -10승을 곱한 것이다.
+- 지수 표현하기: 1의 자리 수와 소수로만 표현한다. 그리고 뒤에 e(E 동일)를 붙여서 10의 제곱수를 곱해서 표현한턴. 1.23e10은 1.23에 10의 10승을 곱한 것이고, 3.45e-10은 3.45에 10의 -10승을 곱한 것이다.
 - 복소수 활용: 내장함수가 있다. 복소수.real, 복소수.imag 처럼 뒤에 붙여 사용하면 순서대로 실수부와 허수부를 리턴한다. 또한 복소수.conjugate()라는 내장함수를 사용하면 켤레복소수를 리턴한다. abs(복소수)는 절대값을 리턴하는데 계산 방식은 1+2j일 때 1의 제곱과 2의 제곱을 더해서 루트씌운것이다. 
 
 ### B. 문자열
@@ -279,16 +279,7 @@ for i in args:
 #    ccc
 ```
 
-## 5. 고급(? 초보자에겐)
-
-### A. 날짜 사용
-
-- ```from datetime import datetime ``` : datetime module에서 datetime 클래스를 가져온다.
-- ```now = datetime.now()``` : 현재 시간(연월일시분초)을 객체로 담아 리턴한다.
-- now 객체에서 year, month, day, hour, minute, second를 ```now.year``` 형태로 호출할 수 있다. 문자열 형태로 리턴된다.
-- 공식 문서 [datetime](https://docs.python.org/3.5/library/datetime.html)
-
-### B. 클래스
+## 5. 클래스
 
 기본 구조는 다음과 같다.
 
@@ -397,16 +388,47 @@ def flip_bit(number, n):
 
 ## 8. 자주 쓸 것 같은 함수들
 
-- ```isalpha()``` : 문자열이 오로지 알파벳으로만 이루어져있는지
-- ```isdigit()``` : 문자열이 오로지 숫자로만 이루어져있는지
-- ```dir(math)``` : math 모듈에서 사용 가능한 모든 것을 리스트로 보여준다.
-- ```abs(-5), max(1,2,3), min(-4, -2, -10)``` : 절대값, 최대값, 최소값. 저렇게 단순한 콤마로 구분해서 여러 수를 넣을 수 있는 것은 콤마만 적으면 자동으로 튜플이 되기 때문이다.
-- ```type(something)``` : something의 타입을 리턴함.
-- random 모듈에서 randint(low, high) 많이 쓰인다. low부터 high까지 임의의 정수 하나를 리턴한다. 중요한건 high 포함이고 둘 모두 정수여야 한다.
+- `isalpha()` : 문자열이 오로지 알파벳으로만 이루어져있는지
+- `isdigit()` : 문자열이 오로지 숫자로만 이루어져있는지
+- `dir(math)` : math 모듈에서 사용 가능한 모든 것을 리스트로 보여준다.
+- `abs(-5), max(1,2,3), min(-4, -2, -10)` : 절대값, 최대값, 최소값. 저렇게 단순한 콤마로 구분해서 여러 수를 넣을 수 있는 것은 콤마만 적으면 자동으로 튜플이 되기 때문이다.
+- `type(something)` : something의 타입을 리턴함.
+- `import random`
+    + `randint(low, high)` 많이 쓰인다. low부터 high까지 임의의 정수 하나를 리턴한다. 중요한건 high 포함이고 둘 모두 정수여야 한다.
+    + `random.choice(iterable)` : iterable에서 무작위로 원소 하나 리턴한다.
+    + `random.shuffle(iterable)` : iterable을 무작위로 섞는다.
 - re 모듈에서 sub 함수가 있다. re.sub(pattern, replacement, string) 으로 쓰면 된다. 매개변수가 2개 더 있지만 저렇게만 자주 쓰일듯.
 - str.lower(), str.upper()는 호출되는 대상을 바꾸지 않는다. 다시 대입해줘야.
 - filter(function, iterable) : iterable의 원소를 하나하나 빼내서 function에 적용한 후 리턴값이 True이면 리스트에 집어넣는다. 그리고 최종적으로 리스트를 리턴한다.
 - `locals()` : 함수 내에서 실행하면 함수의 로컬 변수들을 딕셔너리 형태로 리턴한다.
+- `all(iterable)` : iterable 원소들이 모두 참인 경우 True 리턴한다.
+- `any(iterable)` : 참인 원소가 하나라도 있으면 True
+- `chr(아스키코드값)` : 아스키코드값을 받아서 문자로 리턴한다. `ord`
+는 그 반대다.
+- `divmod(7, 3)` : 7을 3으로 나눈 몫과 나머지를 튜플로 리턴한다.
+- `eval('1+2')` : 실행 가능한 함수나 수식 등을 문자열로 받아서 결과값을 리턴한다. 이 코드는 3을 리턴한다. `eval('divmod(7,3)')` -> (2, 1)
+- `repr(object)` : 객체를 출력 가능한 문자열로 변환해서 리턴한다. 예를들어 repr('hi'.upper()) -> "'HI'"
+- `lambda` : 이름 없는 함수이며 주로 간단한 함수식을 표현할 때 쓴다. `lambda 인수1, 인수2, ...  : 인수를 이용한 표현식`으로 나타낸다. 인수를 이용한 표현식 부분이 자동으로 리턴된다.
+- `id(object)` : 주소값 리턴
+- `filter(func, iterable)` : iterable에서 원소 하나하나를 뽑아서 func에 적용한 후 True를 리턴한 것만 리턴 객체에 넣는다. 2에선 리스트, 3에선 필터 객체다.
+- `map(func, iterable)` : filter와 다르게 iterable의 원소 하나하나를 func에 대입해서 나온 결과값을 리턴 객체에 넣는다. 2에선 리스트, 3에선 맵 객체
+- sorted, zip, type도 기억.
+- `import os`
+    + os.environ: 시스템 환경변수값을 딕셔너리 객체로 리턴
+    + os.chdir: 디렉토리 변경
+    + os.getcwd: 현재 디렉토리 문자열 리턴
+    + os.system("명령어"): 터미널에서 명령어 실행한 결과값 리턴
+    + os.mkdir(디렉토리명): 디렉토리를 생성한다.
+    + os.rmdir(디렉토리): 비어있는 디렉토리 삭제
+    + os.unlink(파일): 파일 삭제
+    + os.rename(src, dst): src 파일을 dst로 이름 변경
+- `import webbrowser`: 브라우저에서 URL을 연다.
+    + webbrowser.open("URL")
+    + webbrowser.open_new("URL")
+- `import shutil` -> `shutil.copy("src.txt", "dst.txt")` 파일 카피다. 만약 목표 디렉토리에 같은 이름의 파일이 있다면 덮어쓴다.
+- `import glob` -> `glob.glob("/users/gyubin/dev/Q*")` 지정 디렉토리의 파일명을 리스트화한다. Q*는 q로 시작하는 파일들만으로 한정한 것.
+- `import tempfile` 임시파일 관련 모듈이다. 테스트할 때 유용하려나?
+- 
 
 ## 9. 예외처리
 
@@ -459,7 +481,9 @@ eagle.fly()
 
 ## 10. 패키지
 
-복잡한 혹은 큰 규모의 파이썬 프로그램이라면 패키지를 만들어서 관리하는게 유용하다. 예를 들어 다음과 같은 구조가 있다.
+### A. 기본
+
+복잡한 혹은 큰 규모의 파이썬 프로그램이라면 패키지를 만들어서 관리하는게 유용하다. 예를 들어 다음과 같은 구조가 있다. 아래 패키지에서 echo.py 모듈을 사용하려면 
 
 ```python
 game/
@@ -478,15 +502,23 @@ game/
         test.py
 ```
 
-위 패키지 중 echo.py 모듈을 import하려면 
-- `import game.sound.echo` 한 다음에 `game.sound.echo.원하는함수호출` 형태로 사용할 수도 있고
-- 편하게 `from game.sound import echo` 하고 `echo.함수호출` 할 수도 있다.
-- 더 간결하게 하려면 `from game.sound.echo import echo_test` 함수까지 import해서 함수를 바로 사용하는 방법도 있다.
+- (O) `import game.sound.echo` -> `game.sound.echo.echo_test()`
+- (O) `from game.sound import echo` -> `echo.echo_test()`
+- (O) `from game.sound.echo import echo_test` -> `echo_test()`
+- (-) `import game` -> 디렉토리를 import하면 game 디렉토리의 `__init__.py`의 내용만 참조 가능
+- (X) `import game.sound.echo.echo_test` 이건 에러난다. 이렇게 `.`으로 구분해서 디렉토리의 모듈을 import할 땐 마지막에 무조건 패키지나 모듈이 되어야 한다. 저렇게 함수가 들어가면 안된다.
 
 하지만 디렉토리 자체를 import할 순 없다. 예를 들어 `import game` 한 후에 `from game.sound.echo import echo_test` 사용은 불가하다. 이렇게 디렉토리를 import 하는 경우는 `__init__.py`의 내용만 가져온다.
 
+### B. `__init__.py`에 대하여
 
+해당 디렉토리가 패키지의 일부라는 것을 나타내주는 것이다. 이거 없이 패키지를 import하면 에러난다. 파이썬3에선 없어도 되는걸로 바뀌었지만 그래도 하위호환성을 위해 해주는게 좋다. 이 안에 all같은 필요한 몇가지 요소들을 적어준다.
 
+### C. `__all__`
+
+`from game.sound import *` 이렇게 코드를 짜면 sound 패키지의 모든 모듈을 import한다는 의미다. 이 때 `__init__.py`에 `__all__` 이 있어야 정상적으로 작동한다. `__all__ = ['echo']` 이렇게 리스트 안에 모듈명을 문자열로 집어넣어주면 된다.
+
+물론 from에서 마지막이 패키지로 끝나는 경우에 위의 작업이 필요한것이지 만약 from에서 마지막이 모듈로 끝난다면 그냥 import * 해도 속한 모든 메소드들이 호출 가능해진다. 하지만 이는 좋은 방법이 아니다.
 
 ## 기타
 

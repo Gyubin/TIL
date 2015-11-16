@@ -21,7 +21,7 @@ filter 함수, re 모듈의 sub 함수, isdigit 함수를 활용한 해답들이
 
 ### A. filter, isdigit
 
-- 'filter(function, iterable)' 형태로 사용된다. iterable의 원소 중 function의 조건을 만족하는 원소만 뽑아내 리스트로 리턴한다.
+- 'filter(function, iterable)' 형태로 사용된다. iterable의 원소 중 function의 조건을 만족하는 원소만 뽑아내 filter 객체를 리턴한다.(python3에선 필터 객체, python2에선 리스트를 리턴) iterable 객체이며 리스트로 바꾸고싶으면 list() 하면 된다.
 - str.isdigit() isdigit() 함수는 문자열에서 호출할 수 있다. "10".isdigit()은 True를 리턴하고, "a1b2c3".isdigit()은 False를 리턴한다.
 - re.sub(pattern, repl, string, count=0, flags=0) string에서 pattern에 해당하는 문자열을 repl로 바꾼다. count는 최대 바꾸는 회수를 말하고 flags는 확실히는 모르겠지만 re.IGNORECASE 같은 것이 들어가서 조건을 정하는 것 같다.
 
