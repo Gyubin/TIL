@@ -147,3 +147,7 @@ print(thread.is_alive())
 - 원래 예상은 hello만 연달아 3번 출력되는거였지만 아니었다. 즉 join은 **호출한 이후의 코드에 대해서만 정지시키는 것이다.**
 - join 호출 이전에 이미 thread2를 start 시켰기 때문에 이 스레드를 정지시키진 않는다. 그 아래 3줄 코드를 정지시킨다.
 - 당연하게도 3초만에 스레드가 끝나기 때문에 join에서 timeout 설정한 5초까지 기다리지 않고 정지는 바로 풀리게 된다.
+
+### C. 성능
+
+성능 향상은 없다고 한다. 병렬처리를 더 나은 성능으로 하고싶으면 gevent같은 라이브러리를 활용하라고 함. [gevent 한글 튜토리얼 - leekchan.com](http://leekchan.com/gevent-tutorial-ko/)
