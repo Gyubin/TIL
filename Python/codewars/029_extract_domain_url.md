@@ -1,4 +1,4 @@
-# Extract the domain name from a URL
+# #29 Extract the domain name from a URL
 
 URL을 매개변수로 받아서 도메인 이름만 뽑아내는 것이다.
 
@@ -31,13 +31,39 @@ def domain_name(url):
 
 ### B. 정규표현식 활용
 
-- '?'를 적절하게 활용했다. 1번 그룹인 '//'는 있어도 되고 없어도 된다. '//'라는 문자열이 URL에 포함되어서 들어올지 안들어올지를 모르므로 유용한 코드다.
-- 그다음은 '-'를 포함한 문자들이 여러 개 나올 수 있는 것, 즉 도메인과 '.'이 합쳐진 문자열이 여러번 반복될 수 있다는 의미다. 즉 'www.', 'github.', 'naver.' 같은 문자열들이 반복해서 나올 수 있다는 패턴이다. 즉 'github.com'같은 경우는 'github.'만 골라질 것이고, 'www.naver.com'같은 경우는 'www.naver.'까지만 골라질 것이다.
-- 여기서도 역시 그룹을 활용해서 도메인만 뽑아냈는데 재밌는 것은 `http://www.cnet.com`같은 경우에서 search.group()의 결과는 'www.cnet.'이다. 여기서 group(1)을 하게 되면 '//'일 것이고, group(2)를 하면 재밌게도 'cnet.'이다. 왜 여기서 'www.'이 결과가 되진 않는 것일까. 디폴트로 뒤쪽이 선택되는 것일까.
-
 ```python
 import re
 def domain_name(url):
     result = re.search("(//)?(([a-zA-Z0-9_-]+)\.)+", url)
     return result.group(3) if result else None
 ```
+
+- `(//)?`
+    + '?'를 활용했다. 1번 그룹인 '//'는 있어도 되고 없어도 된다. '//'라는 문자열이 URL에 포함되어서 들어올지 안들어올지를 모르므로 쓴 것 같은데 맨 앞에 붙어있다보니 굳이 없어도 되는 코드다. 여러 URL을 테스트해보니 없어도 동일한 결과가 나왔다.
+- `(([a-zA-Z0-9_-]+)\.)+`
+    + '-'를 포함한 문자들이 여러개 나올 수 있는데 마지막엔 `.`이 붙어야한다. 이 패턴이 또다시 여러개 나올 수 있다는 패턴이다.
+    + 즉 'www.', 'github.', 'naver.' 같은 문자열들이 반복해서 나올 수 있다.
+    + 'github.com'같은 경우는 'github.'만 골라질 것이고, 'www.naver.com'같은 경우는 'www.naver.'까지 골라질 것이다.
+- 의문점: `"http://www.zombie-bites.com"`의 경우
+    + result.group(0)의 결과는 '//www.zombie-bites.'이다.
+    > (result.group(1)의 결과는 당연하게도 '//'다. 넘어간다.)
+    + 문제는 그룹2부터 나온다. result.group(2)의 결과는 'zombie-bites.'이다. 왜 'www.'은 배제되는 것일까? 'www.'도 가능하고 'zombie-bites.'도 되는데 왜 뒷 부분이 선택되는 것일까?
+    + result.group(3)은 그룹2에서 이어지는 것이므로 'zombie-bites'라고 도메인만 매칭시킬 수 있다.
+    + [Python Korea](https://www.facebook.com/groups/pythonkorea/) 그룹에 질문을 올렸더니 역시 [답변](https://www.facebook.com/groups/pythonkorea/permalink/921335711282924/)이 정확하게 달렸다. 정말 감사드립니다. 내용은 다음과 같다. 역시 내가 공식 문서를 꼼꼼하게 안 읽은 탓이다.
+    + 김덕환님: "If a group is contained in a part of the pattern that matched multiple times, the last match is returned.": [https://docs.python.org/3/library/re.html#re.match.group](https://docs.python.org/3/library/re.html#re.match.group) 원하시는 결과를 얻으시려면 `re.findall(r"\w+\.", "abc.def.ghi.")` 혹은 `re.finditer(r"\w+\.", "abc.def.ghi.")`을 사용하셔야 될 듯합니다.
+    + 그러면 저 코드를 짠 사람은 마지막이 매칭된다는 것을 알고 저렇게 짠걸까? 엄청난데!!???
+
+### C. 정규표현식으로 여러 예외처리를 다 한 모습
+
+```python
+from re import compile, match
+def domain_name(url):
+    REGEX = compile(r'(http[s]*://)?(www.)?(?P<domain>[\w-]+)\.')
+    return match(REGEX, url).group('domain')
+```
+
+- http 도 되고 https도 된다.
+- http:// 까지가 전체 URL에 있어도 되고 없어도 된다.
+- www.이 있어도 되고 없어도 된다.
+- 앞에서 `?`를 사용했기 때문에 그 다음 패턴은 무조건 도메인이 된다.
+- 깔끔하게 도메인이 매칭되는 부분을 domain이란 이름으로 그룹으로 만든다.

@@ -1,4 +1,4 @@
-# #028 Where my anagrams at.
+# #28 Where my anagrams at.
 
 첫 매개변수로 단어 하나를, 두 번째 매개변수로 여러 단어를 모아둔 리스트를 받는다. 리스트의 단어 중 첫 매개변수의 anagram인 것만 다시 리스트에 담아서 리턴한다.
 

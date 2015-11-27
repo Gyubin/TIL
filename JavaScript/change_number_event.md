@@ -15,6 +15,7 @@ stocks.setAttribute("onclick", "changeFunction()");
 stocks.setAttribute("onfocusout",
 ```
 - 세 가지 function을 활용했다. 숫자에 천 단위로 comma를 찍는 numberWithCommas, 문자열에서 특정 문자를 모두 바꾸는 replaceAll, 이벤트에 달아서 숫자를 바꾸는 changeFunction. 처음에 replaceAll을 안 만들고 replace만 썼다가 앞 쪽 comma만 바뀌어서 changeFunction 결과물이 계속 NaN이 나왔었다.
+- (추가) 정규표현식 활용해서 replace를 replaceall처럼 쓰기 -> `mystr.replace(/,/gi, "");` 요렇게만 해주면 된다. 따옴표 대신 슬래시로 감싸고 뒤에 gi를 붙여주면 된다. 정규표현식에서 g는 발생할 모든 패턴에 대한 전역 검색, i는 대소문자 구분 안하는 것, m은 사용하진 않았지만 여러줄 검색을 의미한다. 훨씬 간단하다.
 ```js
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
