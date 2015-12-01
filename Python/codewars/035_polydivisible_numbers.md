@@ -45,7 +45,10 @@ def is_polydivisible(s, b):
     for i in range(len(s)):
         convert = 0
         for j, d in enumerate(s[:i+1]):
-            if d.isalpha(): d = ord(d.upper()) - 55
+            if ord(d) >= 65 and ord(d) <= 90:
+                d = ord(d) - 55
+            elif ord(d) >= 97 and ord(d) <= 122:
+                d = ord(d) - 61
             convert += int(d)*(b**(i-j))
         if convert % (i+1): return False
     return True
