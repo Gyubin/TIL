@@ -2,7 +2,7 @@
 
 참고 링크: [hannal blog](http://blog.hannal.com/category/start-with-django-webframework/), [Django Girls Tutorial](http://tutorial.djangogirls.org/ko/django/index.html)
 
-장고 초반 세팅과 기본 명령어들 정리해본다. 우선 가상환경을 설정해야하는데 이 문서 바로 위 디렉토리에 `virtual_environment.md` 파일을 보고 따라하면 된다.
+장고 걸스 튜토리얼을 따라서 장고의 기본적인 내용들을 정리해본다. 001에서 008까지 source 폴더의 foodgram 프로젝트와 관련되어있다. 001에선 초반 세팅과 기본 명령어들 정리해볼 것이고, 가상환경 설정은 Python 디렉토리의 `virtual_environment.md` 파일을 보고 따라한다. 장고 설치 명령어는 가상환경 활성화 상태에서 `pip install django` 이다.
 
 ## 1. 프로젝트 생성 직후 구조
 
