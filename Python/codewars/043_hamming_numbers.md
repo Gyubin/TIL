@@ -1,6 +1,6 @@
 # #43 Hamming Numbers
 
-매개변수로 받은 숫자 번째의 hamming number를 구하는 문제다. 성능 이슈 때문에 어려웠다. 돌아가는 코드는 두 방법으로 짰지만 결국 6초 제한을 못 이겼다. 검색을 해서 답을 찾을 수 밖에 없었다. 피라미드, power-modulo 문제에 이어 세 번째다. 부끄럽다. 그래도 4시간 이상 고민했다.
+매개변수로 받은 숫자 번째의 hamming number를 구하는 문제다. 성능 이슈 때문에 어려웠다. 돌아가는 코드는 두 방법으로 짰지만 결국 6초 제한을 못 이겼다. 검색을 해서 답을 찾을 수 밖에 없었다. 피라미드, power-modulo 문제에 이어 세 번째다. 부끄럽다. 그래도 4시간 이상 고민했다. 확실히 4급 문제는 어렵다.
 
 ## 1. 내 코드
 
@@ -64,7 +64,13 @@ def hamming(n):
 
 ### A. 로제타코드 해답
 
-엄청나게 빠르다. 설명에 메모리를 많이 잡아먹는다고 적혀있다. 그만큼 빠르다.
+엄청나게 빠르다. 설명에 메모리를 많이 잡아먹는다고 적혀있다. 그만큼 빠르다. [링크](http://rosettacode.org/wiki/Hamming_numbers#Python)에 나온 답이고 해석해보려 했지만 왜 저런식으로 짰는지, 왜 결과값이 정확하게 나오는지 잘 모르겠다. 링크에 다른 답변들도 있는데 역시 해석이 잘 안된다. 말 그대로 '수학'이다.
+
+- 매개변수로 받은 수의 길이만큼 리스트 설정한다. hamming number 리스트다.
+- 2, 3, 5의 배수를 저장할 변수인 `x2`, `x3`, `x5`가 있고, 각 변수와 연관되는 인덱스인 `i`, `j`, `k`다.
+- 1부터 매개변수로 받은 수 바로 전까지 for 반복을 돌고 변수는 `cnt`로 둔다. x2, x3, x5 중 최소값을 hamming list의 cnt 번째 원소에 대입한다. 대입된 최소값이 x2, x3, x5이냐에 따라서 아래 조건문을 실행하는데 `elif`를 쓰지 않는 이유는 x2, x3, x5가 같은 수일 수도 있기 때문이다. 그렇기 때문에 모두 적용하기 위해서 따로 if 문을 각각 써줬다.
+- 조건문 내부는 각 변수 별 인덱스를 1 더해주고, hamming number 리스트에서 그 인덱스의 수를 변수의 배수(2 or 3 or 5)와 곱해준다. 이 결과값을 변수에 대입한다.(이 부분이 가장 이해가 안된다. 왜 이게 정확하게 hamming number를 뽑아내는지 모르겠다.)
+- 반복을 모두 돌면 리스트에 해밍 넘버가 기록되어있다. 마지막 원소를 리턴하면 된다.
 
 ```py
 def hamming(limit):
@@ -72,15 +78,15 @@ def hamming(limit):
     x2, x3, x5 = 2, 3, 5
     i = j = k = 0
 
-    for n in xrange(1, limit):
-        h[n] = min(x2, x3, x5)
-        if x2 == h[n]:
+    for cnt in range(1, limit):
+        h[cnt] = min(x2, x3, x5)
+        if x2 == h[cnt]:
             i += 1
             x2 = 2 * h[i]
-        if x3 == h[n]:
+        if x3 == h[cnt]:
             j += 1
             x3 = 3 * h[j]
-        if x5 == h[n]:
+        if x5 == h[cnt]:
             k += 1
             x5 = 5 * h[k]
 
@@ -90,30 +96,25 @@ def hamming(limit):
 ### B. 코드워 최고 득표
 
 ```py
-from itertools import islice
- 
-def hamming2():
-    h = 1
-    _h=[h]    # memoized
-    multipliers  = (2, 3, 5)
-    multindeces  = [0 for i in multipliers] # index into _h for multipliers
-    multvalues   = [x * _h[i] for x,i in zip(multipliers, multindeces)]
-    yield h
-    while True:
-        h = min(multvalues)
-        _h.append(h)
-        for (n,(v,x,i)) in enumerate(zip(multvalues, multipliers, multindeces)):
-            if v == h:
-                i += 1
-                multindeces[n] = i
-                multvalues[n]  = x * _h[i]
-        # cap the memoization
-        mini = min(multindeces)
-        if mini >= 1000:
-            del _h[:mini]
-            multindeces = [i - mini for i in multindeces]
-        yield h
-
 def hamming(n):
-    return list(islice(hamming2(), n))[-1]
+    bases = [2, 3, 5]
+    expos = [0, 0, 0]
+    hamms = [1]
+    for _ in range(1, n):
+        next_hamms = [bases[i] * hamms[expos[i]] for i in range(3)]
+        next_hamm = min(next_hamms)
+        hamms.append(next_hamm)
+        for i in range(3):
+            expos[i] += int(next_hamms[i] == next_hamm)
+    return hamms[-1]
+```
+
+```py
+import itertools
+
+H = sorted([
+  2**i * 3**j * 5**k
+  for i, j, k in itertools.product(xrange(50), xrange(50), xrange(50))
+])
+hamming = lambda n, H=H: H[n-1]
 ```
