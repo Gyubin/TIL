@@ -11,6 +11,9 @@
 - 주석 : `//`
 - 참 거짓은 소문자로: `true`, `false`
 - 출력: `console.log(context)`
+- 블록: `{ }`로 표현. if ( 조건 ) { } 형태
+- 문자열 슬라이싱: `'string'.substring(i, j)`
+- 변수명: 첫 글자는 소문자, 이후로 CamelCase. 예를 들어 `myAge` 같은 식. 이게 JavaScript에서 컨벤션인 듯 하다.
 
 ## 2. 브라우저 확인 창 관련
 
