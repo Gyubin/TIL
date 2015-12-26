@@ -17,6 +17,8 @@
 - `scope`은 변수가 유효한 범위를 의미한다. global, local 두 가지가 있으며 함수 안에서 선언되면 local이다. 최대한 local 변수를 쓰도록 노력. global은 최대한 쓰지말자.
 - 객체 선언은 모두 앞에 `var`를 붙인다. 예로 `var myAge = 12`
 - `++`, `--` 연산자 존재한다. 전위, 후위 연산자 모두 가능하다.
+- 논리연산자 종류: `&&`, `||`, `!` 순서대로 and, or, not
+- array 원소 추가: `push`를 쓴다. array.push(something)
 - `==`, `===` 차이: 다음 표에서 `===`을 쓰면 모두 false로 나오는 예제다. 무조건 `===`를 쓰는걸 추천.
 
 |         식         |  결과 |
@@ -34,7 +36,7 @@
 ## 2. 브라우저 확인 창 관련
 
 - `confirm('string');` : 확인, 취소 버튼과 함께 문자열을 띄워준다. 확인 버튼을 누르면 `true`, 취소 버튼을 누르면 `false`를 리턴한다.
-- `prompt('string');` : 매개변수로 들어간 문자열을 보여주면서 입력 상자가 띄워진다. 유저가 어떤 텍스트를 입력하면 그것을 리턴한다.
+- `prompt('question', 'placeholder');` : 첫 번째 매개변수는 입력상자에서 보여질 질문이다. 두 번째 매개변수는 입력창에 기본적으로 입력이 된다. 리턴값은 유저가 입력한 텍스트다.
 
 ## 3. 함수
 
@@ -47,7 +49,7 @@ var divideByThree = function (number) {
 
 - 함수가 저장될 객체를 선언하고, 함수를 대입한다. 괄호 안엔 매개변수, {} 안엔 내용이 들어간다. 기본적으로 위와 같은 형태다. 모든 라인에 `;` 붙이는 것 유의
 
-## 4. 반복문
+## 4. 반복, 조건문
 
 - `for` loop
     + c언어에서의 for 문과 형태가 같다. () 안에서 바로 변수를 선언해서 쓸 수도 있고, 이미 있는 변수를 활용할 수도 있다.
@@ -72,6 +74,14 @@ for (var c = 0; c < 5; c++) {
 console.log(myVar)  // I'm alive
 ```
 
+- `for / in ` loop: 아래 syntax로 쓰면 된다. object에서 in을 쓰면 키 값이 하나하나 뽑혀지고, array에서 하면 인덱스가 하나씩 뽑힌다. 결국 object든 array든 사용 방법은 `object[key]` 형태다.
+
+```js
+for (var key in object) {
+  // code
+}
+```
+
 - `while`, `do while`
 
 ```js
@@ -82,6 +92,57 @@ do {
 } while (condiiton);
 ```
 
-## 5. array
+- if: `if (condition) { code }`
+- switch
 
-- 원소 추가: `push`를 쓴다. array.push(something)
+```js
+switch (object) {
+    case something:
+        //code
+        break;
+    case nextthing:
+        //code
+        break;
+    default:
+        //code
+}
+```
+
+## 5. Object
+
+### A. hash로서의 object
+
+Python의 dict, Ruby의 Hash처럼 쓰이는 것을 js에선 object라고 한다. 다음 예시처럼 사용하면 된다. 용법은 다들 비슷하다. 아래처럼 Dot notation으로 접근하는 것 말고도 `var myObj = {'a':'aaa', 'b':'bbb'}` 처럼 선언할 수도 있다. 이 때는 `;`을 쓰면 안된다.
+
+```js
+var phonebookEntry = {};
+// var phonebookEntry = new Object(); 같은 의미
+
+phonebookEntry.name = 'Oxnard Montalvo';
+phonebookEntry.number = '(555) 555-5555';
+phonebookEntry.phone = function() {
+  console.log('Calling ' + this.name + ' at ' + this.number + '...');
+};
+
+phonebookEntry.phone();
+```
+
+## 자주 쓰이는 함수
+
+- `isNaN(object)` : Not a Number라는 뜻이다. 숫자가 아닌 것이 매개변수로 들어가면 true를 리턴한다. 다만 `'42'`의 경우 문자열이지만 자동 변환해서 42로 인식하기 때문에 false를 리턴한다.
+- `toUpperCase()`, `toLowerCase()`: 대, 소문자화 함수
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
