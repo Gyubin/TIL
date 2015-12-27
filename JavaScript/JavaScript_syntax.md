@@ -19,6 +19,7 @@
 - `++`, `--` 연산자 존재한다. 전위, 후위 연산자 모두 가능하다.
 - 논리연산자 종류: `&&`, `||`, `!` 순서대로 and, or, not
 - array 원소 추가: `push`를 쓴다. array.push(something)
+- `typeof thing` 형태로 쓰면 타입을 리턴한다. number, string, function, object가 대부분이다. array도 type은 object다.
 - `==`, `===` 차이: 다음 표에서 `===`을 쓰면 모두 false로 나오는 예제다. 무조건 `===`를 쓰는걸 추천.
 
 |         식         |  결과 |
@@ -54,6 +55,7 @@ var divideByThree = function (number) {
 - `for` loop
     + c언어에서의 for 문과 형태가 같다. () 안에서 바로 변수를 선언해서 쓸 수도 있고, 이미 있는 변수를 활용할 수도 있다.
     + () 안에서 선언한 변수, {} 안에서 선언한 변수 모두 반복이 끝난 후에도 없어지지 않고 사용할 수 있다. scope가 변하지 않는 것 같다. local 변수는 함수 내에서 선언된 것만으로 한정된다.
+    + 모든 반복에 적용: `continue`는 아래 코드 실행하지 않고 다음 반복으로 넘어가는 것, `break`은 가장 가까운 반복에서 나오는 것.
 
 ```js
 // () 안에서 선언. 끝나고도 변수 살아있음
@@ -110,7 +112,7 @@ switch (object) {
 
 ## 5. Object
 
-### A. hash로서의 object
+### A. hash로서의 Object
 
 Python의 dict, Ruby의 Hash처럼 쓰이는 것을 js에선 object라고 한다. 다음 예시처럼 사용하면 된다. 용법은 다들 비슷하다. 아래처럼 Dot notation으로 접근하는 것 말고도 `var myObj = {'a':'aaa', 'b':'bbb'}` 처럼 선언할 수도 있다. 이 때는 `;`을 쓰면 안된다.
 
@@ -127,22 +129,67 @@ phonebookEntry.phone = function() {
 phonebookEntry.phone();
 ```
 
+### B. this
+
+메소드가 호출된 객체를 의미한다. 메소드를 객체 외부에서 선언하더라도 this를 활용하면 어떤 object에서도 property를 수정할 수 있다. 다만 `myObj.myMethod = outerMethod` 처럼 대입해줘야하고, 내부의 변수명도 일치해야한다.
+
+### C. 클래스로서의 Object
+
+```js
+function Person(name,age) {
+  this.name = name;
+  this.age = age;
+  this.setAge = function (newAge) {
+    this.age = newAge
+  }
+}
+var george = new Person("George Washington", 275);
+```
+
+- 위 형태가 기본이다. function인데 매개변수 () 앞에 클래스명이 붙고 this를 활용한다.
+- 객체에서 호출되는 메소드로 쓰려면 앞에 this를 붙여준다. 즉 로컬 메소드다.
+
+### D. prototype
+
+```js
+function Dog (breed) {
+    this.breed = breed;
+}
+var mong = new Dog("mongmong");
+Dog.prototype.bark = function () {
+    console.log('wang');
+}
+mong.bark()
+```
+
+위의 경우로 설명하면 Dog 클래스의 모든 객체에 동일하게 수정하고싶을 경우 prototype을 사용한다. 이미 생성된, 앞으로 생성할 모든 Dog의 객체에 적용된다.
+
+### E. inheritance
+
+```js
+function Animal(name, numLegs) {
+    this.name = name;
+    this.numLegs = numLegs;
+    this.hi = function() {
+        console.log('hi');
+    };
+}
+
+function Penguin(name, numLegs) {
+    this.name = name;
+    this.numLegs = 2;
+};
+
+// set its prototype to be a new instance of Animal
+Penguin.prototype = new Animal();
+var pg = new Penguin();
+pg.hi();
+```
+
+`ChildClass.prototype = new ParentClass();` 형태로 사용한다.
+
 ## 자주 쓰이는 함수
 
 - `isNaN(object)` : Not a Number라는 뜻이다. 숫자가 아닌 것이 매개변수로 들어가면 true를 리턴한다. 다만 `'42'`의 경우 문자열이지만 자동 변환해서 42로 인식하기 때문에 false를 리턴한다.
 - `toUpperCase()`, `toLowerCase()`: 대, 소문자화 함수
-- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- `hasOwnProperty(property)` : Object에서 호출해서 매개변수의 property가 있는지 true, false를 리턴해주는 함수다.
