@@ -6,21 +6,33 @@
 
 ## 1. 기본
 
-- 문자열 길이: `'string'.length;`
 - 한 줄 끝에 `;` 붙이기. 안 붙여도 되는 경우도 있지만 속 편하게 다 붙이기.
 - 주석 : `//`
 - 참 거짓은 소문자로: `true`, `false`
-- 출력: `console.log(context)`
-- 블록: `{ }`로 표현. if ( 조건 ) { } 형태
-- 문자열 슬라이싱: `'string'.substring(i, j)`
 - 변수명: 첫 글자는 소문자, 이후로 CamelCase. 예를 들어 `myAge` 같은 식. 이게 JavaScript에서 컨벤션인 듯 하다.
 - `scope`은 변수가 유효한 범위를 의미한다. global, local 두 가지가 있으며 함수 안에서 선언되면 local이다. 최대한 local 변수를 쓰도록 노력. global은 최대한 쓰지말자.
 - 객체 선언은 모두 앞에 `var`를 붙인다. 예로 `var myAge = 12`
 - `++`, `--` 연산자 존재한다. 전위, 후위 연산자 모두 가능하다.
 - 논리연산자 종류: `&&`, `||`, `!` 순서대로 and, or, not
-- array 원소 추가: `push`를 쓴다. array.push(something)
-- `typeof thing` 형태로 쓰면 타입을 리턴한다. number, string, function, object가 대부분이다. array도 type은 object다.
-- `==`, `===` 차이: 다음 표에서 `===`을 쓰면 모두 false로 나오는 예제다. 무조건 `===`를 쓰는걸 추천.
+- 대부분의 연산자는 2개 값을 비교한다. binary operator. 그런데 한 개 값만 비교하는 연산자도 있는데 unary operator라고 한다. `typeof`, `-`, `!`가 있다. minus operator의 경우 예를 들어 다음이 가능하다. `-(10-2)`
+- 문자열끼리 `<`, `>` 비교할 수 있다. 첫 글자부터 아스키코드값으로 비교한다. 첫 글자가 같으면 두 번째것을 비교하는 식.
+- 연산자 우선순위 낮은 순: `||` -> `&&` -> `comparison(>, ===...)` -> `나머지`
+- 삼항연산자(ternary or conditional operator): `something ? 1 : 2` something이 true면 1이고 false면 2다.
+- 기본 타입 6개: number, string, boolean, function, object, undefined
+- number e 표현 : `2.998e5` = 299,800
+- `NaN`은 Not a Number의 의미지만 type은 number다. 0을 0으로 나눌 때 리턴하기도 하지만 계산식에서 정확한 값을 산출할 수 없을 때도 쓰인다. 유일하게 자신과 자신이 같지 않은 객체다. `NaN === NaN`은 false
+- 개행문자를 출력하려면 앞에 `\` 하나 붙여주면 된다. `\\n`
+- 자동 형변환 : 다른 타입끼리 연산을 하면 자바스크립트는 알아서 형 변환을 시킨다. 이것을 `type coercion`이라고 함. 다음은 예시
+
+|     식     | 결과값 |
+|------------|--------|
+| 8 * null   | 0      |
+| "5" - 1    | 4      |
+| "5" + 1    | 51     |
+| "five" * 2 | NaN    |
+| false == 0 | true   |
+
+- `==`, `===` 차이: 위 예시의 type coercion을 원치 않을 땐 `===`과 `!==`을 쓴다. 다음 예제는 `==`을 썼을 때 모두 false로 나오는 예제
 
 |         식         |  결과 |
 |--------------------|-------|
@@ -159,6 +171,12 @@ var mong = new Dog("mongmong");
 Dog.prototype.bark = function () {
     console.log('wang');
 }
+// 다음처럼도 가능하다.
+// Dog.prototype = {
+//    bark: function() {
+//        console.log('wang');
+//    }
+//}
 mong.bark()
 ```
 
@@ -188,8 +206,40 @@ pg.hi();
 
 `ChildClass.prototype = new ParentClass();` 형태로 사용한다.
 
+## 6. Class에서 public, private 속성
+
+- 개념
+    + public : 클래스 밖에서도 속성에 접근할 수 있는 것. `this`를 쓴다.
+    + private : 클래스 밖에서 dot notation으로 속성에 접근할 수 없다. `var` 사용.
+- 사용법
+    + private property, method를 사용하려면 이 property와 method를 리턴하는 public method를 작성하면 된다.
+    + 주로 private property를 바로 직접 리턴하는 public method를 만들고 이 method 내부에서 인증 같은 처리를 한다.
+    + private method를 만드는 경우 private method를 리턴하는 public method를 만든다. method를 리턴할 때는 뒤에 `( )` 쓰지 않는다.
+    + 만약 어떤 Class로 만든 객체에서 private property 혹은 method가 있다면 `for/in` loop에서 잡아오지 않는다. 즉 private은 아예 반복에서 제외된다.
+
+> 다른 언어에 있는 클래스 변수는 존재하지 않는다.
+
+```js
+function Person(first,last,age) {
+   this.firstname = first;
+   this.lastname = last;
+   this.age = age;
+   var bankBalance = 7500;
+   var returnBalance = function() {
+      return bankBalance;
+   };
+   this.askTeller = function() {
+       return returnBalance;
+   };
+}
+```
+
 ## 자주 쓰이는 함수
 
 - `isNaN(object)` : Not a Number라는 뜻이다. 숫자가 아닌 것이 매개변수로 들어가면 true를 리턴한다. 다만 `'42'`의 경우 문자열이지만 자동 변환해서 42로 인식하기 때문에 false를 리턴한다.
 - `toUpperCase()`, `toLowerCase()`: 대, 소문자화 함수
 - `hasOwnProperty(property)` : Object에서 호출해서 매개변수의 property가 있는지 true, false를 리턴해주는 함수다.
+- `'string'.length;` : 문자열 길이
+- `'string'.substring(i, j)` : 문자열 슬라이싱
+- `myArray.push(something)` : array 원소 추가
+- `typeof thing` : thing의 타입을 리턴한다.
