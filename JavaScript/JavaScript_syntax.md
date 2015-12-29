@@ -7,10 +7,10 @@
 ## 1. 기본
 
 - 한 줄 끝에 `;` 붙이기. 안 붙여도 되는 경우도 있지만 속 편하게 다 붙이기.
-- 주석 : `//`
+- 주석 : `//`, `/* */`
 - 참 거짓은 소문자로: `true`, `false`
 - 변수명: 첫 글자는 소문자, 이후로 CamelCase. 예를 들어 `myAge` 같은 식. 이게 JavaScript에서 컨벤션인 듯 하다.
-- `scope`은 변수가 유효한 범위를 의미한다. global, local 두 가지가 있으며 함수 안에서 선언되면 local이다. 최대한 local 변수를 쓰도록 노력. global은 최대한 쓰지말자.
+- `scope`은 변수가 유효한 범위를 의미한다. global, local 두 가지가 있으며 함수 안에서 선언되면 local이다. 최대한 local 변수를 쓰도록 노력. global은 최대한 쓰지말자. 만약 function 안에서 var을 안 쓰고 변수를 쓰면 글로벌 변수다. 그리고 function이 scope을 만드는 유일한 수단이다.
 - 객체 선언은 모두 앞에 `var`를 붙인다. 예로 `var myAge = 12`
 - `++`, `--` 연산자 존재한다. 전위, 후위 연산자 모두 가능하다.
 - 논리연산자 종류: `&&`, `||`, `!` 순서대로 and, or, not
@@ -46,10 +46,16 @@
 | null == undefined  | true  |
 | ' \t\r\n ' == 0    | true  |
 
-## 2. 브라우저 확인 창 관련
+- 변하지 않는 값 상수: `const name = value;` 형태로 선언하면 절대 바뀌지 않는다. 꼭 초기값이 필요하다. 그냥 const name; 식으로 하면 에러.
+- reserved words: 의미를 모르는거 뭔지 알기. `break case catch class const continue debugger default delete do else enum export extends false finally for function if implements import in instanceof interface let new null package private protected public return static super switch this throw true try typeof var void while with yield`
+- 반복이나 분기문에서 실행문이 한 줄이면 { } 안 써도 된다. 쭉 나열하면 됨. `if (condition) code;`
+- 
+
+## 2. 브라우저 팝업 창 관련
 
 - `confirm('string');` : 확인, 취소 버튼과 함께 문자열을 띄워준다. 확인 버튼을 누르면 `true`, 취소 버튼을 누르면 `false`를 리턴한다.
 - `prompt('question', 'placeholder');` : 첫 번째 매개변수는 입력상자에서 보여질 질문이다. 두 번째 매개변수는 입력창에 기본적으로 입력이 된다. 리턴값은 유저가 입력한 텍스트다.
+- `alert('string')` : 단순하게 메시지만 띄워준다. 리턴 값 없다.
 
 ## 3. 함수
 
@@ -61,12 +67,24 @@ var divideByThree = function (number) {
 ```
 
 - 함수가 저장될 객체를 선언하고, 함수를 대입한다. 괄호 안엔 매개변수, {} 안엔 내용이 들어간다. 기본적으로 위와 같은 형태다. 모든 라인에 `;` 붙이는 것 유의
+- 하지만 마치 클래스처럼 함수를 선언할 수도 있다. declaration notation이라 하는데 `function square(x) { return x * x; }` 처럼 한다. 가능한 방식이다.
+- 위처럼 declaration notation을 활용할 경우 코드의 위치와 상관없이 프로그램이 시작되자마자 선언된다. 그래서 scope에 상관없이 쓰일 수 있다. 하지만 조건, 반복문의 block 내에선 쓰지 않는게 좋다. 브라우저마다 달라진다. 예를 들어 다음 코드는 권장되지 않음.
+
+```
+function example() {
+    if (false) {
+        function a () {
+            console.log('hi');
+        }
+    }
+}
+```
 
 ## 4. 반복, 조건문
 
 - `for` loop
     + c언어에서의 for 문과 형태가 같다. () 안에서 바로 변수를 선언해서 쓸 수도 있고, 이미 있는 변수를 활용할 수도 있다.
-    + () 안에서 선언한 변수, {} 안에서 선언한 변수 모두 반복이 끝난 후에도 없어지지 않고 사용할 수 있다. scope가 변하지 않는 것 같다. local 변수는 함수 내에서 선언된 것만으로 한정된다.
+    + () 안에서 선언한 변수, {} 안에서 선언한 변수 모두 반복이 끝난 후에도 없어지지 않고 사용할 수 있다. scope를 바꾸는 것은 function이 유일.
     + 모든 반복에 적용: `continue`는 아래 코드 실행하지 않고 다음 반복으로 넘어가는 것, `break`은 가장 가까운 반복에서 나오는 것.
 
 ```js
