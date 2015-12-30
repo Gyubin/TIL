@@ -59,6 +59,8 @@
 
 ## 3. 함수
 
+### A. 기본
+
 ```js
 var divideByThree = function (number) {
     var val = number / 3;
@@ -79,6 +81,63 @@ function example() {
     }
 }
 ```
+
+### B. The call stack
+
+```js
+function greet(who) {
+    console.log("Hello " + who);
+}
+greet("Harry");
+console.log("Bye");
+```
+
+위 코드에서 보면 `greet` 함수가 실행되는 순간 2번째 줄 코드로 컨트롤이 넘어간다. 그리고 `console.log` 빌트인 함수를 만나는 순간 또 컨트롤이 넘어가고, 일을 다 한 후에 다시 컨트롤은 2번 줄로 넘어온다. 그리고 greet 함수가 끝남과 동시에 다시 불려진 부분으로 컨트롤이 넘어온다.(4번 줄) 다음 마지막줄의 `console.log`가 실행된다.
+
+이렇게 컨트롤이 왔다갔다 하기 때문에 컴퓨터는 함수가 불려진 context를 기억해야하는데 stack 형태로 저장한다. 서로 call하는 함수가 있다면 메모리 많이 쓴다고 에러 난다.
+
+### C. Optional Arguments
+
+함수에서 정해진 매개변수가 있는데 그거보다 더 많이 넣으면 에러 없이 알아서 무시하고, 더 적게 넣으면 알아서 `undefined`가 들어간다. 에러가 안난다. 그래서 원치 않는 결과가 나오더라도 에러메시지가 없기 때문에 디버깅이 어렵다.
+
+하지만 이 특성을 이용해서 매개변수의 기본값을 설정할 수 있다. 함수 내부에서 특정 매개변수가 `undefined`라면 기본값을 대입해주는 방식이다.
+
+### D. Closure
+
+```js
+function multiplier(factor) {
+    return function(number) {
+        return number * factor;
+    };
+}
+var twice = multiplier(2);
+console.log(twice(5));
+// → 10
+```
+
+함수가 종료되더라도 함수가 호출될 때의 local variable에 접근할 수 있는 방식을 클로저라고 한다. 함수 내에서 함수를 만들어 리턴하면 만들어진 함수는 그 scope을 기억하고 있다. 위의 예에서 `multiplier`의 매개변수로 들어가는 `factor` 변수는 함수가 호출되고 종료되는 순간 사라져야 하지만 게속 사용되는 것을 볼 수 있다.
+
+### E. Recursion
+
+```js
+function findSolution(target) {
+    function find(start , history) {
+        if (start == target)
+            return history;
+        else if (start > target)
+            return null;
+        else
+            return find(start + 5, "(" + history + " + 5)") ||
+                   find(start * 3, "(" + history + " * 3)");
+    }
+    return find(1, "1");
+}
+
+console.log(findSolution(24));
+//→ (((1*3)+5)*3)
+```
+
+탄성을 지른 코드다. Eluquent JavaScript 53page 아래에서 나온 코드다. 어떤 수를 `+5`와 `*3`으로 나타낼 수 있는지 알아보는 건데 `||`의 활용이 기가막힌다. 이런 식으로도 재귀를 짤 수 있구나 감탄 또 감탄했다. 그리고 확실히 {}을 생략할 수 있을 땐 생략하는게 깔끔하고 좋은 것 같다.
 
 ## 4. 반복, 조건문
 
