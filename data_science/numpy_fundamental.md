@@ -35,6 +35,14 @@ brew install matplotlib --with-python3
 
 - numpy.ndarray 생성: `numpy.array(arr)` 매개변수로 리스트가 들어간다. 리스트 안에 또다시 리스트들이 있는데 각각 '행'을 의미한다. [[행], [행], [행], [행] ...] 이런 식이다. `numpy.array([[1, 2], [3, 4]])` 식으로 쓰이면 2 by 2 행렬이 생성된다.
 - numpy.ndarray.shape: `my_ndarray.shape` 생성한 ndarray 객체의 모양을 튜플 형태로 리턴한다. 2 by 4 행렬이라면, 즉 2행 4열 행렬이면 (2, 4)를 리턴한다.
+- numpy.ndarray.ndim: 차원을 리턴
+- numpy.ndarray.size: 총 원소의 수를 리턴
+- numpy.ndarray.dtype: 원소의 타입을 리턴.
+    + 원소 100개가 있을 때 99개가 int인데 하나만 float형이면 전체 원소 타입이 float로 바뀐다. 자동 일치시킨다.
+    + array를 생성할 때 이 dtype을 특정지을 수도 있는데 `numpy.array( [ [1,2], [3,4] ], dtype=complex )` 혹은 `numpy.ones( (2,3,4), dtype='int16' )` 처럼 할 수 있다. int16 같은 경우 튜토리얼에선 그냥 변수처럼 적었는데 쉘에서 실행해보니 문자열로 넣지 않으면 에러가 뜨더라.
+- `numpy.zeros((x, y))`, `numpy.ones((x,y))`, `empty((x,y))` : 0으로 채우기, 1로 채우기, 빈 배열 만들기의 함수다. 기본 dtype은 float다.
+- `numpy.arange(start, end, step)` : 쉽게 array를 만들어준다. start 부터 end 까지 step 간격으로 배열을 생성하는데 end는 불포함이고 1행짜리다. reshape을 통해서 2차 조작하면 될 것 같다.
+- `numpy.linspace(start, end, number_of_elements)` : arange와 비슷하다. 다만 step이 아니라 원하는 원소 개수를 매개변수로 넣는다. `numpy.linspace(0, 2, 9)`를 하면 array([0., 0.25, 0.5, 0.75, 1., 1.25, 1.5, 1.75, 2.]) 결과를 얻는다. 여기선 end가 포함이다. `x = linspace( 0, 2*pi, 100 )` `f = sin(x)` 의 예시도 있다.
 - numpy.ndarray.reshape: `my_ndarray.reshape(x, y)` 행렬 모양을 바꿀 수 있다. [[1, 2, 3], [4, 5, 6]] 의 행렬의 shape은 (2, 3)인데 reshape(3, 2)로 실행한다면 행렬 모양은 [[1, 2], [3, 4], [5, 6]]으로 바뀐다. 원소 수만 같으면 이렇게 순서대로 쭉 나열한 상태에서 그룹을 다시 지어줄 수 있다.
 - `numpy.concatenate((ndarray, ndarray), axis=n)`
     + 배열을 합치는 함수다. 합칠 두 배열을 첫 번째 매개변수에 튜플 형태로 넣는다.
