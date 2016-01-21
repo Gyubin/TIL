@@ -33,6 +33,8 @@ brew install matplotlib --with-python3
 
 `import numpy`는 항상 필요하다.
 
+### A. 기본
+
 - numpy.ndarray 생성: `numpy.array(arr)` 매개변수로 리스트가 들어간다. 리스트 안에 또다시 리스트들이 있는데 각각 '행'을 의미한다. [[행], [행], [행], [행] ...] 이런 식이다. `numpy.array([[1, 2], [3, 4]])` 식으로 쓰이면 2 by 2 행렬이 생성된다.
 - numpy.ndarray.shape: `my_ndarray.shape` 생성한 ndarray 객체의 모양을 튜플 형태로 리턴한다. 2 by 4 행렬이라면, 즉 2행 4열 행렬이면 (2, 4)를 리턴한다.
 - numpy.ndarray.ndim: 차원을 리턴
@@ -51,6 +53,37 @@ brew install matplotlib --with-python3
     + sum 함수에서 매개변수로 axis가 들어갈 수 있다. a.sum(axis=0) 처럼 0 값이 들어가면 각 컬럼들의 합을, 1일 때는 각 행들의 합을 ndarray 객체로 리턴한다. 하나의 행으로만 나타낸다.
     + min, max도 마찬가지로 axis가 0, 1일 때 각각 각 컬럼의 최소 최대값, 각 로우의 최소, 최대값을 ndarray 객체로 리턴한다.
     + `a.cumsum(axis=1)` 같은 경우엔 누적 분포를 보여주는데 기존 a의 모양 그대로에서 우측으로, 즉 행(row)을 따라 누적값을 보여준다. axis는 그냥 여러번 하면서 외우는게 제일 속 편하겠다.
+- `numpy.exp(ndarray)`, `numpy.sqrt(ndarray)`, `numpy.add(A, B)` : 이런 함수들도 있다. exp, sqrt, add. 사실 이거 말고도 너무 많아서 그냥 있을 것은 다 있다고 보면 될 것 같다. 필요할 때 찾아서 쓰자.
+- `numpy.mean(A)`, `numpy.median(A)`, `numpy.std(A)`, `numpy.var(A)` 순서대로 평균, 중간값, 표준 편차, 분산
+- for 반복 등의 iterating 가능하다.
+- `numpy.fromfunction(func, (row, col), dtype=type)` : 0부터 row, 0부터 col까지 정수를 func에 대입한다. func의 리턴값이 그 row, col의 값이 되는 것. fromfunction과 indexing 예시.
+
+```py
+def f(x,y):
+    return 10*x+y
+
+b = fromfunction(f,(5,4),dtype=int)
+# array([[ 0,  1,  2,  3],
+#       [10, 11, 12, 13],
+#       [20, 21, 22, 23],
+#       [30, 31, 32, 33],
+#       [40, 41, 42, 43]])
+
+b[2,3] # 23
+b[0:5, 1] # array([ 1, 11, 21, 31, 41])
+b[ : ,1] # array([ 1, 11, 21, 31, 41])
+b[1:3, : ]
+# array([[10, 11, 12, 13],
+#       [20, 21, 22, 23]])
+```
+
+- slicing: 파이썬에서 리스트 다루는 법과 거의 동일하다. 다만 다음 형태가 가능하다. `A[:5:2] = 10` 일반 리스트에선 에러나는데 여기선 시작부터 5번째 인덱스 이전까지 2칸씩 띄워가면서 원소에다가 10을 대입한다는 의미다. 이런 사용이 가능하다.
+- `...` : [ ] 안에서 인덱싱을 할 때 전체 행 선택, 전체 열 선택 이런 의미다. 5차원 배열에서 `x[1, 2, ...]`은 `x[1, 2, :, :, :]`의미와 같다. 또한 `x[..., 3]`은 `x[:,:,:,:,3]`와 같고 `x[4, ...,5,:]`은 `x[4,:,:,5,:]`와 같다.
+- `for e in ndarray.flat: print(e)` : ndarray에서 `flat` 을 호출하면 모든 원소들을 하나씩 뽑아낼 수 있는 numpy.flatier object를 리턴한다. 하나씩 뽑아 내는 반복문 쓸 때 유용
+- `numpy.random.random((3,4))` : 난수를 생성해서 3행 4열 생성한다. 매개변수엔 튜플이 들어가고 원소 수가 곧 차원 수다. `A = floor(10*numpy.random.random((3, 4)))` 형태로 사용한다. 
+
+### B. 모양 바꾸는 함수들
+
 - `numpy.concatenate((ndarray, ndarray), axis=n)`
     + 배열을 합치는 함수다. 합칠 두 배열을 첫 번째 매개변수에 튜플 형태로 넣는다.
     + 두 번째 매개변수는 어느 방향으로 합치는지 정하는 것인데 axis의 값으로 0과 1이 들어갈 수 있다. 0은 첫 번째 배열 아래에 두 번째 배열을 접합시키는 것이고, 1은 첫 번째 배열 우측에 두 번째 배열을 붙이는 것이다. 아래 예제코드를 실행해본다.
@@ -63,6 +96,8 @@ print(C_Y)
 C_X = numpy.concatenate((A, B), axis = 1)
 print(C_X)
 ```
+
+- 위 합치는 예제에서 더 직관적인 함수가 있다. vertical, horizontal의 의미에 쌓는다는 stack을 더한 이름의 함수다. `numpy.vstack((A, B))`는 수직으로 쌓는다는 의미로 axis = 0으로 concatenate 한 결과와 같다. `numpy.hstack((A,B))`는 수평으로 우측에 붙이는 것으로 axis=1로 concatenate한 결과와 같다.
 
 - `numpy.split(ndarray, index, axis=n)`
     + 배열을 쪼갠다. 첫 번째 매개변수는 분리할 ndarray 객체를 넣는다.
@@ -83,10 +118,8 @@ print(slice_X_different_sizes[1])
 print(slice_X_different_sizes[2])
 ```
 
-
-
-
-
-
-
-
+- `ndarray.ravel()` : 배열을 flat 하게 바꿔서 리턴한다. 타입은 ndarray
+- `ndarray.transpose()` : 행 열을 바꾸는 것.
+- `ndarray.resize((x, y))` : reshape은 모양을 바꾼 값을 리턴하지만 resize는 호출된 객체 자체를 바꿔버린다.
+- `ndarray.reshape(x, -1)` : -1을 넣으면 다른 수에 맞춰서 자동으로 수를 조정해준다. 15개 원소인 ndarray에 reshape(5, -1)을 하면 자동으로 (5, 3) shape으로 모양을 바꿔준다.
+- `numpy.linalg.inv(A)` : 역행렬 구하기.
