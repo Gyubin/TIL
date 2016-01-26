@@ -21,6 +21,7 @@ brew install r
 - 터미널에서 `r`을 입력하면 r 전용 REPL이 뜬다. 연습하면 된다. 혹은 Rstudio 써도 괜찮다.
 - 확장자 명은 `file_name.R` 이다.
 - `?func` : 앞에 물음표를 붙이고 함수이름을 치면 함수 정보가 뜬다.
+- 주석은 `#`
 - operator
     + 다른 프로그래밍 언어처럼 `+ - *`는 똑같다.
     + 나누기는 `/` 표현은 같지만 정수를 정수로 나눠도 결과가 정수인 것이 아니라 실수가 된다. 3/2 를 하면 1.5가 나온다. 정수 결과를 얻고싶다면 `3%/%2`를 하면 되고 결과는 1이다.
@@ -39,9 +40,10 @@ brew install r
     + `is.na(x)` NA 값인지
 - `sum(1, 2, 3, 4)` : sum 함수 내에 바로 숫자 넣어서 합 구할 수도 있다. `sqrt(16)`도 마찬가지.
 - NA 값이 벡터에 섞여있을 때 sum 함수 실행하면 결과값은 NA다. sum 함수에 옵션을 집어넣으면 NA값을 제외시킬 수 있다. `sum(a, na.rm = TRUE)`
+- `print(object)` : 출력함수
 - 자료구조는 `vector`, `matrix`, `array`, `list`, `data.fram` 다섯가지다.
 
-## 2. 벡터
+## 2. Vector
 
 - 벡터는 모든 속성이 동질적이다. 만들 때 `c(1, 2, 3, 4, 'hi')` 이렇게 만들면 1, 2, 3, 4가 모두 자동으로 문자열로 형 변환이 된다.
 - 생성 방법: `c` Combine의 약자다.
@@ -71,9 +73,49 @@ brew install r
 - 벡터를 만들 때 쓰는 `:` 이 `-`보다 연산 우선순위가 높다. `1:3-1`과 `1:(3-1)`의 차이가 있음.
 - `all(A < 5)`, `any(A < 5)` : 매개변수를 보면 스칼라값과 연산이다. 즉 모든 원소에 적용된다. all은 모든 결과가 TRUE여야 TRUE를 리턴, any는 하나라도 TRUE면 TRUE를 리턴한다.
 
-## 3. list
+## 3. Matrix
 
-## 4. array
+- 매트릭스 생성
+    + `matrix(0, 3, 4)` : 첫 번째는 data, 둘셋째는 각각 row, column이다. data에 스칼라값을 넣으면 모든 원소가 그 값으로 초기화된다.
+    + `matrix(data, byrow=TRUE, nrow=3)` : byrow는 data를 행 순으로 채울 것인지 정해준다. 기본은 열부터 순서대로 채워진다. nrow는 행 수를 지정하는 것
+    + vector to matrix : `dim(vector) <- c(2, 4)` 함수를 활용해 행, 열을 지정해주면 된다. 2행 4열이 되면서 matrix 자료형이 된다.
+- 원소 접근: `[r, c]` r행 c열 값
+    + 만약 행, 열 전체를 뽑고 싶다면 `myMatrix[r, ]` 혹은 `myMatrix[, c]` 형태가 되어야 한다. 콤마 필수. 콤마를 안 쓰고 그냥 숫자 하나만 쓰면 마치 벡터에서 뽑는 것처럼 원소가 하나만 뽑힌다.
+    + 각 행, 열 값에 벡터를 넣을 수도 있다. `myMatrix[1:2, 3:5]`라면 12행, 345열이 뽑혀서 2행 3열 매트릭스가 리턴된다.
+- `contour(matrix)` : 매트릭스를 매개변수로 받아서 등고선 그래프를 그린다.
+- `persp(matrix, expand = 0.2)` : 3D 투시도법으로 보는 그래프를 그린다. expand 값을 조절해서 그래프 모양을 바꿀 수 있다. `volcano`라는 매트릭스 예시 데이터가 기본 삽입돼있으니 활용해봐도 좋다.
+- `image(matrix)` : 매트릭스에 색을 입히는 것 같다. volcano 예시 자료를 대입해보면 heat map이 그려진다.
+- 매트릭스 이름 넣기
+    + `rownames(my_matrix) <- name_vector` : 행에 이름 넣기
+    + `colnames(my_matrix) <- name_vector` : 열에 이름 넣기
+
+## 4. factor
+
+- 생성: `factor(myVector)` 형태로 생성한다.
+- 벡터를 매개변수로 넣어서 factor를 생성하면 벡터의 원소 중 unique value만 모은 Levels 속성이 생긴다.
+- factor를 print해보면 원소가 문자열이 아닌 것을 볼 수 있다. Levels의 원소를 가리키는 Integer 레퍼런스이다.
+- `as.integer(myFactor)` : factor의 원소들을 Integer 레퍼런스 형태로 변환해서 리턴한다.
+- `levels(myFactor)` : factor의 level만 보여준다.
+- `plot(rVector, cVector, pch=as.integer(myFactor))` : 산점도를 그릴 때 pch 값으로 factor를 넣어주면 점의 모양을 구분할 수 있다.
+- `legend("topright", c('gems', 'gold', 'silver'), pch=1:3)` : 위 산점도가 그려진 상태에서 범주를 덧 그린다. 첫 번째 매개변수는 범주의 위치, 두 번째는 모양별로 적용될 텍스트, pch는 factor와 대응될 숫자를 의미. 즉 좀 더 범용적으로 쓰려면 다음과 같다. `legend('topright', levels(types), pch=1:length(levels(types)))`
+
+## 5. Data Frames
+
+- 생성: `treasure = data.frame(v1, v2, v3)` 이런식으로 매개변수에 벡터를 넣는다. 각 벡터가 column으로 들어가고, 동일 위치끼리 행으로 묶일 수 있다.
+- 열 전체 뽑기(위 데이터프레임에서 2열 뽑기)
+    + `treasure[[2]]`
+    + `treasure[['v2']]` 열 이름으로 뽑을 수도 있다. 생성할 때 벡터 이름이 열 이름이 되고 문자열 형태로 들어가야 한다.
+    + `treasure$v2` dollar sign이 들어가며 문자열 표시 없이 접근한다.
+- 파일 읽어들여서 DataFrame 생성
+    + `read.csv("myFile.csv")` : csv 파일 읽어들이기(Comma Separated Value)
+    + `read.table("myFile.txt", sep="\t", header=TRUE)` : csv 형식이 아닐 때 table을 쓴다. 그리고 데이터 구분할 때 쓰인 문자를 지정해준다. 만약 첫 줄이 column의 이름이라면 header 값을 TRUE로 주면 된다. 만약 header가 없다면 열 이름이 자동으로 V1, V2 형태가 된다.
+- `merge(x = df1, y = df2)` : 데이터 프레임을 합친다. 만약 동일한 Column이 있으면 그에 맞춰서 열벡터의 순서가 자동으로 조정된다. 위 아래로 합쳐지는게 아니라 열벡터가 좌우로 추가되는 형태.
+- `cor.test(myDF$AAA, myDF$BBB)` : correlation 테스트 할 수 있다. 결과값이 출력된다. t, p-value 등등이 있는데 p-value만 잘 봐도 된다. 0.05 이하면 상관관계가 있다는 의미다.
+- `line <- lm(myDF$AAA, myDF$BBB)` : 첫 매개변수가 response variable, 두 번째 매개변수가 predictor variable이다. 코드스쿨의 예제에선 해적 활동 횟수가 response, GDP가 predictor 였다. 즉 이 함수의 결과물은 `선`을 준비하는 것이다. 즉 이거 회귀선을 그리는 것.
+- `abline(line)` : 이미 plot 함수로 산점도가 그려진 상황에서 `lm` function으로 구한 선을 abline 함수로 산점도에 선을 표시한다.
+- 
+
+## 5. array
 
 - 생성: `array(data, dim, dimnames)`
     + 첫 번째 매개변수로 데이터를 넣는다.
@@ -82,8 +124,6 @@ brew install r
     + 예제: `arr = array(1:3, c(2, 4), dimnames=dimnamearr)`
 - 
 
-## 5. factor
-
 ## 6. 자주 쓰이는 함수
 
 - `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌.
@@ -91,6 +131,17 @@ brew install r
 - `barplot(vesselsSunk)` : 벡터 함수를 매개변수로 받아서 bar chart를 그린다. 이 때 벡터의 스칼라값들에 이름이 있다면 표시된다.
 - `plot(x, y)` : x와 y 값으로 산점도를 그린다.
 - `sin(A)` A의 각 원소들의 sin 값을 구함.
+- `mean(vector)`, `median(vector)`, `mode(vector)` 순서대로 평균, 중앙값, 최빈값
+- `abline(h = mean(limbs))` : 먼저 그려져있는 bar chart에 수평선을 특정 값에 맞춰 그리는 함수다. 즉 이 함수 이전에 `barplot` 함수가 먼저 호출된 적이 있어야한다. 계속 그리면 선이 계속 누적된다. 여러 개 그릴 수 있음. h 값에 mean, median, mode 값 등 다양한 값을 줄 수 있다.
+- `sd(vector)` : 표준편차 구하기
+
+## 7. ggplot2 활용
+
+- `install.packages('ggplot2')` : 패키지 설치
+- `help(package = "ggplot2")` : 패키지 설명
+- `library(ggplot2)` : 라이브러리 사용하기 전에 import 하는 의미인듯.
+- `qplot(myV1, myV2, color=myFactor)` : ggplot2에 속해있는 qplot 함수. x, y축 벡터 두 개와 범주를 의미하는 factor를 매개변수로 받는다.
+- 
 
 
 
