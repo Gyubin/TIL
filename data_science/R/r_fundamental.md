@@ -77,7 +77,7 @@ brew install r
 
 - 매트릭스 생성
     + `matrix(0, 3, 4)` : 첫 번째는 data, 둘셋째는 각각 row, column이다. data에 스칼라값을 넣으면 모든 원소가 그 값으로 초기화된다.
-    + `matrix(data, byrow=TRUE, nrow=3)` : byrow는 data를 행 순으로 채울 것인지 정해준다. 기본은 열부터 순서대로 채워진다. nrow는 행 수를 지정하는 것
+    + `matrix(data, byrow=TRUE, nrow=3, dimnames=list(v1, v2))` : byrow는 data를 행 순으로 채울 것인지 정해준다. 기본은 열부터 순서대로 채워진다. nrow는 행 수를 지정하는 것, dimnames는 벡터가 포함되어있는 list가 들어가는데 순서대로 행, 열의 이름을 의미한다.
     + vector to matrix : `dim(vector) <- c(2, 4)` 함수를 활용해 행, 열을 지정해주면 된다. 2행 4열이 되면서 matrix 자료형이 된다.
 - 원소 접근: `[r, c]` r행 c열 값
     + 만약 행, 열 전체를 뽑고 싶다면 `myMatrix[r, ]` 혹은 `myMatrix[, c]` 형태가 되어야 한다. 콤마 필수. 콤마를 안 쓰고 그냥 숫자 하나만 쓰면 마치 벡터에서 뽑는 것처럼 원소가 하나만 뽑힌다.
@@ -88,6 +88,14 @@ brew install r
 - 매트릭스 이름 넣기
     + `rownames(my_matrix) <- name_vector` : 행에 이름 넣기
     + `colnames(my_matrix) <- name_vector` : 열에 이름 넣기
+- 매트릭스에서 행, 열 합 구하기
+    + `rowSums(my_matrix)` : 매트릭스 각 행을 합해서 벡터로 리턴. 행 이름이 스칼라값의 name이 된다.
+    + `colSums(my_matrix)` : 행 부분과 원리가 같다.
+- 행, 열 추가하기
+    + `cbind(v1, v2, m1, v3, m2)` : 매트릭스 합병 또는 컬럼 추가
+    + `rbind(m1, m2, c1)` : 행 추가
+- 당연하게도(?) 스칼라값을 곱하면 전체 원소에 적용
+- 
 
 ## 4. factor
 
@@ -126,7 +134,7 @@ brew install r
 
 ## 6. 자주 쓰이는 함수
 
-- `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌.
+- `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌. 매개변수에 경로를 넣으면 당연히 경로의 파일 목록을 보여준다.
 - `source("sample.R")` : 파일을 실행한다.
 - `barplot(vesselsSunk)` : 벡터 함수를 매개변수로 받아서 bar chart를 그린다. 이 때 벡터의 스칼라값들에 이름이 있다면 표시된다.
 - `plot(x, y)` : x와 y 값으로 산점도를 그린다.
@@ -134,6 +142,8 @@ brew install r
 - `mean(vector)`, `median(vector)`, `mode(vector)` 순서대로 평균, 중앙값, 최빈값
 - `abline(h = mean(limbs))` : 먼저 그려져있는 bar chart에 수평선을 특정 값에 맞춰 그리는 함수다. 즉 이 함수 이전에 `barplot` 함수가 먼저 호출된 적이 있어야한다. 계속 그리면 선이 계속 누적된다. 여러 개 그릴 수 있음. h 값에 mean, median, mode 값 등 다양한 값을 줄 수 있다.
 - `sd(vector)` : 표준편차 구하기
+- `getwd()` , `setwd("directory/dir")` : 경로 조회, 경로 지정
+- 
 
 ## 7. ggplot2 활용
 
@@ -146,7 +156,6 @@ brew install r
 
 
 - `class(object)`, `typeof(object)`, `mode(object)` 차이점이 뭐지?
-
 
 
 
