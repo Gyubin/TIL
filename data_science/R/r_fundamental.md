@@ -45,7 +45,7 @@ brew install r
 
 ## 2. Vector
 
-- 벡터는 모든 속성이 동질적이다. 만들 때 `c(1, 2, 3, 4, 'hi')` 이렇게 만들면 1, 2, 3, 4가 모두 자동으로 문자열로 형 변환이 된다.
+- 벡터는 **모든 속성이 동질적**이다. 만들 때 `c(1, 2, 3, 4, 'hi')` 이렇게 만들면 1, 2, 3, 4가 모두 자동으로 문자열로 형 변환이 된다.
 - 생성 방법: `c` Combine의 약자다.
     + `c(1, 2, 3, 4, 10, 100, 1000)` : 원소 특정
     + `c(1, 2, c(5, 7, 10))` : c 함수를 섞을 수도 있음. 1, 2, 5, 7, 10 됨.
@@ -75,6 +75,7 @@ brew install r
 
 ## 3. Matrix
 
+- 모든 원소가 **동질적**
 - 매트릭스 생성
     + `matrix(0, 3, 4)` : 첫 번째는 data, 둘셋째는 각각 row, column이다. data에 스칼라값을 넣으면 모든 원소가 그 값으로 초기화된다.
     + `matrix(data, byrow=TRUE, nrow=3, dimnames=list(v1, v2))` : byrow는 data를 행 순으로 채울 것인지 정해준다. 기본은 열부터 순서대로 채워진다. nrow는 행 수를 지정하는 것, dimnames는 벡터가 포함되어있는 list가 들어가는데 순서대로 행, 열의 이름을 의미한다.
@@ -95,25 +96,38 @@ brew install r
     + `cbind(v1, v2, m1, v3, m2)` : 매트릭스 합병 또는 컬럼 추가
     + `rbind(m1, m2, c1)` : 행 추가
 - 당연하게도(?) 스칼라값을 곱하면 전체 원소에 적용
-- 
 
 ## 4. factor
 
-- 생성: `factor(myVector)` 형태로 생성한다.
-- 벡터를 매개변수로 넣어서 factor를 생성하면 벡터의 원소 중 unique value만 모은 Levels 속성이 생긴다.
+- 생성: `factor(myVector)` 형태가 일반적이다.
+- ordinal(순서가 있는) 범주라면 다음 코드와 같다. ordered 매개변수를 TRUE로 주고, levels 매개변수에 순서를 나타내는 벡터를 넣어준다.
+
+```
+temperature_vector <- c("High", "Low", "High","Low", "Medium")
+factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels = c("Low", "Medium", "High"))
+```
+
+- ordinal 범주라면 원소끼리 비교 가능하다. `< > <= >=` 등의 연산 가능.
+- 벡터를 매개변수로 넣어서 factor를 생성하면 벡터의 원소 중 unique value만 모은 Levels 속성이 생긴다. 알파벳 순으로 자동 정렬한다. `levels(myFactor)` 를 통해서 범주 자료를 볼 수 있다.
+- level을 내가 원하는 자료로 수정하고 싶을 때, 즉 성별 자료에서 M, F로 자료를 받았는데 파악하기 쉽게 하려고 Male, Female 로 바꾸고싶다면 `levels(myFactor) <- c("Male", "Female")` 처럼 벡터를 대입해주면 된다.
 - factor를 print해보면 원소가 문자열이 아닌 것을 볼 수 있다. Levels의 원소를 가리키는 Integer 레퍼런스이다.
 - `as.integer(myFactor)` : factor의 원소들을 Integer 레퍼런스 형태로 변환해서 리턴한다.
-- `levels(myFactor)` : factor의 level만 보여준다.
 - `plot(rVector, cVector, pch=as.integer(myFactor))` : 산점도를 그릴 때 pch 값으로 factor를 넣어주면 점의 모양을 구분할 수 있다.
 - `legend("topright", c('gems', 'gold', 'silver'), pch=1:3)` : 위 산점도가 그려진 상태에서 범주를 덧 그린다. 첫 번째 매개변수는 범주의 위치, 두 번째는 모양별로 적용될 텍스트, pch는 factor와 대응될 숫자를 의미. 즉 좀 더 범용적으로 쓰려면 다음과 같다. `legend('topright', levels(types), pch=1:length(levels(types)))`
 
 ## 5. Data Frames
 
+- 동질적 데이터인 열 벡터들이 모여서, 다양한 타입의 열벡터가 모인 데이터 프레임이 된다.
+- `mtcars` : 내장 데이터 프레임 데이터셋. 공부할 때 쓸 것.
+- `head(df1)`, `tail(df1)` : 위, 아래의 약 6개 정도 행을 보여준다.
+- `str(df1)` : 데이터 프레임의 구조(structure)를 보여줌. observations 수(몇 행인지), variables 수(몇 열인지), variables 이름(열 이름), variable의 타입과 원소 몇 개 예시로 보여준다.
 - 생성: `treasure = data.frame(v1, v2, v3)` 이런식으로 매개변수에 벡터를 넣는다. 각 벡터가 column으로 들어가고, 동일 위치끼리 행으로 묶일 수 있다.
 - 열 전체 뽑기(위 데이터프레임에서 2열 뽑기)
     + `treasure[[2]]`
     + `treasure[['v2']]` 열 이름으로 뽑을 수도 있다. 생성할 때 벡터 이름이 열 이름이 되고 문자열 형태로 들어가야 한다.
     + `treasure$v2` dollar sign이 들어가며 문자열 표시 없이 접근한다.
+- 필터링하기 : `df`라는 데이터 프레임이 있고, 속해있는 `is_married` 열 벡터 즉 variable이 있다고 하자. 이 때 결혼한 사람의 정보만 뽑아내고 싶을 때 `df[is_married,]` 처럼 한다. 벡터에서 필터링하는 것과 똑같다. 대괄호 안에 숫자가 들어가면 그 인덱스를 정확하게 뽑아내지만 숫자가 아니라 boolean 값(T, F)이 들어간다면 처음부터 순서대로 적용해서 T인 것만 뽑아낸다. df 행(자료 수)이 100개라면 `df[c(T, F), ]` 라고 했을 때 리턴되는 데이터 프레임은 원본의 홀수행만이다. 역시 필터링 정보가 전체 정보보다 숫자가 적으면 반복된다.
+- `subset(my_df, subset=some_condition)` : 위 대괄호를 이용한 필터링을 함수화한 것이다. 첫 번째 매개변수는 데이터셋, 두 번째 매개변수는 각 행마다 적용될 조건식이다. ~~함수 이름, 매개변수 이름을 똑같이 한 것은 쫌 어이없다.~~ 이 때 조건식은 주로 열벡터가 어떠하냐~는 식인데 variable 이름을 바로 적어줘도 된다.
 - 파일 읽어들여서 DataFrame 생성
     + `read.csv("myFile.csv")` : csv 파일 읽어들이기(Comma Separated Value)
     + `read.table("myFile.txt", sep="\t", header=TRUE)` : csv 형식이 아닐 때 table을 쓴다. 그리고 데이터 구분할 때 쓰인 문자를 지정해준다. 만약 첫 줄이 column의 이름이라면 header 값을 TRUE로 주면 된다. 만약 header가 없다면 열 이름이 자동으로 V1, V2 형태가 된다.
@@ -121,9 +135,24 @@ brew install r
 - `cor.test(myDF$AAA, myDF$BBB)` : correlation 테스트 할 수 있다. 결과값이 출력된다. t, p-value 등등이 있는데 p-value만 잘 봐도 된다. 0.05 이하면 상관관계가 있다는 의미다.
 - `line <- lm(myDF$AAA, myDF$BBB)` : 첫 매개변수가 response variable, 두 번째 매개변수가 predictor variable이다. 코드스쿨의 예제에선 해적 활동 횟수가 response, GDP가 predictor 였다. 즉 이 함수의 결과물은 `선`을 준비하는 것이다. 즉 이거 회귀선을 그리는 것.
 - `abline(line)` : 이미 plot 함수로 산점도가 그려진 상황에서 `lm` function으로 구한 선을 abline 함수로 산점도에 선을 표시한다.
-- 
+- `nrow(df)`, `ncol(df)` : 데이터 프레임에서 행 수, 열 수 뽑기
 
-## 5. array
+## 6. list
+
+- 이질적인 타입이 여러가지 속 한 배열이다. 아래는 datacamp의 비교설명
+    + Vectors (**one** dimensional **array**): can hold numeric, character or logical values. The elements in one vector all have the **same datatype**.
+    + Matrices (**two** dimensional **array**): can hold numeric, character or logical values. The elements in one matrix all have the **same datatype**.
+    + Data frames (**two-dimensional objects**): can hold numeric, character or logical values. Within a column all elements have the same data type, but **different columns can be of different data type**.
+- 생성
+    + 그냥 생성: `list(object, object, object)` 
+    + 이름과 함께 생성: `list(name1=object1, name2=object2, name3=object3)` 생성할 때는 이름을 문자열 표시하지 않아도 되지만 아래 설명에서처럼 접근할 때는 문자열 표시 해야한다.
+    + 이미 그냥 생성된 리스트에 이름을 넣으려면 `names(my_list) <- c('name1', 'name2', ...)` 처럼 문자열 벡터를 names 함수를 호출해서 대입하면 된다.
+- 원소 접근
+    + `my_list[[1]]` : 리스트의 각 원소는 대괄호 2개로 접근한다. 인덱스로 접근한다.
+    + `my_list[['element_name']]` : 역시 원소 접근은 대괄호 2개이고, 이름으로 접근할 수 있다. 이름으로 접근하려면 이름을 꼭 지정해줘야 한다. 생성할 때 입력했던 변수 이름이 아니다.
+    + 
+
+## 7. array
 
 - 생성: `array(data, dim, dimnames)`
     + 첫 번째 매개변수로 데이터를 넣는다.
@@ -132,7 +161,7 @@ brew install r
     + 예제: `arr = array(1:3, c(2, 4), dimnames=dimnamearr)`
 - 
 
-## 6. 자주 쓰이는 함수
+## 8. 자주 쓰이는 함수
 
 - `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌. 매개변수에 경로를 넣으면 당연히 경로의 파일 목록을 보여준다.
 - `source("sample.R")` : 파일을 실행한다.
@@ -143,9 +172,9 @@ brew install r
 - `abline(h = mean(limbs))` : 먼저 그려져있는 bar chart에 수평선을 특정 값에 맞춰 그리는 함수다. 즉 이 함수 이전에 `barplot` 함수가 먼저 호출된 적이 있어야한다. 계속 그리면 선이 계속 누적된다. 여러 개 그릴 수 있음. h 값에 mean, median, mode 값 등 다양한 값을 줄 수 있다.
 - `sd(vector)` : 표준편차 구하기
 - `getwd()` , `setwd("directory/dir")` : 경로 조회, 경로 지정
-- 
+- `my_vector[order(my_vector, decreasing=T)]` : order 함수는 매개변수로 들어가는 벡터의 원소들을 기본으로 오름차순으로 정렬하고 decreasing 값을 TRUE로 주면 내림차순이 된다. 리턴 값은 원소 값이 아니라 원본 벡터에서의 인덱스로 표현된 벡터다. 즉 `v = c(1, 100, 50)` 일 때 `order(v)`를 하면 `1 3 2` 벡터가 리턴된다. 즉 이것을 다시 원본 벡터의 대괄호 안에 집어넣으면 실제 값들로 정렬되어 출력이 되는 것.
 
-## 7. ggplot2 활용
+## 9. ggplot2 활용
 
 - `install.packages('ggplot2')` : 패키지 설치
 - `help(package = "ggplot2")` : 패키지 설명
@@ -156,6 +185,3 @@ brew install r
 
 
 - `class(object)`, `typeof(object)`, `mode(object)` 차이점이 뭐지?
-
-
-
