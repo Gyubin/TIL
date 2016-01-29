@@ -28,7 +28,7 @@ brew install r
     + 승수는 `3^2` 형태로 쓴다. 결과는 9
     + 나머지는 `5 %% 3` 형태로 쓴다. 결과는 2
 - 논리, 비교연산자 : `<, <=, >=, >` 부등호 연산 다 똑같고, `==, !=` 도 똑같이 쓰이고, not도 `!x` 같은 형태로 사용된다. 논리연산 역시 or은 `|` and는 `&`으로 같다.
-- boolean : TRUE, T, FALSE, F 로 쓴다. `isTRUE(x)`로 boolean 체크할 수도 있다.
+- boolean : TRUE, T, FALSE, F 로 쓴다. `isTRUE(x)`로 boolean 체크할 수도 있다. 그런데 이 함수에서 매개변수로 `1`을 넣으면 FALSE가 리턴되는데 `1 == T`를 하면 TRUE다. ~~뭘까 이놈의 R은. 이런거 발견할 때마다 다른 언어랑 차이가 느껴짐~~
 - NULL(정의되지 않은 값), -Inf, Inf(무한대), NaN(연산 불능일 때), NA(Missing value)
 - 복소수는 실제 수학에서 쓰는 그대로 `1 + 2i` 이런식으로 쓰면 된다.
 - 대입 : `a = 3` or `a <- 3` 두 형태 모두 가능. 예전엔 `<-`만 있었다는데 `=`가 추가된 것이라고 한다.
@@ -40,10 +40,12 @@ brew install r
     + `is.na(x)` NA 값인지
 - `sum(1, 2, 3, 4)` : sum 함수 내에 바로 숫자 넣어서 합 구할 수도 있다. `sqrt(16)`도 마찬가지.
 - NA 값이 벡터에 섞여있을 때 sum 함수 실행하면 결과값은 NA다. sum 함수에 옵션을 집어넣으면 NA값을 제외시킬 수 있다. `sum(a, na.rm = TRUE)`
+- boolean 값이 원소로 들어있을 때 sum 함수는 TRUE를 1, FALSE를 0으로 취급한다.
 - `print(object)` : 출력함수
-- 자료구조는 `vector`, `matrix`, `array`, `list`, `data.fram` 다섯가지다.
 
-## 2. Vector
+## 2. Data type
+
+### A. Vector
 
 - 벡터는 **모든 속성이 동질적**이다. 만들 때 `c(1, 2, 3, 4, 'hi')` 이렇게 만들면 1, 2, 3, 4가 모두 자동으로 문자열로 형 변환이 된다.
 - 생성 방법: `c` Combine의 약자다.
@@ -73,7 +75,7 @@ brew install r
 - 벡터를 만들 때 쓰는 `:` 이 `-`보다 연산 우선순위가 높다. `1:3-1`과 `1:(3-1)`의 차이가 있음.
 - `all(A < 5)`, `any(A < 5)` : 매개변수를 보면 스칼라값과 연산이다. 즉 모든 원소에 적용된다. all은 모든 결과가 TRUE여야 TRUE를 리턴, any는 하나라도 TRUE면 TRUE를 리턴한다.
 
-## 3. Matrix
+### B. Matrix
 
 - 모든 원소가 **동질적**
 - 매트릭스 생성
@@ -81,7 +83,7 @@ brew install r
     + `matrix(data, byrow=TRUE, nrow=3, dimnames=list(v1, v2))` : byrow는 data를 행 순으로 채울 것인지 정해준다. 기본은 열부터 순서대로 채워진다. nrow는 행 수를 지정하는 것, dimnames는 벡터가 포함되어있는 list가 들어가는데 순서대로 행, 열의 이름을 의미한다.
     + vector to matrix : `dim(vector) <- c(2, 4)` 함수를 활용해 행, 열을 지정해주면 된다. 2행 4열이 되면서 matrix 자료형이 된다.
 - 원소 접근: `[r, c]` r행 c열 값
-    + 만약 행, 열 전체를 뽑고 싶다면 `myMatrix[r, ]` 혹은 `myMatrix[, c]` 형태가 되어야 한다. 콤마 필수. 콤마를 안 쓰고 그냥 숫자 하나만 쓰면 마치 벡터에서 뽑는 것처럼 원소가 하나만 뽑힌다.
+    + 만약 행, 열 전체를 뽑고 싶다면 `myMatrix[r, ]` 혹은 `myMatrix[, c]` 형태가 되어야 한다. 콤마 필수. 콤마를 안 쓰고 그냥 숫자 하나만 쓰면 마치 벡터에서 뽑는 것처럼 원소가 하나만 뽑힌다. ~~`[[1]]` 이런거 없다.~~
     + 각 행, 열 값에 벡터를 넣을 수도 있다. `myMatrix[1:2, 3:5]`라면 12행, 345열이 뽑혀서 2행 3열 매트릭스가 리턴된다.
 - `contour(matrix)` : 매트릭스를 매개변수로 받아서 등고선 그래프를 그린다.
 - `persp(matrix, expand = 0.2)` : 3D 투시도법으로 보는 그래프를 그린다. expand 값을 조절해서 그래프 모양을 바꿀 수 있다. `volcano`라는 매트릭스 예시 데이터가 기본 삽입돼있으니 활용해봐도 좋다.
@@ -97,7 +99,7 @@ brew install r
     + `rbind(m1, m2, c1)` : 행 추가
 - 당연하게도(?) 스칼라값을 곱하면 전체 원소에 적용
 
-## 4. factor
+### C. factor
 
 - 생성: `factor(myVector)` 형태가 일반적이다.
 - ordinal(순서가 있는) 범주라면 다음 코드와 같다. ordered 매개변수를 TRUE로 주고, levels 매개변수에 순서를 나타내는 벡터를 넣어준다.
@@ -115,7 +117,7 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 - `plot(rVector, cVector, pch=as.integer(myFactor))` : 산점도를 그릴 때 pch 값으로 factor를 넣어주면 점의 모양을 구분할 수 있다.
 - `legend("topright", c('gems', 'gold', 'silver'), pch=1:3)` : 위 산점도가 그려진 상태에서 범주를 덧 그린다. 첫 번째 매개변수는 범주의 위치, 두 번째는 모양별로 적용될 텍스트, pch는 factor와 대응될 숫자를 의미. 즉 좀 더 범용적으로 쓰려면 다음과 같다. `legend('topright', levels(types), pch=1:length(levels(types)))`
 
-## 5. Data Frames
+### D. Data Frames
 
 - 동질적 데이터인 열 벡터들이 모여서, 다양한 타입의 열벡터가 모인 데이터 프레임이 된다.
 - `mtcars` : 내장 데이터 프레임 데이터셋. 공부할 때 쓸 것.
@@ -137,7 +139,7 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 - `abline(line)` : 이미 plot 함수로 산점도가 그려진 상황에서 `lm` function으로 구한 선을 abline 함수로 산점도에 선을 표시한다.
 - `nrow(df)`, `ncol(df)` : 데이터 프레임에서 행 수, 열 수 뽑기
 
-## 6. list
+### E. list
 
 - 이질적인 타입이 여러가지 속 한 배열이다. 아래는 datacamp의 비교설명
     + Vectors (**one** dimensional **array**): can hold numeric, character or logical values. The elements in one vector all have the **same datatype**.
@@ -150,19 +152,23 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 - 원소 접근
     + `my_list[[1]]` : 리스트의 각 원소는 대괄호 2개로 접근한다. 인덱스로 접근한다.
     + `my_list[['element_name']]` : 역시 원소 접근은 대괄호 2개이고, 이름으로 접근할 수 있다. 이름으로 접근하려면 이름을 꼭 지정해줘야 한다. 생성할 때 입력했던 변수 이름이 아니다.
-    + 
+    + `my_list$element_name` : 이름이 설정되어있다면 데이터프레임에서처럼 달러 표시로 접근할 수 있다.
+    + 만약 리스트의 원소가 벡터거나, 매트릭스, 데이터프레임이라면 `my_list$element_name][row, col]` 이런식으로 대괄호 하나 더 붙여서 접근 가능.
+- 원소 추가: `c(my_list, add_variable)` 여기서 c는 벡터에서의 combine이 아니라 concatenate의 의미다. ~~이런 중복 문법 싫어..~~ 만약 이름을 추가하고 싶다면 `c(my_list, name=add_variable)` 처럼 이름 바로 지정해주면 된다.
+- 
 
-## 7. array
+### F. array
 
 - 생성: `array(data, dim, dimnames)`
     + 첫 번째 매개변수로 데이터를 넣는다.
     + 두 번째로 차원을 지정하는데 벡터 형태로 넣는다.
     + dimnames는 옵션이고 쓰려면 매개변수 이름을 명시해준다. list 타입을 대입하는데 차원에 맞게 벡터 값들을 comma로 구분한다. 즉 2차원이고 2행 4열이라면 다음처럼 된다. `dimnamearr = list(c("1st", "2nd"), c("1st", "2nd", "3rd", "4rd"))`
     + 예제: `arr = array(1:3, c(2, 4), dimnames=dimnamearr)`
-- 
 
-## 8. 자주 쓰이는 함수
+## 4. 자주 쓰이는 함수
 
+- `objects` : 선언한 함수들을 보여줌
+- `rm(object, object, ...)` : 선언한 변수 지우기.
 - `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌. 매개변수에 경로를 넣으면 당연히 경로의 파일 목록을 보여준다.
 - `source("sample.R")` : 파일을 실행한다.
 - `barplot(vesselsSunk)` : 벡터 함수를 매개변수로 받아서 bar chart를 그린다. 이 때 벡터의 스칼라값들에 이름이 있다면 표시된다.
@@ -173,15 +179,20 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 - `sd(vector)` : 표준편차 구하기
 - `getwd()` , `setwd("directory/dir")` : 경로 조회, 경로 지정
 - `my_vector[order(my_vector, decreasing=T)]` : order 함수는 매개변수로 들어가는 벡터의 원소들을 기본으로 오름차순으로 정렬하고 decreasing 값을 TRUE로 주면 내림차순이 된다. 리턴 값은 원소 값이 아니라 원본 벡터에서의 인덱스로 표현된 벡터다. 즉 `v = c(1, 100, 50)` 일 때 `order(v)`를 하면 `1 3 2` 벡터가 리턴된다. 즉 이것을 다시 원본 벡터의 대괄호 안에 집어넣으면 실제 값들로 정렬되어 출력이 되는 것.
+- `tail(object, num)` : tail 함수는 벡터, 데이터프레임, 매트릭스 모두에 적용된다. 매개변수로 객체 하나만 주면 마지막 6개 행을 보여주고, 만약 숫자를 두 번째 매개변수에 지정하게 되면 그 수만큼 행을 보여준다. 만약 2라면 마지막 2개 행을, 3이라면 마지막 3개 행인 식이다.
+- `class(object)`, `typeof(object)`, `mode(object)` 차이점
+    + `mode` : R 기본 구조에 따른 상호 배타적인 분류.
+        * 'atomic' mode는 `numeric`, `complex`, `character`, `logical`이다.
+        * Recursive objects는 `list`, `function` 등이 있다.
+    + `class` : object에 할당된 속성이다. 이 타입이 내장함수 동작 여부를 결정한다. 클래스는 mutually exclusive 하지 않다. 만약 숫자 벡터를 정의했을 때 따로 특정 클래스를 적용하지 않았다면 mode 값과 같다. 벡터지만 numeric이다.
+    + mode를 바꾸는 것은 coercion이라고 부르는데 class 변경 없이도 가능하다.
 
-## 9. ggplot2 활용
+- `class()` : 객체 지향 프로그래밍 관점에서 객체가 어떤 타입인지 define, identify하는 함수다.
+- `typeof()` : R의 관점에서 type을 보여준다. 이걸 사용하다보면 오류가 많이 난다.
+
+## 5. ggplot2 활용
 
 - `install.packages('ggplot2')` : 패키지 설치
 - `help(package = "ggplot2")` : 패키지 설명
 - `library(ggplot2)` : 라이브러리 사용하기 전에 import 하는 의미인듯.
 - `qplot(myV1, myV2, color=myFactor)` : ggplot2에 속해있는 qplot 함수. x, y축 벡터 두 개와 범주를 의미하는 factor를 매개변수로 받는다.
-- 
-
-
-
-- `class(object)`, `typeof(object)`, `mode(object)` 차이점이 뭐지?
