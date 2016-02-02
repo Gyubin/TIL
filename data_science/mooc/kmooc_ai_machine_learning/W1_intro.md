@@ -1,6 +1,7 @@
-# KMOOC 인공지능과 기계학습 - 소개
+# KMOOC 인공지능과 기계학습: 소개
 
 강의: 김기응, 오혜연 교수님
+링크: [KMOOC](http://www.kmooc.kr/courses/course-v1:KAISTk+KCS470+2015_K0201/about)
 
 ## 1. 정의
 
