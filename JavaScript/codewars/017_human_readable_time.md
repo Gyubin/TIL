@@ -1,4 +1,4 @@
-# Human Readable Time
+# #17 Human Readable Time
 
 단순한 문제인데 꽤 헤맸다. '초'를 입력받아서 시, 분, 초 형태로 변환하는 문제다.
 
