@@ -167,9 +167,9 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 
 ## 4. 자주 쓰이는 함수
 
-- `objects` : 선언한 함수들을 보여줌
+- `objects()`, `ls()` : 선언한 함수들을 보여줌
 - `rm(object, object, ...)` : 선언한 변수 지우기.
-- `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌. 매개변수에 경로를 넣으면 당연히 경로의 파일 목록을 보여준다.
+- `list.files()` : 현재 디렉토리 파일, 폴더 목록 보여줌. 매개변수에 경로를 넣으면 당연히 경로의 파일 목록을 보여준다. 폴더 내의 파일을 반복문으로 접근할 수 있다.
 - `source("sample.R")` : 파일을 실행한다.
 - `barplot(vesselsSunk)` : 벡터 함수를 매개변수로 받아서 bar chart를 그린다. 이 때 벡터의 스칼라값들에 이름이 있다면 표시된다.
 - `plot(x, y)` : x와 y 값으로 산점도를 그린다.
@@ -196,3 +196,4 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
 - `help(package = "ggplot2")` : 패키지 설명
 - `library(ggplot2)` : 라이브러리 사용하기 전에 import 하는 의미인듯.
 - `qplot(myV1, myV2, color=myFactor)` : ggplot2에 속해있는 qplot 함수. x, y축 벡터 두 개와 범주를 의미하는 factor를 매개변수로 받는다.
+- 이 외에도 `dplyr`, `data.table`, `ggvis` 등의 패키지들 존재.
