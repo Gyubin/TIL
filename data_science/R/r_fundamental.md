@@ -32,18 +32,39 @@ brew install r
 - NULL(정의되지 않은 값), -Inf, Inf(무한대), NaN(연산 불능일 때), NA(Missing value)
 - 복소수는 실제 수학에서 쓰는 그대로 `1 + 2i` 이런식으로 쓰면 된다.
 - 대입 : `a = 3` or `a <- 3` 두 형태 모두 가능. 예전엔 `<-`만 있었다는데 `=`가 추가된 것이라고 한다.
-- 타입 체크하기
-    + `is.integer(x)` 정수
-    + `is.numeric(x)` 실수
-    + `is.complex(x)` 복소수
-    + `is.character(x)` 문자열
-    + `is.na(x)` NA 값인지
 - `sum(1, 2, 3, 4)` : sum 함수 내에 바로 숫자 넣어서 합 구할 수도 있다. `sqrt(16)`도 마찬가지.
 - NA 값이 벡터에 섞여있을 때 sum 함수 실행하면 결과값은 NA다. sum 함수에 옵션을 집어넣으면 NA값을 제외시킬 수 있다. `sum(a, na.rm = TRUE)`
 - boolean 값이 원소로 들어있을 때 sum 함수는 TRUE를 1, FALSE를 0으로 취급한다.
 - `print(object)` : 출력함수
 
-## 2. Data type
+## 2.1 Data Mode
+
+가장 기초가 되는 Data Mode(유형)이다. 가장 작은 데이터 그 자체의 속성.
+
+- 기본 유형
+    + numeric : integer, double
+    + complex: 1+1i, 3i
+    + character: 문자나 문자열
+    + logical : TRUE, FALSE(T,F는 전역변수)
+- 특수 데이터
+    + NULL: 값이 없음
+    + NAN: 수학적으로 정의 불가능
+    + NA: 결측치
+    + Inf, -Inf: 양 음 무한대
+
+연산 우선순위가 있다. 예를 들어 동질적 데이터가 모여야 하는 vector, matrix, array에서 다른 타입의 원소를 가지고 생성하면 다음처럼 data mode가 강제 형변환된다. `문자형 > 복소수형 > 수치형 > 논리형`
+
+- Type check, coercion: 앞에 is. as. 붙이고 이름 적어주면 된다.
+    + `is.integer(x)`, `is.double(x)`, `is.numeric(x)` 
+    + `is.complex(x)` 복소수
+    + `is.character(x)` 문자열
+    + `is.logical`
+    + `is.na(x)` NA 값인지
+    + `is.null(x)`
+    + `is.nan(x)`
+    + `is.infinite(x)`
+
+## 2.2 Data Object
 
 ### A. Vector
 
@@ -135,7 +156,7 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
     + `read.table("myFile.txt", sep="\t", header=TRUE)` : csv 형식이 아닐 때 table을 쓴다. 그리고 데이터 구분할 때 쓰인 문자를 지정해준다. 만약 첫 줄이 column의 이름이라면 header 값을 TRUE로 주면 된다. 만약 header가 없다면 열 이름이 자동으로 V1, V2 형태가 된다.
 - `merge(x = df1, y = df2)` : 데이터 프레임을 합친다. 만약 동일한 Column이 있으면 그에 맞춰서 열벡터의 순서가 자동으로 조정된다. 위 아래로 합쳐지는게 아니라 열벡터가 좌우로 추가되는 형태.
 - `cor.test(myDF$AAA, myDF$BBB)` : correlation 테스트 할 수 있다. 결과값이 출력된다. t, p-value 등등이 있는데 p-value만 잘 봐도 된다. 0.05 이하면 상관관계가 있다는 의미다.
-- `line <- lm(myDF$AAA, myDF$BBB)` : 첫 매개변수가 response variable, 두 번째 매개변수가 predictor variable이다. 코드스쿨의 예제에선 해적 활동 횟수가 response, GDP가 predictor 였다. 즉 이 함수의 결과물은 `선`을 준비하는 것이다. 즉 이거 회귀선을 그리는 것.
+- `line <- lm(myDF$AAA ~ myDF$BBB)` : 첫 매개변수가 response variable, 두 번째 매개변수가 predictor variable이다. 코드스쿨의 예제에선 해적 활동 횟수가 response, GDP가 predictor 였다. 즉 이 함수의 결과물은 `선`을 준비하는 것이다. 즉 이거 회귀선을 그리는 것.
 - `abline(line)` : 이미 plot 함수로 산점도가 그려진 상황에서 `lm` function으로 구한 선을 abline 함수로 산점도에 선을 표시한다.
 - `nrow(df)`, `ncol(df)` : 데이터 프레임에서 행 수, 열 수 뽑기
 
@@ -155,7 +176,6 @@ factor_temperature_vector <- factor(temperature_vector, ordered = TRUE, levels =
     + `my_list$element_name` : 이름이 설정되어있다면 데이터프레임에서처럼 달러 표시로 접근할 수 있다.
     + 만약 리스트의 원소가 벡터거나, 매트릭스, 데이터프레임이라면 `my_list$element_name][row, col]` 이런식으로 대괄호 하나 더 붙여서 접근 가능.
 - 원소 추가: `c(my_list, add_variable)` 여기서 c는 벡터에서의 combine이 아니라 concatenate의 의미다. ~~이런 중복 문법 싫어..~~ 만약 이름을 추가하고 싶다면 `c(my_list, name=add_variable)` 처럼 이름 바로 지정해주면 된다.
-- 
 
 ### F. array
 
