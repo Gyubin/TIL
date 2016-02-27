@@ -9,7 +9,7 @@ R에서 셀레니움 활용방식을 간단하게 정리한다. 셀레니움은 
 - 우선 jre(java runtime environment)가 필요하다. 셀레늄에서 remote server를 돌릴 때 자바를 이용하기 때문이다. oracle.com에 들어가서 jre를 받는게 가장 간편하지만, 개인적으로 터미널을 즐겨 이용하기 때문에 jdk를 받는 것이 좋겠다.
 - 다음은 R 패키지 설치다. 설치랑 부착은 쉽다. 인터넷에 보면 가끔 library 대신 require를 쓰는 경우가 있는데 그냥 library 쓰는게 좋다고 한다. require(package)는 library(package)를 try하는 함수다. 그래서 될 수도 있고, 안 될 수도 있는데 에러가 안난다. 그래서 만약 된 줄 알고 넘어가면 나중에 에러가 다시 날 수도 있기 때문에 그냥 안되면 바로 에러 터지는 library를 쓰라고 한다. 근데 왠지 require를 써야하는 특수 상황이 있을 것 같다.
 
-    ```sh
+    ```py
     install.packages('RSelenium')   # install
     library(RSelenium)  # attach
     ```
@@ -28,7 +28,7 @@ R에서 셀레니움 활용방식을 간단하게 정리한다. 셀레니움은 
     + 세 번째는 remoteDriver 생성이고, 네 번째는 실제로 인스턴스를 만드는 코드다.
     + 마지막 navigate 함수는 웹드라이버로 원하는 url을 띄우는 것이다.
 
-    ```sh
+    ```py
     RSelenium::checkForServer() # 셀레늄 서버가 있는지 확인, 없으면 설치
     RSelenium::startServer()
     myDriver <- RSelenium::remoteDriver(browserName = "phantomjs")
@@ -38,13 +38,33 @@ R에서 셀레니움 활용방식을 간단하게 정리한다. 셀레니움은 
 
 - 속성 고르기. 아래 css selector는 TripAdvisor의 리뷰에서 more 버튼을 가리키는 것이다. 리뷰가 길면 잘리기 때문에 셀레니움으로 눌러줘야한다. findElement로 찾아서 변수에 할당해두고, 여러 함수를 호출해서 쓸 수 있다.
 
-```sh
-more <- myDriver$findElement('css selector', 'span.moreLink')
-more$getElementAttribute('onclick')
-more$getElementText()
-more$clickElement()
+    ```py
+    more <- myDriver$findElement('css selector', 'span.moreLink')
+    more$getElementAttribute('onclick')
+    more$getElementText()
+    more$clickElement()
+    ```
+
+## 2. 크롬, 파이어폭스로 띄우기
+
+phantomjs는 실제로 GUI가 나타나거나 하지 않는다. 그래서 그냥 편하게 shell만 보면서 작업하면된다. 근데 가끔 이상하게 버그가 안잡히는 경우가 있다. 그럴 땐 직접 브라우저에서 동작하는걸 보면서 하는게 최고다. 예를 들어 TripAdvisor 사이트를 크롤링할 때 언어 설정 때문에 내가 참고한 css selector와 RSelenium이 보는 css selector가 달라질 수 있다. 내 경우가 그랬다. 나는 영문판을 보고 있었고, RSelenium은 한글판을 보고 있었다. 이럴 때 사용해보자. phantomjs와 거의 똑같다.
+
+```py
+dyn.load('/Library/Java/JavaVirtualMachines/jdk1.8.0_73.jdk/Contents/Home/jre/lib/server/libjvm.dylib')
+
+RSelenium::checkForServer()
+RSelenium::startServer()
+myDriver <- RSelenium::remoteDriver(browserName = "firefox")
+myDriver$open()
+myDriver$navigate("http://www.naver.com")
 ```
 
-## 2. 웹드라이버 - 크롬, 파이어폭스
+역시 내 경우에는 KoNLP 때와 마찬가지로 RStudio가 Java를 잘 못 불러온다. path가 잘못된 것 같은데 아쉬운데로 dyn.load 함수를 써서 해결했다. 만약 `Summary: UnknownError, Detail: An unknown server-side error occurred while processing the command, class: org.openqa.selenium.WebDriverException`와 같은 에러가 뜬다면 자바 문제다. 그리고 자기 컴퓨터의 jdk 버전은 맞게 지정해줘야한다. 나는 1.8.0에 73 버전이라서 `jdk1.8.0_73.jdk` 이렇게 적었다 각자 맞게 적어야 한다. 
 
-추가 예정
+## 3. 주요 함수들
+
+- `findElement(using='css selector', 'selector_string')` : using에 원하는 찾기 방법을 입력하고, 그에 맞는 값을 두번째 매개변수로 넣어준다. 주로 css selector를 쓴다. 찾는 값 하나를 리턴한다. 찾은 값에서 또다시 remoteDriver 객체에서 호출할 수 있는 함수를 사용할 수 있다.
+- `findElements(using='css selector', 'selector_string')` : findElement와 같지만 찾는 값 여러개를 리턴한다. 그래서 결과에 뭔가를 적용하고싶다면 apply 계열 함수를 사용하면 된다.
+- `clickElement()` : 주로 findElement로 찾은 값에서 호출한다. 클릭하는 기능
+- `getElementText()` : 텍스트 부분을 리턴한다.
+- `getElementAttribute('attribute')` : 원하는 속성 값을 리턴한다.
