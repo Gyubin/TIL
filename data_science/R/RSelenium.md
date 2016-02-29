@@ -68,3 +68,15 @@ myDriver$navigate("http://www.naver.com")
 - `clickElement()` : 주로 findElement로 찾은 값에서 호출한다. 클릭하는 기능
 - `getElementText()` : 텍스트 부분을 리턴한다.
 - `getElementAttribute('attribute')` : 원하는 속성 값을 리턴한다.
+
+## 4. 셀레늄 팁
+
+- 클릭해서 팝업을 띄우는 경우(새 윈도우 창 말고 같은 창 내에서): 브라우저의 화면에서 그 버튼이 보이는 범위로 스크롤되어있지 않은 경우에 에러난다. 아래 코드처럼 `scrollIntoView()` 함수를 선택 객체에서 호출해서 스크롤 위치를 조정해준다. 사이트에 따라서 navigation menu가 버튼을 가리는 경우도 있는데 `window.scroll(x, y)` 함수로 살짝 조정해주면 된다. 스크롤이 코드 실행 속도보다 느릴 수 있으니 짧게 딜레이를 준다.
+
+    ```js
+    remDr$executeScript("arguments[0].scrollIntoView();", list(gt))
+    remDr$executeScript("window.scrollBy(0, -150)")
+    Sys.sleep(0.5)
+    ```
+
+- `findElements('css selector', 'blah#blah blah.blah')` 함수를 통해 객체를 여러개 찾게 되면 찾아진 모든 webElement들이 list에 담기게 된다. 하나하나 for 문으로 뽑아낼 수 있는데 가끔은 이 뽑아진 객체가 하나의 webElement로 작동하지 않는 경우가 있다. 이 땐 에러가 나는 부분 전에 `findElement` 함수로 같은 element를 하나만 뽑아보면 해결된다. 의미없이 실행하는 코드지만 신기하게 에러가 사라지는 것을 볼 수 있다. 이유는 모르겠다.
