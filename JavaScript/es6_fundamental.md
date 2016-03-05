@@ -79,20 +79,86 @@ BSIDESOFT 스터디에서 ES6를 주로 사용한다. 이전 버전과 많은 �
     // 중첩배열과 함수 예제
     let [a, b, [c, d]] = [1, 2, [3, 4]];
 
+    // 배열을 매개변수로 받는데 배열 내에서 기본값 할당.
     function myFunction([a, b, c=3]){
         console.log(a, b, c);
     }
 
+    // 배열 매개변수에 기본값 할당
     function myFunction([a, b, c=3] = [1, 2, 3]) {
         console.log(a, b,c);
     }
     ```
 
-- 객체 해체 할당 예제다. 
+- 객체 해체 할당 예제다.
+    + 전체를 괄호로 감싸고, 대입할 변수들을 중괄호 `{ }`로 묶어서 객체를 대입하면 각 변수에 객체의 value가 들어간다.
+    + 객체 property 이름과 variable 이름이 같을 때는 대입될 변수를 그냥 중괄호에 넣어주면 된다.
+    + 이름이 다르면 객체 형태와 똑같이 적어주되 value 부분에 변수를 적어주면 된다. 자연스럽게 매칭되어서 변수에 값이 대입된다.
+    + 한 줄로 적어준다면 전체를 괄호로 감싸줄 필요가 없다.
+    + 역시 배열에서처럼 중괄호로 감싸진 변수들에 기본값을 줄 수 있다.
+    + 객체의 property name을 동적으로 표현할 수 있는데 `[ ]` 대괄호로 감싸줘야 한다.
+    + 함수의 파라미터로 객체를 사용할 수 있으며 기본값 할당도 가능하다.
 
+    ```js
+    let object = {"name" : "민호", "age" : 23};
 
+    // 같은 이름일 때
+    let name, age;
+    ({name, age} = object);
 
+    // 다른 이름일 때
+    let x, y;
+    ({name: x, age: y} = object);
 
+    // 가장 짧게 한 줄로
+    let {name:x, age:y} = {"name":"민호", "age":23};
 
+    // 기본값 할당
+    let {a, b, c = 3} = {a:1, b:2}
 
+    // property name 동적 할당
+    let {['first'+'Name']: x} = {firstName: "안녕"}
 
+    // 중첩 객체
+    let {name, otherInfo : {age}} = {name : "수지", otherInfo: {age: 23}};
+
+    // 함수 파라미터로 사용
+    function myFunction ({name = "수지", age = 23, profession = "연예인"} = {}) {
+        console.log(name, age, profession);)  
+    }
+    myFunction({name:"민호", age:23});
+    ```
+
+## 7. Arrow Function
+
+- 함수를 선언할 때 쓰는 간결한 표현이고, anonymous function을 선언할 때도 쓰인다.
+- 기본형: `(a, b, c) => { code something }` 과 같은 형태다. 괄호 안에 매개변수를 넣고, arrow를 쓴 다음, 중괄호에 함수 내용을 쓴다.
+- 함수 내용이 한 줄이면 `{ }` 중괄호를 생략할 수 있고, 중괄호가 없다면 그 유일한 '문'의 값이 리턴된다. `return`을 생략할 수 있다.
+
+    ```js
+    let circleArea = (pi, r) => {
+        let area = pi * r * r;
+        return area;
+    }
+
+    // 간단한 익명 함수
+    () => {console.log('hi')}
+    ```
+
+- `function`과 `=>`에서 this 스코프 차이
+    + `function`: this는 context object를 가리킨다.
+    + `=>` : this는 arrow function을 정의한 시점의 스코프
+    + 아래 예제에서 function을 썼다면 결과가 `Object, Window, Window`가 나왔겠지만 arrow를 썼을 땐 `Window, Window, Window`가 나온다.
+
+    ```js
+    var object = {
+        f1: () => {
+            console.log(this);
+            var f2 = () => { console.log(this); }
+            f2();
+            setTimeout(f2, 1000);
+        }
+    }
+    ```
+
+- arrow function은 new 연산자를 못 쓴다. function을 썼을 때는 function의 인스턴스를 new로 찍어낼 수 있는데 `=>`는 불가능하다.
