@@ -162,3 +162,30 @@ BSIDESOFT 스터디에서 ES6를 주로 사용한다. 이전 버전과 많은 �
     ```
 
 - arrow function은 new 연산자를 못 쓴다. function을 썼을 때는 function의 인스턴스를 new로 찍어낼 수 있는데 `=>`는 불가능하다.
+
+## 7. 객체 리터럴
+
+- 객체를 정의하는 것이 좀 더 쉬워졌다.
+- 객체 내부에 변수나 메소드를 추가할 때, 만약 이미 선언되어있다면 `:`을 쓸 필요 없이 `{ }` 안에 바로 변수명을 써주면 된다.
+- 함수는 바로 declaration notation에서 맨 앞에 쓰는 `function`을 제외한 부분만 써도 바로 선언 및 객체에 값 추가가 가능하다.
+
+    ```js
+    // 변수 명이 이미 존재할 떄
+    let x = 1, y = 2;
+    let object1 = {x, y};
+
+    // 함수 선언과 동시에 객체에 값 추가
+    let object2 = {
+        myFunction() { console.log('hi'); }
+    }
+    ```
+
+- computed property name : 런타임 시점에 property name을 조합하는 것으로 표현식의 동적 계산 결과를 property 이름으로 쓴다. ES5에서와 다르게 ES6에선 객체 생성할 때부터 동적으로 property 이름을 추가할 수 있다. 아래처럼 생성할 때 표현식을 `[ ]`로 감싸주면 된다.
+
+    ```js
+    // 생성할 때 key 표현식을 대괄호로 감싸기
+    let object = {
+        ["first" + "Name"]: "수지", 
+    };
+    console.log(object["first" + "Name"]);
+    ```

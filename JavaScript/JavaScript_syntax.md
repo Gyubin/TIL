@@ -4,6 +4,18 @@
 
 참고 자료: [Eloquent JavaScript](http://eloquentjavascript.net/), [코드카데미](https://www.codecademy.com/learn/javascript)
 
+## 0. Sublime text 3 Build system
+
+- hombrew 통해서 `node` 깔기
+- 에디터에서 new build system 들어가서 파일 내용을 아래처럼 변경
+
+```js
+{
+    "cmd": ["/usr/local/bin/node", "$file"],
+    "selector": "source.js"
+}
+```
+
 ## 1. 기본
 
 - 한 줄 끝에 `;` 붙이기. 안 붙여도 되는 경우도 있지만 속 편하게 다 붙이기.
@@ -47,9 +59,8 @@
 | ' \t\r\n ' == 0    | true  |
 
 - 변하지 않는 값 상수: `const name = value;` 형태로 선언하면 절대 바뀌지 않는다. 꼭 초기값이 필요하다. 그냥 const name; 식으로 하면 에러.
-- reserved words: 의미를 모르는거 뭔지 알기. `break case catch class const continue debugger default delete do else enum export extends false finally for function if implements import in instanceof interface let new null package private protected public return static super switch this throw true try typeof var void while with yield`
+- reserved words: 의미를 모르는거 뭔지 알기. 'break case catch class const continue debugger default delete do else enum export extends false finally for function if implements import in instanceof interface let new null package private protected public return static super switch this throw true try typeof var void while with yield'
 - 반복이나 분기문에서 실행문이 한 줄이면 { } 안 써도 된다. 쭉 나열하면 됨. `if (condition) code;`
-- 
 
 ## 2. 브라우저 팝업 창 관련
 
@@ -98,9 +109,14 @@ console.log("Bye");
 
 ### C. Optional Arguments
 
-함수에서 정해진 매개변수가 있는데 그거보다 더 많이 넣으면 에러 없이 알아서 무시하고, 더 적게 넣으면 알아서 `undefined`가 들어간다. 에러가 안난다. 그래서 원치 않는 결과가 나오더라도 에러메시지가 없기 때문에 디버깅이 어렵다.
+- 함수에서 정해진 매개변수가 있는데 그거보다 더 많이 넣으면 에러 없이 알아서 무시하고, 더 적게 넣으면 알아서 `undefined`가 들어간다. 에러가 안난다. 그래서 원치 않는 결과가 나오더라도 에러메시지가 없기 때문에 디버깅이 어렵다. 하지만 이 특성을 이용해서 매개변수의 기본값을 설정할 수 있다. 함수 내부에서 특정 매개변수가 `undefined`라면 기본값을 대입해주는 방식이다.
+- 아래 코드처럼 매개변수로 받는 모든 객체들을 함수 안에서 `arguments` 형태로 사용할 수 있다. 타입은 `object`다. 키 값은 '0', '1', '2'처럼 0부터 순서대로 `문자열` 타입이다. 아래처럼 함수 자체가 인자를 하나만 받게 되어있더라도 실제 fun 함수를 호출할 때 그 이상의 인자를 넣는다면 arguments에도 그대로 들어간다. 3개 넣으면 arguments 원소도 3개다.
 
-하지만 이 특성을 이용해서 매개변수의 기본값을 설정할 수 있다. 함수 내부에서 특정 매개변수가 `undefined`라면 기본값을 대입해주는 방식이다.
+```js
+var fun = function(obj) {
+    console.log(arguments);
+}
+```
 
 ### D. Closure
 
@@ -199,7 +215,23 @@ switch (object) {
 }
 ```
 
-## 5. Object
+## 5. Array
+
+- array도 object다. 그래서 정말 독특하게도 아래 코드가 동작한다. 즉 Array는 키 값이 numeric 문자열인 object의 한 종류인 것이다.
+
+```js
+var arr = [];
+arr[0] = '000';
+arr[1] = '111';
+arr['a'] = 'aaa';
+console.log(arr);
+// -> [ '000', '111', a: 'aaa' ]
+```
+
+- 다만 `length`같은 경우 `{ }`로 선언했을 땐 존재하지 않는다. `[ ]`로 선언했을 때만 자동으로 length 객체가 생긴다.
+- object든 array든 `[ ]`를 활용할 땐 대괄호 안의 내용이 자동으로 문자열화된다. 
+
+## 6. Object
 
 ### A. hash로서의 Object
 
