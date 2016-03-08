@@ -68,6 +68,7 @@ myDriver$navigate("http://www.naver.com")
 - `clickElement()` : 주로 findElement로 찾은 값에서 호출한다. 클릭하는 기능
 - `getElementText()` : 텍스트 부분을 리턴한다.
 - `getElementAttribute('attribute')` : 원하는 속성 값을 리턴한다.
+- `findChildElement`, `findChildElements` : remoteDriver 객체에서 어떤 요소를 뽑아내고 그 요소 내에서 다시 다른 요소를 찾을 때 호출하는 함수다. 즉 remoteDriver가 아니라 webElement 객체에서 호출할 수 있는 함수
 
 ## 4. 셀레늄 팁
 
@@ -80,3 +81,4 @@ myDriver$navigate("http://www.naver.com")
     ```
 
 - `findElements('css selector', 'blah#blah blah.blah')` 함수를 통해 객체를 여러개 찾게 되면 찾아진 모든 webElement들이 list에 담기게 된다. 하나하나 for 문으로 뽑아낼 수 있는데 가끔은 이 뽑아진 객체가 하나의 webElement로 작동하지 않는 경우가 있다. 이 땐 에러가 나는 부분 전에 `findElement` 함수로 같은 element를 하나만 뽑아보면 해결된다. 의미없이 실행하는 코드지만 신기하게 에러가 사라지는 것을 볼 수 있다. 이유는 모르겠다.
+- 페이지에서 '덩어리' 별로 반복을 돌아야할 경우가 있다. 구체적으로 말하면 한 페이지에 10개의 평가가 있는데, 이 평가를 10개 잡아내서 하나 하나 for 반복을 돌리는 경우다. 리뷰 하나 하나를 객체로 만들어 db에 저장하거나, 한 평가 덩어리에서 없는 요소가 있을 수 있는 경우 이 방법을 통해 걸러내거나 NA 처리를 해주면 된다. 이 때 문제가 되는 것은 요소에서 다시 `findChildElement`를 호출해 자식 요소들을 고를 때 아무것도 리턴되지 않는 경우가 생길 수 있다. html 문서에서 분명 하나 밖에 없는 요소라도 높은 확률로 2개가 골라질 수 있기 때문이다. 그렇기 때문에 만약 에러가 난다면 `findChildElements` 함수를 써야하며 이 때도 이 중에 하나는 빈 요소이며 list로 리턴될 때 앞에 올지 뒤에 올지 모르기 때문에 if문으로 비었는지 여부를 체크해가며 자료에 넣어줘야 한다.
