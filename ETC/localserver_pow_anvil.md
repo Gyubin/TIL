@@ -44,14 +44,20 @@
 
 ## 추가: gollum Wiki
 
-개인적으로 wiki를 운영하고 싶으면 [gollum](https://github.com/gollum/gollum/wiki)을 써보자. 한글로 설명돼있는 Outsider님의 [블로그](https://blog.outsider.ne.kr/579)를 참고하면 된다.
+- 개인적으로 wiki를 운영하고 싶으면 [gollum](https://github.com/gollum/gollum/wiki)을 써보자. 한글로 설명돼있는 Outsider님의 [블로그](https://blog.outsider.ne.kr/579)를 참고하면 된다. 설치 방법은 다음과 같다.
 
-위 gollum을 pow와 연결하면 참 편하다. 쉽다. 위키 폴더의 루트 디렉토리에 `config.ru` 파일을 추가하고 아래 코드를 입력해두면 된다. 자세한 내용은 다음 [블로그](http://www.juliendesrosiers.com/2011/07/20/run-gollum-on-pow)를 참고한다.
+    ```sh
+    brew install icu4c # 미리 international components for unicode for C 설치. gollum 깔기 전에 이게 없으면 에러날 수 있다.
+    sudo gem install gollum # gollum 설치
+    gem install github-markdown # Github Flavored Markdown(GFM) 설치
+    ```
 
-```
-require "gollum/app"
+- 위 gollum을 pow와 연결하면 참 편하다. 쉽다. 위키 폴더의 루트 디렉토리에 `config.ru` 파일을 추가하고 아래 코드를 입력해두면 된다. 자세한 내용은 다음 [블로그](http://www.juliendesrosiers.com/2011/07/20/run-gollum-on-pow)를 참고한다.
 
-Precious::App.set(:gollum_path, File.dirname(__FILE__))
-Precious::App.set(:wiki_options, {})
-run Precious::App
-```
+    ```
+    require "gollum/app"
+
+    Precious::App.set(:gollum_path, File.dirname(__FILE__))
+    Precious::App.set(:wiki_options, {})
+    run Precious::App
+    ```
