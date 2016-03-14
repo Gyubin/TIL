@@ -14,6 +14,12 @@
 - bower 이용해서 d3 설치: `bower install d3 --save`
 - bower_components 폴더가 $HOME 디렉토리에 만들어질 것이고 html 파일에서 호출하여 사용하면 된다. 아래 예제 코드 참조.
 
+실제 작업할 때는 html, css, js 파일을 로컬 서버로 열어서 작업해야 한다. 브라우저 보안 기능이 일반 파일로 열었을 때 js가 csv나 json 파일을 읽는 것을 막기 때문이다. 아래처럼 파이썬 로컬 서버로 열든가, pow.cx + anvil [조합](https://github.com/Gyubin/TIL/blob/master/ETC/localserver_pow_anvil.md)을 이용한다.
+
+- 파이썬2 : `python -m SimpleHTTPServer`
+- 파이썬3 : `python -m http.server`
+- 폴더에서 실행하고, index.html 파일을 만들어두면 그 파일이 열린다.
+
 ## 2. 주요 함수 설명
 
 `d3` 객체에서 `.`으로 호출된다. 순서대로 모두 chain해서 사용할 수 있다.
