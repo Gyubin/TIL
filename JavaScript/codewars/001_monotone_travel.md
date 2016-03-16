@@ -6,7 +6,7 @@ array의 원소들이 갈 수록 올라가는지 확인하는 함수를 짜는 �
 
 ```js
 var isMonotone = function(arr){
-    for (var i = 0; i < arr.length - 1; i++) {
+  for (var i = 0; i < arr.length - 1; i++) {
     if (arr[i+1] < arr[i]) return false;
   }
   return true;
