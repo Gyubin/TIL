@@ -39,8 +39,13 @@ nltk.pos_tag(text)
 - lemmatize는 '분류, 정리하다'라는 의미이다. `[run, ran, running]`을 `run`으로 바꿔서 복잡성을 낮춘다. 대량으로 텍스트를 분석할 때 처리시간을 줄일 뿐만 아니라 정확도도 높일 수 있다.
 - `from nltk.stem.wordnet import WordNetLemmatizer` : import할 것
 - `wnl = WordNetLemmatizer()`: lemmatize를 실행할 변수다.
-- `wnl.lemmatize(tag[0], lem)`
+- `wnl.lemmatize(word, 'n')` : 함수를 실행할 때 첫 번째 매개변수로 문자열 단어가 들어가고, 두 번째로 형태소 태그가 들어간다. 형태소 태그를 넣지 않으면 기본값으로 'n'이 들어간다. 형태소 태그는 다음 네가지만 들어갈 수 있다.
+    +  'n', wordnet.NOUN
+    +  'r', wordnet.ADV
+    +  'v', wordnet.VERB
+    +  'a', wordnet.ADJ
 
+### 1.3 예제 코드
 
 ```py
 import csv
