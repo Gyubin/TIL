@@ -108,3 +108,62 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
         z-index: -1;
     }
     ```
+
+## 4. pseudo classes
+
+요소의 특별한 상태를 나타낼 때 쓴다. 마우스가 over된 상태, 링크의 클릭(방문) 여부, 요소가 focus되었는지에 대한 것을 잡아낼 수 있다. 매우 다양한 클래스들이 있고 다음 w3school [링크](http://www.w3schools.com/css/css_pseudo_classes.asp)의 맨 아래 부분에 목록과 예제가 존재한다.
+
+```css
+selector:pseudo-class {
+    property:value;
+}
+```
+
+### 4.1 link 관련
+
+- `a:hover`를 효율적으로 사용하려면 `a:link`와 `a:visited` 뒤에 와야한다.
+- `a:active` 역시 `a:hover` 뒤에 오는게 좋다.
+- 대소문자 구별 없어서 HOVER 써도 된다.
+
+```css
+/* unvisited link */
+a:link { color: #FF0000; }
+
+/* visited link */
+a:visited { color: #00FF00; }
+
+/* mouse over link */
+a:hover { color: #FF00FF; }
+
+/* selected link. 클릭 중일 때. */
+a:active { color: #0000FF; }
+
+/* 특정 클래스인 녀석을 지정할 수도 있다 */
+a.highlight:hover { color: #ff0000; }
+```
+
+### 4.2 child element
+
+```css
+/* 첫 번째 자식 element */
+p:first-child { color: blue; }
+
+/* 모든 p에 대해서 첫 번째 자식 element인 i */
+p i:first-child { color: blue; }
+
+/* 첫 번째 자식인 p에 대해서 모든 i */
+p:first-child i { color: blue; }
+```
+
+### 4.3 :lang
+
+- `:lang`은 다른 languages에 대해 특별한 규칙을 지정할 수 있다.
+- IE8에서는 !DOCTYPE이 명시되어있어야 동작한다.
+
+```html
+<p>Some text <q lang="no">A quote in a paragraph</q> Some text.</p>
+```
+
+```css
+q:lang(no) { quotes: "~" "~"; }
+```
