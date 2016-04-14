@@ -40,24 +40,14 @@
 
 자바스크립트는 꼭 다른 파일로 분리해야한다. 관련 정책 [링크](https://developer.chrome.com/extensions/contentSecurityPolicy)
 
+- popup.html
+
 ```html
 <!doctype html>
 <html>
   <head>
     <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="popup.js"></script>
   </head>
   <body>
@@ -67,49 +57,55 @@
 </html>
 ```
 
-```js
-// Copyright (c) 2014 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+- style.css
 
-/**
- * Get the current URL.
- *
- * @param {function(string)} callback - called when the URL of the current tab
- *   is found.
- */
+```css
+body {
+    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+    font-size: 100%;
+}
+
+#status {
+/* avoid an excessively wide status text */
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 400px;
+}
+```
+
+- popup.js
+
+```js
+// 현재 탭의 URL을 가져오는 함수
+// 매개변수: 문자열(URL)을 매개변수로 받는 callback함수. 탭이 찾아지면 실행.
 function getCurrentTabUrl(callback) {
-  // Query filter to be passed to chrome.tabs.query - see
-  // https://developer.chrome.com/extensions/tabs#method-query
+  // Query filter다. chrome.tabs.query에 매개변수로 들어가게 된다.
+  // 관련 링크: https://developer.chrome.com/extensions/tabs#method-query
   var queryInfo = {
     active: true,
     currentWindow: true
   };
 
   chrome.tabs.query(queryInfo, function(tabs) {
-    // chrome.tabs.query invokes the callback with a list of tabs that match the
-    // query. When the popup is opened, there is certainly a window and at least
-    // one tab, so we can safely assume that |tabs| is a non-empty array.
-    // A window can only have one active tab at a time, so the array consists of
-    // exactly one tab.
+    // 쿼리와 매칭되는 탭을 고르고, callback 함수를 실행하는 역할.
+    // 팝업이 열릴 때 탭이 하나는 열려있어야 'tabs'가 빈 배열이 아니게 된다.
+    
     var tab = tabs[0];
-
-    // A tab is a plain object that provides information about the tab.
-    // See https://developer.chrome.com/extensions/tabs#type-Tab
+    // 쿼리 필터에서 active:true로 해놨다. 한 번에 한 탭만 active되므로
+    // tabs은 한 개 탭으로 구성된 배열이 된다.
+    // 배열의 원소는 tab의 정보를 나타내는 기본 object다.
+    // 관련 링크: https://developer.chrome.com/extensions/tabs#type-Tab
+    
     var url = tab.url;
+    // tab.url은 "activeTab" permission이 선언되었을 때만 사용 가능하다.
+    // 다른 탭들의 링크를 알려면 Query filter에서 active:true를 없앤다.
 
-    // tab.url is only available if the "activeTab" permission is declared.
-    // If you want to see the URL of other tabs (e.g. after removing active:true
-    // from |queryInfo|), then the "tabs" permission is required to see their
-    // "url" properties.
     console.assert(typeof url == 'string', 'tab.url should be a string');
-
     callback(url);
   });
 
-  // Most methods of the Chrome extension APIs are asynchronous. This means that
-  // you CANNOT do something like this:
-  //
+  // 대부분의 크롬 extension의 API는 비동기다. 그래서 다음처럼 못한다.
   // var url;
   // chrome.tabs.query(queryInfo, function(tabs) {
   //   url = tabs[0].url;
