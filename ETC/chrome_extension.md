@@ -113,44 +113,50 @@ function getCurrentTabUrl(callback) {
   // alert(url); // Shows "undefined", because chrome.tabs.query is async.
 }
 
-/**
- * @param {string} searchTerm - Search term for Google Image search.
- * @param {function(string,number,number)} callback - Called when an image has
- *   been found. The callback gets the URL, width and height of the image.
- * @param {function(string)} errorCallback - Called when the image is not found.
- *   The callback gets a string that describes the failure reason.
- */
+// 이미지 URL을 찾아내는 함수다.
+// - searchTerm: 문자열 매개변수.
+// - callback: func(string,number,number) 형태. 이미지가 찾아질 때 call되고
+// 이미지의 width, height를 구한다.
+// - errorCallback: func(string) 형태. 이미지를 못찾으면 호출된다. 실패 이유를 문자열로 받는 함수다.
 function getImageUrl(searchTerm, callback, errorCallback) {
-  // Google image search - 100 searches per day.
-  // https://developers.google.com/image-search/
+  // 아래 URL은 Google image search를 활용했는데 현재 deprecated되었다.
+  // 참고 링크: https://developers.google.com/image-search/
+  // Google custom search를 활용해야 한다. 알아보는 중.
   var searchUrl = 'https://ajax.googleapis.com/ajax/services/search/images' +
     '?v=1.0&q=' + encodeURIComponent(searchTerm);
+
+  // ajax를 활용하기 위해 XMLHttpRequest 객체를 만들고, GET으로 연다.
   var x = new XMLHttpRequest();
   x.open('GET', searchUrl);
-  // The Google image search API responds with JSON, so let Chrome parse it.
+
+  // 크롬 파싱을 json으로 지정해준다. Google image search API가 json이다.
   x.responseType = 'json';
+
+  // x가 로드될 때 실행될 함수를 정의한다.
   x.onload = function() {
-    // Parse and process the response from Google Image Search.
     var response = x.response;
-    if (!response || !response.responseData || !response.responseData.results ||
-        response.responseData.results.length === 0) {
+    // response, response의 데이터, 결과 등에 모두 값이 없다면 에러콜백
+    if (!response || !response.responseData || !response.responseData.results || response.responseData.results.length === 0) {
       errorCallback('No response from Google Image search!');
       return;
     }
     var firstResult = response.responseData.results[0];
-    // Take the thumbnail instead of the full image to get an approximately
-    // consistent image size.
+    // full이 아닌 썸네일을 가져온다. 그래야 대략적인 가로세로를 알 수 있다.
     var imageUrl = firstResult.tbUrl;
     var width = parseInt(firstResult.tbWidth);
     var height = parseInt(firstResult.tbHeight);
+
+    // 만약 URL이 문자열이 아니거나 가로세로가 숫자가 아니라면 에러콜백
     console.assert(
         typeof imageUrl == 'string' && !isNaN(width) && !isNaN(height),
         'Unexpected respose from the Google Image Search API!');
     callback(imageUrl, width, height);
   };
+  // 역시 onerror일 때 에러 콜백
   x.onerror = function() {
     errorCallback('Network error.');
   };
+  // send해서 ajax 통신한다.
   x.send();
 }
 
