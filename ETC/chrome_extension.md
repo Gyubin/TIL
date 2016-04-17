@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ### 1.4 툴팁 띄우기
 
-익스텐션 아이콘에 커서 가져다댔을 때 팁을 보여줄 수 있다. manifest.json에 `default_title`에 문자열을 넣어주면 된다. 아래와 같다. 적용은 브라우저가 새로고침되면 적용된다.
+익스텐션 아이콘에 커서 가져다댔을 때 팁을 보여줄 수 있다. manifest.json에 `default_title`에 문자열을 넣어주면 된다. 아래와 같다. 적용은 크롬 설정에서 확장 프로그램 페이지가 새로고침되면 적용된다.
 
 ```js
 {
