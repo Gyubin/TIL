@@ -197,3 +197,19 @@ document.addEventListener('DOMContentLoaded', function() {
 - 크롬 설정창(`command + ,`)에서 확장프로그램 메뉴로 들어간다.
 - 우측 상단에 개발자 모드에 체크
 - `Load unpacked extension`를 클릭하고 해당 파일들이 들어있는 폴더를 선택하면 된다.
+
+### 1.4 툴팁 띄우기
+
+익스텐션 아이콘에 커서 가져다댔을 때 팁을 보여줄 수 있다. manifest.json에 `default_title`에 문자열을 넣어주면 된다. 아래와 같다. 적용은 브라우저가 새로고침되면 적용된다.
+
+```js
+{
+  ...
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Click here!"
+  },
+  ...
+}
+```
