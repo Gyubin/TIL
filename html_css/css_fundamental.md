@@ -6,7 +6,6 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 
 - 브라우저 지원 : 앞에 붙인다. `-webkit-`, `-moz-`, `-o-`
 - `#` -> `.` -> `나머지` : 스타일 겹칠 때 적용 우선순위
-- `margin: 100px auto;` : 상하 마진 100px 주고, 좌우는 auto로 중앙 정렬시킨다.
 - `text-transform: uppercase` : 대문자로 바꾸기
 - `letter-spacing: 3px;` : 글자 간격 3px
 - `box-sizing: border-box;` : 설정된 width, height 값을 무조건 지킨다. 이 속성이 없을 때 padding 값이 있으면 태그의 범위가 더 넓어진다. 즉 전체 가로가 width + padding left, right 값이 되는 것. 하지만 속성이 있으며녀 무조건 가로는 width다.
@@ -166,4 +165,53 @@ p:first-child i { color: blue; }
 
 ```css
 q:lang(no) { quotes: "~" "~"; }
+```
+
+## 5. 견고한 중앙 정렬 기법
+
+참고 링크: [css-tricks.com](http://css-tricks.com/centering-css-complete-guide/)
+
+일반적으로 `margin: 100px auto;` 형태로 중앙정렬한다. 하지만 위 참고링크에서처럼 상황에 따라 적용이 안 될 경우가 있다. 아래처럼 테이블, 테이블 셀을 활용해서 div를 중첩하면 어디서든 적용되는 견고한 중앙정렬 형태가 만들어진다. 아래 코드에서 `div.centered` 안에 원하는 것을 넣으면 된다.
+
+- 요소의 수평 중앙 정렬: `.inner`의 `text-align` 속성 수정
+- 요소의 수직 중앙 정렬: `.inner`의 `vertical-align` 속성 수정
+
+```html
+<div class="container">
+  <div class="outer">
+    <div class="inner">
+      <div class="centered">
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```css
+.container {
+  width: 70%;
+  height: 70%;
+  margin: 40px auto;
+  background: red;
+}
+.outer {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.inner {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.centered {
+  position: relative;
+  display: inline-block;
+ 
+  width: 50%;
+  padding: 1em;
+  background: orange;
+  color: white;
+}
 ```
