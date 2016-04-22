@@ -33,11 +33,26 @@ Scalable Vector Graphics의 약자. 브라우저에서 그래픽을 마크업으
 - 초록색 원이 80px 반지름으로 빨간 사각형 중앙에 그려진다. offset은 30+120px inward, 50+50px upward다.
 - 텍스트 SVG가 그려진다. 글자는 하얀색으로 채워지고, text-anchor를 middle로 설정했으므로 중앙에 그려진다. 녹색 원의 정 중앙이다.
 
-## 2. 그리드
+## 2. 그리드, user unit
 
 ![grid](https://developer.mozilla.org/@api/deki/files/78/=Canvas_default_grid.png)
 
-For all elements, SVG uses a coordinate system or grid system similar to the one used by canvas (and by a whole lot of other computer drawing routines). That is, the top left corner of the document is considered to be the point (0,0). Positions are then measured in pixels from the top left corner, with the positive x direction being to the right, and the positive y direction being to the bottom. Note that this is the opposite of the way you're taught to graph as a kid. However, this is the same way elements in HTML are positioned.
+모든 elements에 대해서 SVG는 그리드 시스템을 사용한다. 즉 왼쪽 상단이 (0,0)이다. 위치는 왼쪽 상단을 기준으로 픽셀로 이동된다. x, y 좌표가 커질수록 우측, 아래로 이동한다. HTML의 방식과 같다.
+
+기본적으로 SVG의 픽셀 한 개는 출력 장치의 한 개 픽셀과 대응된다. 하지만 이렇게만 구현된다면 이름에서처럼 scalable이 구현되지 않는다. CSS의 absolute, relative 폰트 사이즈와 비슷하게 SVG는 absolute units를 정의해서 사용하는데 'pt'나 'cm'과 비슷한 것이다. user units라고 불리기도 한다. 90dpi에서 1cm는 약 35.43px 정도인데 이 때 이것을 35.43 user unit이라 표현한다. SVG에서 따로 뒤에 단위를 적지 않고 숫자만 적으면 user unit으로 여겨진다. 이러한 매핑을 `user coordinate system`이라 하고 기본은 1 user unit에 1 screen unit 대응이다.
+
+```html
+<!-- 아래는 일반적인 경우. 1 user unit = 1 screen unit -->
+<svg width="100" height="100">
+
+<!--
+아래 코드는 너비 200, 높이 200의 svg 공간이다.
+viewBox 속성을 통해 디스플레이에 대한 캔버스의 비율을 설정할 수 있다.
+아래는 200*200px 공간을 user unit (0,0)에서 (100,100)까지로 표현한다는 의미다.
+이 땐 요소들의 크기가 2배로 확대되어서 그려진다.
+-->
+<svg width="200" height="200" viewBox="0 0 100 100">
+```
 
 ## 9. 자료
 
