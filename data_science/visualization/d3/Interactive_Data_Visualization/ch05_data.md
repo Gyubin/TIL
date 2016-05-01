@@ -13,8 +13,8 @@ D3에서 data란 텍스트 기반 자료형을 뜻한다. 알파벳, 한글, 숫
 
     ```js
     d3.select("body")
-        .append("p")
-        .text("New paragraph!");
+      .append("p")
+      .text("New paragraph!");
     ```
 
 - The Hand-off
@@ -27,3 +27,57 @@ D3에서 data란 텍스트 기반 자료형을 뜻한다. 알파벳, 한글, 숫
     var p = body.append("p");
     p.text("New paragraph!");
     ```
+
+## 2. Binding Data
+
+- 데이터가 들어가면 -> 시각화 결과물이 나온다.
+- 데이터를 binding한다는 말은 element에 'attach'한다는 의미.
+- `d3-selection.data()` 형태로 사용한다.
+
+### 2.1 Data
+
+```js
+var dataset; // Global variable
+d3.csv("file_name.csv", function(data) {
+  dateset = data;
+});
+// d3.tsv("file_name.tsv", function) 형태도 존재. tab separated value.
+
+// error 잡는 방법
+d3.json("file_name.json", function(error, data) {
+  if (erorr) {
+    console.log(error);
+  } else {
+    dataset = data;
+  }
+})
+```
+
+- csv, json 파일을 불러오는 예제다.
+- 파일명과 callback function을 매개변수로 받는다.
+- csv는 모든 값이 문자열 형태로 되어있다. 필요하다면 사용할 때 형변환해줘야함.
+- 데이터를 불러올 때 함수 내의 지역변수로 불러와지므로 미리 전역변수를 선언해두고 대입하는 형태가 좋다. 아니라면 안에서 모든 시각화처리를 다 하든지.
+- 만약 데이터를 불러오는 상황에서 서버 에러나 인터넷 연결 에러가 발생한다면 원하는 결과가 나오지 않는다. 이를 방지하기 위해 위 코드블록의 두 번째 예제처럼 하면 된다. callback funcion에서 첫 번째 매개변수를 error로 두고 쓴다. 매개변수를 한 개만 넣으면 'data'와 매칭되고, 두 개를 넣으면 'error', 'data'로 매칭된다. 순서가 묘한데 callback function에서 매개변수가 몇 개냐에 따라 다르게 적용하는 내부구조가 있는 것 같다.
+
+```js
+d3.select("body").selectAll("p")
+  .data(dataset)
+  .enter()
+  .append("p")
+  .text("New paragraph!");
+```
+
+- 위 코드는 1.1 코드에서 `selectAll`, `data`, `enter` 메소드만 추가됐다.
+- 원래는 body를 고르고, p를 붙인 다음, text를 추가한 것.
+- 코드 분석
+    + `d3.select("body").selectAll("p")`: body를 선택하고, body의 자식 element인 p를 모두 선택했다. 다만 여기서 기존에 존재하던 p는 없기 때문에 빈 selection 객체를 리턴한다.
+    + `data(dataset)`: 데이터가 들어있는 객체인 dataset을 data 메소드에 매개변수로 넣어줬다. 이 다음부터 호출되는 함수는 dataset의 value마다 반복되어 호출된다. 즉 length만큼 호출된다.
+    + `enter()`: 데이터가 결합된 element를 만들려면 꼭 이 메소드를 써야한다. 
+
+
+
+
+
+
+
+
