@@ -60,24 +60,24 @@ d3.json("file_name.json", function(error, data) {
 - 만약 데이터를 불러오는 상황에서 서버 에러나 인터넷 연결 에러가 발생한다면 원하는 결과가 나오지 않는다. 이를 방지하기 위해 위 코드블록의 두 번째 예제처럼 하면 된다. callback funcion에서 첫 번째 매개변수를 error로 두고 쓴다. 매개변수를 한 개만 넣으면 'data'와 매칭되고, 두 개를 넣으면 'error', 'data'로 매칭된다. 순서가 묘한데 callback function에서 매개변수가 몇 개냐에 따라 다르게 적용하는 내부구조가 있는 것 같다.
 
 ```js
-d3.select("body").selectAll("p")
+// 만약 기존 p tag가 2개 있고, 데이터가 5개인 경우
+d3.select("body")
+  .selectAll("p")
   .data(dataset)
+  .text(function(d) {   // 기존 2개 p에 적용
+    return d.Food + ": " + d.Deliciousness;
+  })
   .enter()
   .append("p")
-  .text("New paragraph!");
+  .text(function(d) {   // 새로 만들어질 3개에 적용
+    return d.Food + ": " + d.Deliciousness;
+  });
 ```
 
 - 위 코드는 1.1 코드에서 `selectAll`, `data`, `enter` 메소드만 추가됐다.
 - 원래는 body를 고르고, p를 붙인 다음, text를 추가한 것.
 - 코드 분석
-    + `d3.select("body").selectAll("p")`: body를 선택하고, body의 자식 element인 p를 모두 선택했다. 다만 여기서 기존에 존재하던 p는 없기 때문에 빈 selection 객체를 리턴한다.
-    + `data(dataset)`: 데이터가 들어있는 객체인 dataset을 data 메소드에 매개변수로 넣어줬다. 이 다음부터 호출되는 함수는 dataset의 value마다 반복되어 호출된다. 즉 length만큼 호출된다.
-    + `enter()`: 데이터가 결합된 element를 만들려면 꼭 이 메소드를 써야한다. 
-
-
-
-
-
-
-
-
+    + `d3.select("body").selectAll("p")`: body를 선택하고, body의 자식 element인 p를 모두 선택했다. 기존에 존재하는 p 태그만 골라서 selection 객체를 리턴한다. 2개면 2개, 없었다면 빈 객체를.
+    + `data(dataset)`: 데이터가 들어있는 객체인 dataset을 data 메소드에 매개변수로 넣어준다. 데이터를 `select` 메소드로 선택된 element에 바인딩 시키는 역할이고, 이 다음부터 호출되는 함수는 데이터가 바인딩된 element의 개수만큼 반복되서 호출한다. 리턴 타입은 데이터와 결합된 selection 객체다. 기존에 2개가 존재했다면 2개, 없었다면 빈 객체다.
+    + `enter()`: 데이터가 기존 element보다 많았다면, `placeholder element`를 만들어 결합되지 않은 나머지 데이터와 결합시킨다. `data` 메소드처럼 이 이후엔 새롭게 만들어진 placeholdef element의 개수만큼 이후에 호출되는 메소드가 반복 호출된다. 리턴값은 가장 최근에 호출된 `select` 류의 메소드가 가리키는 element의 부모 element다. 위 코드에선 가장 최근에 p 태그를 모두 골랐으므로 그 부모 element인 body가 된다. 그래서 이 이후에 `append(p)` 함수가 호출되면 body에 p가 여러개 붙는 것이다.
+    + 위에서 `text` 메소드가 2번 호출됐는데 지금까지의 설명에서처럼 `enter` 메소드 이전과 이후에 선택된 객체들이 다르다. 이전은 기존 존재하던 것을 select한 결과이고, 이후는 남는 데이터와 바인딩된 placeholder를 선택한 결과다. 저렇게 두 element 그룹에 어떤 효과를 적용하려면 위 아래로 각각 관련 메소드를 호출해줘야한다.
