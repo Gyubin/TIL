@@ -34,7 +34,7 @@ D3에서 data란 텍스트 기반 자료형을 뜻한다. 알파벳, 한글, 숫
 - 데이터를 binding한다는 말은 element에 'attach'한다는 의미.
 - `d3-selection.data()` 형태로 사용한다.
 
-### 2.1 Data
+### 2.1 데이터 로드
 
 ```js
 var dataset; // Global variable
@@ -59,6 +59,8 @@ d3.json("file_name.json", function(error, data) {
 - 데이터를 불러올 때 함수 내의 지역변수로 불러와지므로 미리 전역변수를 선언해두고 대입하는 형태가 좋다. 아니라면 안에서 모든 시각화처리를 다 하든지.
 - 만약 데이터를 불러오는 상황에서 서버 에러나 인터넷 연결 에러가 발생한다면 원하는 결과가 나오지 않는다. 이를 방지하기 위해 위 코드블록의 두 번째 예제처럼 하면 된다. callback funcion에서 첫 번째 매개변수를 error로 두고 쓴다. 매개변수를 한 개만 넣으면 'data'와 매칭되고, 두 개를 넣으면 'error', 'data'로 매칭된다. 순서가 묘한데 callback function에서 매개변수가 몇 개냐에 따라 다르게 적용하는 내부구조가 있는 것 같다.
 
+### 2.2 코드 분석
+
 ```js
 // 만약 기존 p tag가 2개 있고, 데이터가 5개인 경우
 d3.select("body")
@@ -81,3 +83,9 @@ d3.select("body")
     + `data(dataset)`: 데이터가 들어있는 객체인 dataset을 data 메소드에 매개변수로 넣어준다. 데이터를 `select` 메소드로 선택된 element에 바인딩 시키는 역할이고, 이 다음부터 호출되는 함수는 데이터가 바인딩된 element의 개수만큼 반복되서 호출한다. 리턴 타입은 데이터와 결합된 selection 객체다. 기존에 2개가 존재했다면 2개, 없었다면 빈 객체다.
     + `enter()`: 데이터가 기존 element보다 많았다면, `placeholder element`를 만들어 결합되지 않은 나머지 데이터와 결합시킨다. `data` 메소드처럼 이 이후엔 새롭게 만들어진 placeholdef element의 개수만큼 이후에 호출되는 메소드가 반복 호출된다. 리턴값은 가장 최근에 호출된 `select` 류의 메소드가 가리키는 element의 부모 element다. 위 코드에선 가장 최근에 p 태그를 모두 골랐으므로 그 부모 element인 body가 된다. 그래서 이 이후에 `append(p)` 함수가 호출되면 body에 p가 여러개 붙는 것이다.
     + 위에서 `text` 메소드가 2번 호출됐는데 지금까지의 설명에서처럼 `enter` 메소드 이전과 이후에 선택된 객체들이 다르다. 이전은 기존 존재하던 것을 select한 결과이고, 이후는 남는 데이터와 바인딩된 placeholder를 선택한 결과다. 저렇게 두 element 그룹에 어떤 효과를 적용하려면 위 아래로 각각 관련 메소드를 호출해줘야한다.
+    + `data` 메소드를 호출한 이후부터 익명 함수를 사용해서 데이터를 이용할 수 있다. 관습적으로 익명함수의 첫 번째 매개변수인 데이터는 `d`로 한다.
+
+### 2.3 다른 메소드
+
+- `.style(attribute, value)` : HTML에서 사용되는 속성과 값을 정해줄 수 있다.
+- attribute엔 일반적인 HTML의 속성이 들어간다. width, height, class, id, name, font-weight 등등
