@@ -20,6 +20,7 @@
 - `makeAlarm`: 알람을 만드는 메소드
     + 내 경우엔 사용자가 누구냐에 따라 다른 알람을 설정하도록 되어있어서, 사용자번호를 매개변수로 받아서 분기했다.
     + `AlarmManager` 객체를 만들고 Intent를 위 설명과 같이 설정한다. 그리고 객체를 통해 세부 내용을 set한다.
+    + 만약 알람을 여러개 만들고싶다면 `PendigIntent` 객체를 생성할 때 `getBroadcast` 메소드의 두 번째 매개변수의 값을 다르게 주면 된다. 같은 값을 주면 계속 알람을 override하게된다. 반복문을 돌려서 객체를 여러개 생성하고 알람매니저로 `set`하면 된다.
 
     ```java
     public void makeAlarm(int userNum) {
