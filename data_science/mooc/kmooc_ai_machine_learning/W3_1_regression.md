@@ -139,7 +139,7 @@ g(x)를 대입해서 Err term을 다시 써보면 `Err = 1/2 * sigma1~N (yi - w1
     + x에 대해서 보는게 아니라 multivariate input vector z를 만들어서 이것을 input으로 사용한다.
     + z에는 x의 1차부터 k차까지 원소로 들어간다. 그리고 이걸 활용해서 multivariate linear regression으로 풀어낸다.
 
-## 6. Moter Trend 잡지 데이터 예제
+## 6. Motor Trend 잡지 데이터 예제
 
 ![Imgur](http://i.imgur.com/kyrFg44.png)
 
