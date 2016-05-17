@@ -18,25 +18,69 @@
 기본적인 순서는 AlarmManager 객체를 만드는 것부터 시작한다. 그리고 객체가 속한 Activity에서 알람이 실행될 때 동작할 코드가 있는 Activity로 넘어가는 Intent를 만든다. AlarmManager 객체에 시간 정보와 Intent를 매개변수로 넣어서 세부 내용을 `set`한다. 그리고 넘어간 Activity 클래스 java 파일에서 원하는 행동을 설정한다.
 
 - `makeAlarm`: 알람을 만드는 메소드
-    + 내 경우엔 사용자가 누구냐에 따라 다른 알람을 설정하도록 되어있어서, 사용자번호를 매개변수로 받아서 분기했다.
+    + `isCell` 변수를 써서 실험 시작 버튼인지, 취소 버튼인지 구분했다.
+    + `cellNum` 변수로 실험 종류를 구분했다. intent의 extra로 전달해서 리시버에서 구분했다.
     + `AlarmManager` 객체를 만들고 Intent를 위 설명과 같이 설정한다. 그리고 객체를 통해 세부 내용을 set한다.
-    + 만약 알람을 여러개 만들고싶다면 `PendigIntent` 객체를 생성할 때 `getBroadcast` 메소드의 두 번째 매개변수의 값을 다르게 주면 된다. 같은 값을 주면 계속 알람을 override하게된다. 반복문을 돌려서 객체를 여러개 생성하고 알람매니저로 `set`하면 된다.
+    + `PendigIntent` 객체 생성 (1): 만약 알람을 여러개 만들고싶다면 `getBroadcast` 메소드의 두 번째 매개변수인 intent의 id 값을 다르게 주면 된다. 같은 값을 주면 계속 알람을 override하게된다. 반복문을 돌려서 객체를 여러개 생성하고 알람매니저로 `set`하면 된다.
+    + `PendigIntent` 객체 생성 (2): PendingIntent로 intent를 전달할 때 extra를 함께 보낼 때가 있다. 아래 코드에선 `count`, `cellNum` 변수를 설정해서 보내줬다. 아래 코드에선 `getBroadcast`의 네 번째 매개변수로 `PendingIntent.FLAG_UPDATE_CURRENT`를 넣어주었는데 extra를 갱신한다는 의미다. 한 번 같은 아이디로 이미 intent를 보낸적이 있다면 디폴트로 intent에 포함된 extra는 갱신 불가다. 저 값을 넣어줘야 보낼 떄마다 extra를 갱신할 수 있다. AlarmManager 객체로 모든 알람을 cancel해도 저렇게 설정하지 않으면 갱신되지 않는다.
 
     ```java
-    public void makeAlarm(int userNum) {
-        if (userNum >= 1 && userNum <= 18) {
+    public void makeAlarm(boolean isCell, int cellNum) {
+        // 실험 시작 버튼을 눌렀을 때
+        if (isCell) {
+            // 공통 처리: 알람매니저, 인텐트 생성
             AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
-            PendingIntent pIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+            PendingIntent[] sender = new PendingIntent[6];
+            int count = 0;
+            long alarmTime;
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.add(Calendar.SECOND, 6);
+            Calendar target = Calendar.getInstance();
+            target.setTimeInMillis(System.currentTimeMillis());
 
-            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
-            Log.v("mth", "makeAlarm 끝");
+            int[][] times = new int[][]{
+                    {13, 5}, {14, 1}, {15, 9}, {16, 22}, {17, 7}, {18, 9}
+            };
+            for (int[] time : times) {
+                Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
+                intent.putExtra("count", count);
+                intent.putExtra("cellNum", cellNum);    // 메시지, 진동 구분.
+
+                sender[count] = PendingIntent.getBroadcast(MainActivity.this, count, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                target.set(Calendar.HOUR_OF_DAY, time[0]);
+                target.set(Calendar.MINUTE, time[1]);
+                target.set(Calendar.SECOND, 0);
+                target.set(Calendar.MILLISECOND, 0);
+                alarmTime = target.getTimeInMillis();
+                am.set(AlarmManager.RTC_WAKEUP, alarmTime, sender[count]);
+                count++;
+            }
+            Toast toast = Toast.makeText(getApplicationContext(), "실험이 시작됩니다.", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+
+        // 중단 버튼을 눌렀을 때
         } else {
-            // something
+            EditText pw = (EditText)findViewById(R.id.editText);
+            if (pw.getText().toString().equals("0948")) {
+                // 모든 알람 없애기
+                PendingIntent[] sender = new PendingIntent[6];
+                AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
+                for(int i = 0; i < 6; i++) {
+                    sender[i] = PendingIntent.getBroadcast(MainActivity.this, i, intent, 0);
+                    am.cancel(sender[i]);
+                }
+
+                Toast toast = Toast.makeText(getApplicationContext(), "모든 실험이 중단되었습니다", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            } else {
+                pw.setText("");
+                Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 틀림", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
         }
     }
     ```
