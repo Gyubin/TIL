@@ -102,3 +102,18 @@
     clean :
         rm *.o diary_exe
     ```
+
+## 2. 내가 서브라임에서 쓰는 방식.
+
+```sh
+TARGET = test.o
+SOURCE = test.m
+FW_FOUN = -framework Foundation
+
+$(TARGET) : $(SOURCE)
+    gcc $(FW_FOUN) $(SOURCE) -o $(TARGET)
+    ./$(TARGET)
+    rm $(TARGET)
+```
+
+Obj-C 컴파일 때문에 Make 사용 방법을 찾아봤었다. 위처럼 타겟, 소스 파일과 `Foundation` 프레임워크 사용을 지정해놓고, **컴파일 -> 실행 -> 기존 파일 삭제**가 다 돌아가도록 해놨다. 타겟 파일이 만들어지면 이미 되어있다고 컴파일이 안되서 지우는 것까지 만들어놨다.
