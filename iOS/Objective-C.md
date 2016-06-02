@@ -1,6 +1,6 @@
 # Objective-C 기초
 
-iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로그래밍](http://www.easyspub.co.kr/20_Menu/BookView/A001/96), [tutorials point](http://www.tutorialspoint.com/objective_c/) 참고.
+iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로그래밍](http://www.easyspub.co.kr/20_Menu/BookView/A001/96), [tutorials point](http://www.tutorialspoint.com/objective_c/), [codeschool](http://tryobjectivec.codeschool.com/) 참고.
 
 ## 0. 기본
 
@@ -8,8 +8,14 @@ iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로�
 - id 데이터형: 어떤 데이터가 들어올지 알 수 없을 때 자유로이 형변환이 가능하다.
 - 함수 호출: 함수를 쓰겠다고 메시지를 보내는 형태. 함수가 없다면 nil을 리턴하기 때문에 에러 때문에 프로그램이 멈추지 않는다.
 - `Object`가 정확하게 지칭하는 바는 `variable` 안에 들어있는 것이다. 둘 구분할 것.
+- 주석은 `//`
+- `!`는 not 을 의미한다. `BOOL` 자료형 앞에 쓰일 수 있음.
 
-### 0.1 문자열
+## 1. 자료형
+
+C 위에 얹혀진 문법이라서 더 쉽게 쓰기 위해 새로운 자료형을 만들었다. C 언어의 operator들은 C의 기본 자료형에 대해서 쓰여지기 때문에 새로운 방식들이 등장한다.
+
+### 1.1 NSString
 
 - `NSLog(@"Hello, Mr. Higgie.");` : 출력 함수.
 - 문자열: `NSString *firstName = @"Gyubin";`
@@ -19,26 +25,203 @@ iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로�
 - 출력: `NSLog(@"Hello there, %@.", firstName);`
     + `%@`로 placeholder를 만들 수 있다. 쉬운 출력.
     + 여러개 placeholder 사용 가능.
+    + 만약 placeholder를 안쓰고 바로 firstName을 출력하려하면 warning 뜬다.
+- 문자열 잇기1: `stringByAppendingString`
+    + message를 nest하는 것 가능하다.
+    + 단순히 + 연산으로 안된다.
 
-### 0.2 숫자
+    ```objective-c
+    NSString *firstName = @"Gyubin";
+    NSString *lastName = @"Son";
+    NSString *fullName = [[firstName stringByAppendingString:@" "] stringByAppendingString:lastName];
+    NSLog(@"My name is %@.", fullName);
+    ```
+
+- 문자열 잇기2: `stringWithFormat`
+    + format string을 활용한다. placeholder를 이요한 방법.
+
+    ```objective-c
+    NSString *fullname = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+    ```
+
+- NSString Class 사용하기.
+    + string 메시지로 빈 문자열 생성: `NSString *s = [NSString string];`
+    + 문자열 복사: `NSString *s = [NSString stringWithString:anotherString];`
+- `isEqualToString` 문자열 같은지 비교: `[@"Gyubin" isEqualToString:@"GGGGGG"]`
+
+### 1.2 NSNumber
 
 - `NSNumber *age = @28;` : `NSNumber` 타입에, 역시 `*`를 붙여서 선언하고, Object 앞에는 `@`를 붙인다.
 - 출력: 문자열에서와 똑같이 `%@` placeholder를 쓰면 된다.
+- `NSLog(@234);` 이런식으로 못 쓴다. 무조건 placeholder 써야 한다. 숫자를 출력하려면.
+- 곱셈하기
+    + 단순 곱셈이 안된다. Obj-C는 C 위에 얹혀진거라서 `*` operation은 양 쪽에 C의 Integer형을 받아야한다. 그래서 NSNumber를 못쓴다.
+    + `unsignedIntegerValue` 메소드를 사용해서 `NSUInteger` Object로 바꾼 다음에 더해줘야한다.
 
-### 0.3 Array
+    ```objective-c
+    NSNumber *higgiesAge = @6;
+    NSNumber *phoneLives = @3;
+
+    NSUInteger higgiesAgeInt = [higgiesAge unsignedIntegerValue];
+    NSUInteger phoneLivesInt = [phoneLives unsignedIntegerValue];
+
+    NSUInteger higgiesRealAge = higgiesAgeInt * phoneLivesInt;
+    ```
+
+### 1.3 NSArray
 
 - `NSArray *apps = @[@"AngryFowl", @"Lettertouch", @"Tweetrobot"];`
     + 타입은 `NSArray`. 역시 변수 선언할 때 `*` 붙인다.
     + 배열을 의미하는 `[ ]` 앞에 `@` 붙여야 한다.
     + 원소 접근은 다른 언어와 비슷하게 `apps[0]` 처럼 인덱스로 한다.
+- NSArray는 immutable Object다. 만약 원소를 추가하고 뺀다면 원래 것에서 빼는게 아니라 변경된 NSArray를 새로 만든다. 문자열도 immutable이며 모든 것은 mutable한 counterparts가 존재한다. `NSMutableArray`, `NSMutableString`이 있다.
+- `NSArray *emptyArray = [NSArray array];` : 빈 배열 생성.
+- 원소 추가: 
 
-## 1. Class
+### 1.4 NSDictionary
+
+- key, value 쌍으로 이루어진 자료형. 중괄호로 감싸고, key-value는 콜론으로 구분하고, 쌍 끼리는 comma로 구분한다. 파이썬이랑 똑같다.
+- `NSDictionary *person = @{@"firstName": @"Gyubin"};`
+- `person[@"firstName"]` 접근은 이렇게 대괄호에 키를 넣어서.
+- `NSDictionary *emptyDict = [NSDictionary dictionary];`
+
+### 1.5 NSInteger, NSUInteger
+
+- C-layer의 자료형이다. 사칙연산 등의 operator 사용 가능하다.
+- 예로 문자열을 `length` 메소드를 통해 길이를 재었을 때 리턴되는 타입이 NSUInteger다.
+- `*` asterisk를 쓰지 않는다. NSLog에서 placeholder를 `%@`가 아니라 NSUInter의 경우 `%lu`로 받는다.
+
+```objective-c
+NSString *firstName = @"Gyubin";
+NSUInteger firstNameLength = [firstName length];
+NSLog(@"firstName length is %lu", firstNameLength);
+```
+
+### 1.6 BOOL
+
+- `YES`, `NO`로 표현된다.
+- `BOOL flag = YES;` 형태로 사용한다. `*` 쓰지 않는다.
+
+### 1.7 ENUM
+
+```objective-c
+typedef NS_ENUM(NSInteger, DayOfWeek) {
+    DayOfWeekMonday = 1,
+    DayOfWeekTuesday = 2,
+    DayOfWeekWednesday = 3,
+    DayOfWeekThursday = 4,
+    DayOfWeekFriday = 5,
+    DayOfWeekSaturday = 6,
+    DayOfWeekSunday = 7
+};
+DayOfWeek day = 5;
+```
+
+- DayOfWeek이란 타입을 만든 것. 이 타입으로 변수 선언해서 사용.
+- 위 코드에선 NSInteger를 실제 값으로 쓰는 것. 다른 타입 가능하다.
+- 값을 지정할 수 있는데 위에선 1에서 7까지 지정한 것. 만약 지정 안했으면 0부터 6까지 인덱스로 접근할 수 있다.
+
+## 2. Message
+
+- `[objectName messageName];`
+- Obj-C에선 메소드를 바로 사용하는 것이 아니라 사용하겠다고 메시지를 보내는 형태다. 대괄호에 타겟 object와 관련된 메소드의 이름을 적으면 된다.
+    + 아래 예제에서처럼 사용하면 된다.
+    + `description`은 object를 문자열 형태로 바꿔서 리턴한다. Array는 속한 원소들을 보기 쉽게 나열해주고, 문자열을 넣으면 그냥 문자열이다.
+    + description을 공식 문서를 보면 `(NSString *)description` 으로 표현되어있다. 리턴 타입이 NSString이란 의미다.
+
+    ```objective-c
+    NSArray *foods = @[@"tacos", @"burgers"];
+    NSString *myString = [foods description];
+    NSLog(@"%@", [foods description]);
+    ```
+
+- message를 여러개 nest할 수 있다.
+- 매개변수를 여러개 가질 수 있다. 가독성을 위해 띄워쓴다.
+
+    ```objective-c
+    NSString *s = [@"aa bb" stringByReplacingOccurrencesOfString:@"aa"
+                                                      withString:@"AA"];
+    ```
+
+- 타입 별 초기화하기
+    + 모든 클래스는 `alloc` 메시지에 반응한다. 메모리에 Object가 들어갈 공간을 만드는 역할이다.
+    + `alloc`의 리턴 객체는 `init`을 다시 해줘야 사용가능해진다.
+    + `init`보다는 `initWithString`같은 메시지를 더 많이 사용한다.
+
+    ```objective-c
+    NSString *emptyString = [[NSString alloc] init];
+    NSString *emptyString = [[NSString alloc] initWithString:otherString];
+
+    NSArray *emptyArray = [[NSArray alloc] init];
+    NSDictionary *emptyDictionary = [[NSDictionary alloc] init];
+    ```
+
+## 3. 조건, 제어문
+
+### 3.1 if
+
+```objective-c
+NSNumber *scale = @5;
+
+if ([scale intValue] < 4) {
+    NSLog(@"HELLO WORLD!");
+} else if ([scale intValue] < 7) {
+    NSLog(@"WOW!!");
+} else {
+    NSLog(@"HO!!");
+}
+```
+
+- if 구문은 C 언어와 동일하다.
+- 만약 NSNumber 타입의 object를 크기로 분기하려면 inValue 메시지를 통해 먼저 NSUInteger 타입으로 바꿔주고 operator로 비교한다.
+
+### 3.2 switch, enum
+
+```objective-c
+typedef NS_ENUM(NSInteger, DayOfWeek) {
+    DayOfWeekMonday = 1,
+    DayOfWeekTuesday = 2,
+    DayOfWeekWednesday = 3,
+    DayOfWeekThursday = 4,
+    DayOfWeekFriday = 5,
+    DayOfWeekSaturday = 6,
+    DayOfWeekSunday = 7
+};
+
+DayOfWeek day = 3;
+
+switch (day) {
+    case DayOfWeekMonday:
+    case DayOfWeekTuesday:
+    case DayOfWeekWednesday:
+    case DayOfWeekThursday: {
+        NSLog(@"%@", @1234);
+        break;
+    }
+    case DayOfWeekFriday: {
+        NSLog(@"%@", @5);
+        break;
+    }
+    case DayOfWeekSaturday:
+    case DayOfWeekSunday: {
+        NSLog(@"%@", @67);
+        break;
+    }
+}
+```
+
+- switch
+    + C의 switch에선 각 case를 curly-braces로 묶지 않았지만 여기선 묶는다. 그 외엔 break이나 default같은 것들은 같다.
+    + case에 사용할 object는 C-layer에 있는 타입이어야 한다. 그래서 위에 보면 NSNumber가 아니라 NSInteger다.
+- enum: switch문과 같이 잘 쓰인다.
+
+## 5. Class
 
 클래스 구조는 `선언.h`과 `구현.m`으로 나뉜다.
 
-### 1.1 헤더 파일
+### 5.1 헤더 파일
 
-#### 1.1.1 기본
+#### 5.1.1 기본
 
 - `@interface`, `@end` 사이에 클래스 구성을 적어서 컴파일러에게 알려줘야한다. 클래스 상속 구조와 어떤 변수와 메소드를 다룰 것인지 적으면 됨.
 - 클래스명: 대문자로 시작하고 CamelCase로.
@@ -57,13 +240,13 @@ iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로�
     @end
     ```
 
-#### 1.1.2 변수 memberDeclarations
+#### 5.1.2 변수 memberDeclarations
 
 - 헤더 파일(.h)에 선언하는 것을 원칙으로 하되 구현 파일(.m)에서도 선언 가능하다.
 - `{ }` 중괄호 사이에 데이터 타입과 변수명을 선언해주면 된다.
 - 인스턴스 변수라고도 하며 클래스가 생성될 때마다 각 객체별로 구분되는 변수다.
 
-#### 1.1.3 method
+#### 5.1.3 method
 
 - `- (int) SampleMethod : (int) value returnValue:(int) value;`
     + `-` or `+` : +는 static method를 의미한다. 객체 생성하지 않더라도 호출할 수 있으며 내부에선 class method와 class 변수만 사용할 수 있다. -는 인스턴스 메서드를 의미.
@@ -73,7 +256,7 @@ iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로�
     + `returnValue: (int) value;` : 리턴값에 대한 선언.
 - 선언하는 이유는 method들이 서로를 사용할 수 있게 하기 위해서다. 선언하지 않더라도 아래에 있는 method는 그 위 줄에서 구현된 method를 사용할 수 있지만 다른 클래스 메소드를 import해서 사용하려면 선언해줘야 한다.
 
-#### 1.1.4 @property
+#### 5.1.4 @property
 
 - 다른 클래스에서 현재 클래스의 변수를 활용하도록 getter, setter 접근자를 만들게하는 부분이다. 구현 파일에도 `@synthesize` 또는 `@dynamic`을 사용해줘야함.
 - 만약 미리 숫자형 myNumber라는 변수가 있었다면 `@property int myNuber;` 라고 적어주면 된다. 아래 표는 property의 종류에 대해서.
@@ -90,4 +273,4 @@ iOS 앱을 만들기 위해 문법을 정리한다. [Do it 아이폰 앱 프로�
 | atomic            |      |
 | nonatomic         |      |
 
-### 1.2 구현 파일
+### 5.2 구현 파일
