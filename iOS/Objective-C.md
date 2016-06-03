@@ -215,6 +215,86 @@ switch (day) {
     + case에 사용할 object는 C-layer에 있는 타입이어야 한다. 그래서 위에 보면 NSNumber가 아니라 NSInteger다.
 - enum: switch문과 같이 잘 쓰인다.
 
+### 3.3 for
+
+```objective-c
+// Enumerating an NSArray
+NSArray *newHats = @[@"Cowboy", @"Conductor", @"Baseball"];
+for (NSString *hat in newHats) {
+  NSLog(@"Trying on new %@ hat", hat);
+}
+
+// Enumerating an NSDictionary
+NSDictionary *funnyWords = @{
+  @"Schadenfreude": @"pleasure derived by someone from another person's misfortune.",
+  @"Portmanteau": @"consisting of or combining two or more separable aspects or qualities",
+  @"Penultimate": @"second to the last"
+};
+for (NSString *word in funnyWords) {
+  NSLog(@"%@ is defined as %@", word, funnyWords[word]);
+}
+```
+
+- NSArray를 `for in` 구문으로 하나씩 뽑아 쓸 수 있다.
+- NSDictionary에서 for in 구문을 쓰면 key가 하나씩 뽑혀 나온다.
+
+## 4. Block
+
+### 4.1 인수 없는
+
+```objective-c
+void (^logMessage)(void) = ^{
+    NSLog(@"Hello from inside the block");
+};
+logMessage();
+```
+
+- block과 method의 다른 점은 무엇일까.
+- block을 변수로 할당해서 재사용할 수 있다. 할당된 값을 method의 매개변수와 리턴값으로 쓸 수 있고, Array나 Dictionary의 원소로 쓸 수도 있다.
+- 변수명과 `{ }` 앞에 `^` 붙여야 한다. 변수명은 `^` 포함해서 괄호로 감싼다.
+- `{ }`이 끝날 때 `;` semi-colon 꼭 붙여준다.
+- 변수명의 앞엔 리턴값의 타입을 나타내고, 뒤에는 괄호로 감싸서 매개변수를 적어준다. 만약 매개변수가 없다면 `void`
+- 변수명 뒤에 `();`를 붙여서 block을 실행한다.
+
+### 4.2 인수 있는
+
+```objective-c
+// 정수 2개 받아서 합을 나타내는.
+void (^mySum)(NSUInteger, NSUInteger) = ^(NSUInteger n1, NSUInteger n2){
+    NSLog(@"The sum of the numbers is %lu", n1 + n2);
+};
+mySum(10, 20);
+
+// NSArray를 받아서 원소 개수를 리턴하는.
+void (^logCount)(NSArray *) = ^(NSArray *array){
+    NSLog(@"There are %lu objects in this array", [array count]);
+};
+logCount(@[@"Mr.", @"Higgie"]);
+logCount(@[@"Mr.", @"Jony", @"Ive", @"Higgie"]);
+```
+
+- 선언 부분에선 타입만 적어주고, block 부분에선 할당할 변수도 적어준다.
+- NSArray같은 경우 `*`를 선언 부분에도 꼭 적어줘야함.
+
+### 4.3 메시지에 블락 넘겨보기
+
+```objective-c
+NSArray *funnyWords = @[@"Schadenfreude", @"Portmanteau", @"Penultimate"];
+[funnyWords enumerateObjectsUsingBlock:
+  ^(NSString *word, NSUInteger index, BOOL *stop){
+    NSLog(@"%@ is a funny word", word);  
+  }
+];
+```
+
+- NSArray에 `enumerateObjectsUsingBlock`라는 메시지가 있다. 각 원소에 대해 넘겨준 block을 사용하는 것.
+- 변수에 할당 없이 block 부분만 적어주면 된다.
+- 저 메시지에 block을 넘겨주려면 3가지 매개변수가 꼭 있어야한다. 하나라도 없으면 에러가 난다.
+    + `NSString *word` : Array의 원소 하나 하나.
+    + `NSUInteger index` : 해당 원소의 인덱스.
+    + `BOOL *stop` : 반복을 멈추고싶을 때 `*stop = YES` 형태로 값을 넣어주고, 바로 return하면 된다.(for문에서 `break`와 같은 동작.) 원래 BOOL 타입은 `*`를 쓰지 않는데 로컬 변수가 아니라 포인터 형태로 사용하는 것 같다. 그냥 return은 해당 반복을 종료하는 것일 뿐 전체 반복을 종료하는 것은 아니다.(`continue`와 같다.)
+- 변수로 선언해서 변수만 넘겨도 되고, block 부분만 적어서 익명 함수처럼 넘겨도 된다. 상황에 맞게 활용.
+
 ## 5. Class
 
 클래스 구조는 `선언.h`과 `구현.m`으로 나뉜다.
