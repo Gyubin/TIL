@@ -1,4 +1,4 @@
-# Linked Lists - Push & BuildOneTwoThree
+# #61 Linked Lists - Push & BuildOneTwoThree
 
 파이썬으로 링크드 리스트 만드는 문제.
 
