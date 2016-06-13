@@ -1,8 +1,9 @@
-# jekyll
+# GitHub hosting으로 jekyll 블로그 이용하기
+
+참고 링크: 오라일리 ebook `Static Site Generator`, [ilmol님 블로그](http://ilmol.com/2015/01/워드프레스에서%20Jekyll로%20마이그레이션.html), [nolboo님 블로그](https://nolboo.github.io/blog/2013/10/15/free-blog-with-github-jekyll/), [codecademy deploy](https://www.codecademy.com/en/courses/deploy-a-website/)
 
 ## 0. 기본
 
-- 참고: 오라일리 ebook `Static Site Generator`
 - 웹 사이트의 발전: static -> dynamic
     + static: DB 통신 없이 html text를 바로 쏴주면 돼서 매우 빠르다. 하지만 단순하고, 자체 기능이 부족하고, 콘텐츠 수정이 힘들다.
     + dynamic: DB와 연동하여 댓글, 좋아요 등 다양한 기능이 가능하고, 콘텐츠 수정, 추가가 용이하다.
@@ -14,41 +15,124 @@
 
 ## 1. 세팅 (OS X)
 
-- jekyll 설치: 맥에는 루비가 기본으로 설치되어있기 때문에 gem으로 바로 설치한다.
+- jekyll, github-pages 설치: 맥에는 루비가 기본으로 설치되어있기 때문에 gem으로 바로 설치한다. github pages는 github이 호스팅해주는 서비스다.
 
     ```sh
     sudo gem install jekyll
+    gem install github-pages
     ```
 
-- 원하는 디렉토리에 jekyll 프로젝트를 생성한다.(아래 코드에서 실제로 칠 때는 대괄호[] 는 쓰지 않는다.)
+- 원하는 디렉토리에 jekyll 프로젝트를 생성한다. GitHub 호스팅을 활용하려면 remote, local repository 이름을 모두 `username.github.io`로 해야한다. 나 같은 경우는 GitHub username이 'gyubin'이라서 [gyubin.github.io](http://gyubin.github.io/)로 했다.
 
     ```sh
-    jekyll new [project name]
+    jekyll new username.github.io
+    cd username.github.io
+    jekyll build
     ```
 
-- 디렉토리 살펴보기
-    + `_config.yml`: configuration file. 설정 파일이다.
-    + `_includes`: template partials 가 위치하는 곳
-    + `_layouts`: post(글)을 위한 템플릿이 위치.
-    + `_posts`: 마크다운 파일. 글 원본이 위치하는 폴더.
-    + `_sass`: css 전처리기인 SASS가 위치. 지킬에서 기본적으로 지원하지만 꼭 쓸 필요는 없다. pure css도 가능하고, SASS 안 쓸거면 지워도 된다.
-    + `css`: css or Sass 파일 위치
-    + `feed.xml`: rss feed를 생성한다.
-    + `index.html`: 사이트의 홈페이지.
-- 이제 다음 명령어로 로컬 서버를 띄워서 생김새를 살펴본다. `localhost:4000`으로 살펴보면 된다. 그리고 서버 명령어를 더 알아보려면 `jekyll serve -h`
+- 이제 GitHub에 remote repository를 만들고 로컬과 연결시킨다. 먼저 GitHub에 역시 같은 이름(username.github.io)으로 repository를 만드는데 README나 License 파일 없이 **빈 것**으로 만든다. 다음 git 명령어를 차례로 실행해서 연결한다.
 
     ```sh
-    cd [project name] # 만들어진 디렉토리로 들어가서
+    # username.github.io 디렉토리에서
+    git init
+    git remote add origin git@github.com:Gyubin/gyubin.github.io.git # 같은 이름으로 만든 remote의 주소를 로컬의 remote origin으로 지정한다.
+    git add . # 모든 파일을 stage로
+    git commit -m "Initialize Blog" # commit 하기
+    git push origin master
+    ```
+
+- 잠시 기다리면(난 바로 됐다) [http://gyubin.github.io/](http://gyubin.github.io/)로 새로운 URL이 생기고 접속이 가능할 것이다. 이제 로컬에서 블로깅 작업을 하고 GitHub에 push하기만 하면 자동으로 반영된다. 로컬 서버를 띄워서 push 전 모습을 확인하려면 다음 명령어를 친다. URL은 `localhost:4000` 이다. 서버 명령어를 더 알아보려면 `jekyll serve -h`
+
+    ```sh
+    cd username.github.io # 만들어진 디렉토리로 들어가서
     jekyll serve
     ```
 
-## 2. Liquid template
+## 2. 디렉토리 살펴보기
 
-jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 가깝다. 어떤 글을 끌어올 것이고, 날짜와 제목은 어떻게 설정할 것인지에 대한 최소한의 문법이 존재한다. Rails랑 비슷하다.
+- `_config.yml`: configuration file. 수정 사항이 jekyll serve 중일 때는 변하지 않는다. 재시작해야 적용됨.
+- `_includes/`: 코드 재사용을 위한 `template partials`가 위치하는 곳.
+- `_layouts/`: post(글)을 위한 템플릿이 위치.
+- `_posts/`: 마크다운 파일. 글 원본이 위치하는 폴더. jekyll의 naming convention을 따라서 파일명이 지정되어야 함.
+- `_sass/`: css 전처리기인 SASS가 위치. 지킬에서 기본적으로 지원하지만 꼭 쓸 필요는 없다. pure css도 가능하고, SASS 안 쓸거면 지워도 된다.
+- `css/`: main.scss 파일이 존재. 확장자가 scss지만 pure css로 작성해도 되고 특별한 경로 없이 바로 `_sass` 폴더의 파일을 불러올 수 있다. ex) `@import "base";` `@import "layout"`
+- `feed.xml`: rss feed를 생성한다.
+- `index.html`: 사이트의 홈페이지.
 
-- 변수: `{{ page.title }}` 처럼 변수는 중괄호 2개로 감싼다. 이런 변수 정보는 다음 [링크](http://jekyllrb.com/docs/variables/)에 나와있다.
-- filter: [GitHub](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers#standard-filters), [공식문서](http://jekyllrb.com/docs/templates/) 참조.
+## 3. _config.yml 세팅하기
 
+```
+title: Gyubin's learning
+email: geubin0414@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  1. 오늘보다 조금 더 발전한 내일이 되자.<br>
+  2. 중요한 것은 포기하지 않는 것.<br>
+  &nbsp; &nbsp; 더딘 것을 염려하지 말고, 멈출 것을 염려하자.<br>
+  3. 공부 슬럼프는 공부로 극복한다.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://qbinson.com/" # the base hostname & protocol for your site
+twitter_username: geubin0414
+github_username:  gyubin
+
+# Build settings
+markdown: kramdown
+# markdown: redcarpet
+# redcarpet:
+#   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
+
+#permalink
+permalink: pretty
+```
+
+- title, email: 사이트 제목과 사이트에 표시될 내 이메일
+- description: 사이트 설명. 기본 폼에선 하단 우측에 표시된다. `>` 표시는 `baseurl:`을 만날 때까지 개행문자를 무시하는 의미다.
+- baseurl: 다른 사이트를 URL로 구분해서 띄울 때 쓰지만(예를 들어 domain/blog 식으로) 개인 블로그로 사용할 경우 비워둔다.
+- url: 개인 도메인을 쓴다면 입력한다. 기본 주소는 "http://gyubin.github.io/"으로 적어두면 된다.
+- markdown: jekyll이 버전 3이 되면서 마크다운 방식에 [변화](https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0)가 생겼다. kramdown만 지원되고, GFM을 완벽하게 지원한다. 단순하게 markdown: kramdown만 쓰면 된다. ~~GitHub Flavored Markdown을 쓰기 위해 redcarpet으로 바꿨다. 바꾸는 방식은 다음 [링크](https://github.com/nono/Jekyll-plugins)에서 확인했다. `redcarpet`, `albino` gem을 모두 설치했고, 나는 링크에서처럼 버전을 지정하지 않고 최신 버전을 설정했다. 그리고 redcarpet2를 치면 에러가 나서 redcarpet을 입력했다.~~
+- permalink: pretty를 쓰면 각 포스트의 URL이 `카테고리/연/월/일/제목`이 된다. [공식문서](http://jekyllrb.com/docs/permalinks/#built-in-permalink-styles) 참고
+- yml 파일에 이름과 값을 설정하면 global 변수가 된다. 어디서든 `{{ site.정한이름 }}`으로 호출 가능하다.
+
+## 3. Liquid 문법
+
+jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 가깝다. 어떤 글을 끌어올 것이고, 날짜와 제목은 어떻게 설정할 것인지에 대한 최소한의 문법이 존재한다. 근데 웃긴건 ruby 기반이면서 liquid 문법은 Python Django랑 똑같다.
+
+- `{{ }}` : Output markup. 안에 쓴 객체가 html에 그대로 출력된다. `{{ page.title }}` 이라면 저 객체가 갖고 있는 값이 그대로 html에서 보여진다. 변수 정보는 다음 [링크](http://jekyllrb.com/docs/variables/)에 나와있다.
+- `{% %}` : Tag markup. 안에 쓴 내용이 html에 보이지 않는다. 반복 시작과 끝, 조건 시작과 끝을 나타낸다.
+- filter: `<p>Posted {{ post.date | date: "%b %-d, %Y" }}</p>` 처럼 쓴다. [GitHub](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers#standard-filters), [공식문서](http://jekyllrb.com/docs/templates/) 참조. 
+
+## 4. 글 쓰기
+
+- 글 제목은 언제나 `년-월-일-제목.markdown`으로 한다. ex) 2016-01-31-welcome-to-jekyll.markdown
+- Front Matter: post 폴더의 markdown 파일에서 `---`로 구분된 부분.
+    + `layout` : `_layout` 폴더의 형식을 불러온다. 이 부분을 활용해서 다양한 스타일 제작 가능하다.
+    + `published`: false 로 두면 드래프트 상태가 된다.
+    + `category`, `categories` : 글의 카테고리를 지정. 여러 카테고리로 지정하려면 복수형으로 쓰고 comma로 구분된 문자열을 대입한다.
+    + `title`: 글 제목
+    + `date`: 글 작성 시간
+    + `tags`: 태그
+    + `author`: 글쓴이
+    + `comment`: true로 두면 댓글 기능 가능. disqus 이용하면 좋다.
+    + [추가 정보](http://jekyllrb.com/docs/frontmatter/ )
+- disqus는 아래 코드를 `_layouts` 폴더의 `post.html`에 삽입한다. Front Matter에서 `comment: true`로 두는 것 잊지 말자.
+
+    ```html
+    {% if page.comments %}
+      <section id="comments" role="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+          var disqus_developer = 1; // github 에 올리기 전 확인하고 싶다면 //를 지우고 명령어로 수정
+          var disqus_shortname = 'gyubinson'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </section>
+    {% endif %}
+    ```
 
 
 
