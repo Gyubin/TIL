@@ -18,7 +18,8 @@ def insert_nth(head, index, data):
     raise ValueError
 ```
 
-- 재귀를 이용
+- 재귀를 이용. 이전 문제와 비슷하게.
+- 인덱스와 head의 조건이 맞지 않으면 에러를 일으킨다.
 
 ## 2. 다른 코드
 
