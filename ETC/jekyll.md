@@ -48,7 +48,16 @@
     jekyll serve
     ```
 
-## 2. 디렉토리 살펴보기
+## 2. 내 도메인 연결하기
+
+- AWS에 접속한다. 콘솔 메뉴에서 네트워킹 타이틀의 **Route 53**으로 들어간다.
+- **Domain Registration**의 시작 버튼 클릭
+- **Register Domain** 클릭. 여기서 도메인 살 수도 있다. io 도메인이 39달러다.
+- `CNAME` 이란 파일 명으로 github repo에 파일을 생성하고 첫 줄에 내 도메인을 적는다. 나같은 경우는 'qbinson.io'로 했다. 그러면 repo 세팅에 'Github Pages' 란에 'Your site is published at http://yourcustomdomain.com.' 라고 뜬다.
+- 이제 AWS에서 DNS record를 설정해준다. Route 53 페이지에 다시 들어가서 왼쪽 메뉴 중 **Hosted Zone**으로 들어가서 내 도메인을 선택한다.
+- NS Type의 4가지 값을 카피해둔다. 다시 왼쪽 메뉴의 Domains의 Registered domains 메뉴로 들어가서 내 도메인을 클릭해보면 4가지 값이 이미 설정되어있는 것을 볼 수 있다.
+
+## 3. 디렉토리 살펴보기
 
 - `_config.yml`: configuration file. 수정 사항이 jekyll serve 중일 때는 변하지 않는다. 재시작해야 적용됨.
 - `_includes/`: 코드 재사용을 위한 `template partials`가 위치하는 곳.
@@ -59,7 +68,7 @@
 - `feed.xml`: rss feed를 생성한다.
 - `index.html`: 사이트의 홈페이지.
 
-## 3. _config.yml 세팅하기
+## 4. _config.yml 세팅하기
 
 ```
 title: Gyubin's learning
@@ -92,7 +101,7 @@ permalink: pretty
 - permalink: pretty를 쓰면 각 포스트의 URL이 `카테고리/연/월/일/제목`이 된다. [공식문서](http://jekyllrb.com/docs/permalinks/#built-in-permalink-styles) 참고
 - yml 파일에 이름과 값을 설정하면 global 변수가 된다. 어디서든 `{{ site.정한이름 }}`으로 호출 가능하다.
 
-## 3. Liquid 문법
+## 5. Liquid 문법
 
 jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 가깝다. 어떤 글을 끌어올 것이고, 날짜와 제목은 어떻게 설정할 것인지에 대한 최소한의 문법이 존재한다. 근데 웃긴건 ruby 기반이면서 liquid 문법은 Python Django랑 똑같다.
 
@@ -100,7 +109,7 @@ jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 �
 - `{% %}` : Tag markup. 안에 쓴 내용이 html에 보이지 않는다. 반복 시작과 끝, 조건 시작과 끝을 나타낸다.
 - filter: `<p>Posted {{ post.date | date: "%b %-d, %Y" }}</p>` 처럼 쓴다. [GitHub](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers#standard-filters), [공식문서](http://jekyllrb.com/docs/templates/) 참조. 
 
-## 4. 글 쓰기
+## 6. 글 쓰기
 
 - 글 제목은 언제나 `년-월-일-제목.markdown`으로 한다. ex) 2016-01-31-welcome-to-jekyll.markdown
 - Front Matter: post 폴더의 markdown 파일에서 `---`로 구분된 부분.
@@ -133,25 +142,3 @@ jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 �
       </section>
     {% endif %}
     ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
