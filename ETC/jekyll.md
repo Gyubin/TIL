@@ -50,12 +50,39 @@
 
 ## 2. 내 도메인 연결하기
 
-- AWS에 접속한다. 콘솔 메뉴에서 네트워킹 타이틀의 **Route 53**으로 들어간다.
+### 2.1 도메인 구입
+
+어디서든 원하는 곳에서 해도 된다. 다음은 AWS의 **Route 53**에 대한 내용이다.
+
+- AWS 콘솔 메뉴에서 네트워킹 타이틀의 **Route 53**으로 들어간다.
 - **Domain Registration**의 시작 버튼 클릭
-- **Register Domain** 클릭. 여기서 도메인 살 수도 있다. io 도메인이 39달러다.
-- `CNAME` 이란 파일 명으로 github repo에 파일을 생성하고 첫 줄에 내 도메인을 적는다. 나같은 경우는 'qbinson.io'로 했다. 그러면 repo 세팅에 'Github Pages' 란에 'Your site is published at http://yourcustomdomain.com.' 라고 뜬다.
+- **Register Domain** 클릭. io 도메인이 39달러라서 다른 곳에 비해 싼 편.
+
+### 2.2 지킬과 연결
+
+`CNAME` 이란 파일 명으로 github repo에 파일을 생성하고 첫 줄에 내 도메인을 적는다. 나같은 경우는 'qbinson.io'로 했다. 그러면 repo 세팅의 'Github Pages' 란에 'Your site is published at http://qbinson.io' 라고 뜬다.
+
+### 2.3 DNS
+
 - 이제 AWS에서 DNS record를 설정해준다. Route 53 페이지에 다시 들어가서 왼쪽 메뉴 중 **Hosted Zone**으로 들어가서 내 도메인을 선택한다.
 - NS Type의 4가지 값을 카피해둔다. 다시 왼쪽 메뉴의 Domains의 Registered domains 메뉴로 들어가서 내 도메인을 클릭해보면 4가지 값이 이미 설정되어있는 것을 볼 수 있다.
+- 다시 Hosted Zone으로 간다. DNS record엔 몇 가지 타입이 있는데 A 타입을 조정할 것이다. `A`는 `Address` 레코드를 뜻하며 도메인 이름을 IP 주소로 이동시켜준다. 우측 메뉴의 'Create Record Set'에서 Name 부분은 넘어가고, Type을 `A - IPv4 address`로 선택한다. 아래 TTL은 기본 세팅인 300으로 두고 Value 부분을 다음처럼 줄바꿈해서 적어준다. GitHub 주소다.
+
+    ```
+    192.30.252.153
+    192.30.252.154
+    ```
+
+### 2.4 Subdomain
+
+- 내 루트 도메인은 `qbinson.io`다. 이 앞에 `www.qbinson.io` 혹은 `blog.qbinson.io` 등으로 앞에 붙는 것들이 subdomain이다.
+- `CNAME` 레코드(Canonical Name)를 통해 subdomain을 설정할 수 있다. CNAME 레코드는 도메인 이름이 진짜 domain name의 alias 혹은 substitute로 사용될 수 있도록 해준다.
+    + CNAME record specifies that a domain name will be used as an alias, or substitute, for the true (canonical) domain name.
+- Hosted Zone 메뉴에서 Create Record Set 버튼을 선택하고, 우측 창이 나타나면 값들을 입력하고 저장한다.
+    + Name: www
+    + Type: CNAME - Canonical name
+    + Value: `gyubin.github.io`
+- dig, domain information groper: 잘 되었는지 `dig www.qbinson.io` 명령어를 터미널에 쳐서 확인할 수 있다. A, CNAME 레코드 정보가 보일 것이다.
 
 ## 3. 디렉토리 살펴보기
 

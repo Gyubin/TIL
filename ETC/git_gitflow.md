@@ -32,7 +32,7 @@
     + 두 번째 비밀번호는 입력해준다.
     + successfully 무엇무엇 내용이 나오면 성공.
 
-### 1.3 init, add, commit
+### 1.3 init, add, commit, diff
 
 - `git init` : 버전 관리할 폴더에 처음에 딱 한 번만 해준다. 이 디렉토리를 git으로 버전관리하겠다는 의미.
 - 가장 많이 사용하는 명령어는 다음 세 가지다. `status`, `add`, `commit`.
@@ -42,6 +42,10 @@
     git add file_name   # 특정 파일의 현재 상태를 stage 상태로 만들기.
     git commit -m "commit message"  # 짧은 메시지와 함께 커밋
     ```
+
+- `git diff filename`: file이 달라진 부분을 보여준다. `+`는 새로 생긴, `-`는 없어진 부분이다. `q`를 누르면 이탈한다. [똑똑한 diff 만들기](http://blog.weirdx.io/post/27889) 글을 보고 따라해도 좋음.
+- `git checkout HEAD filename`: 특정 파일을 수정하다보니 잘못 수정한 것 같을 때 다시 이전 커밋 지점까지 그 파일만 돌리는 것.
+- `git reset HEAD filename`: 파일을 수정하고, staging area에 추가했는데 아니다 싶을 때. 즉 add 명령을 취소할 때 쓴다. 수정 내용은 그대로다.
 
 ### 1.4 branch
 
@@ -77,12 +81,17 @@ git commit -am "커밋 메시지" # 수정된 부분만 자동 추가해서 comm
 - `--no-ff` 옵션을 줬기 때문에 충돌나서 두 코드가 공존하는 상황이 커밋된 상태다.
 - 알아서 편집기를 통해 해당 부분을 적절히 수정한 후 `add`한 후 `commit`하면 된다.
 
+#### 1.4.3 브랜치 지우기
+
+`git branch -d branch_name` 명령어로 지운다. 브랜치의 목적을 달성했다면 지워준다.
+
 ### 1.5 commit 기록 삭제, 뭉개기
 
 #### 1.5.1 삭제 및 복구
 
 - commit을 잘못해서 기록을 삭제하고싶을 때 사용한다. `--hard` 옵션을 주면 코드 내용까지 완전히 복구한 지점으로 돌아간다. soft 옵션을 주면 코드 내용 자체는 현재 시점으로 두고, commit 기록만 삭제하게 된다. 아래는 hard 옵션의 예.
 - reset으로 커밋 기록을 지웠더라도 Git의 GC(Garbage Collection)가 동작을 하기 전이라면 지운 것을 복구할 수도 있다. `git reflog` 명령어로 지운 커밋의 해시를 확인한 다음 `reset` 명령어로 똑같이 복구할 수 있다.
+- 여기서 해시란 40 글자의 코드이며 SHA라고 불린다. 커밋을 개별적으로 구분할 수 있다.
 
 ```sh
 git reset --hard hash # 지정한 해시의 커밋까지로 복구. 해시는 git log 명령어로 확인할 수 있다. 이상한 숫자와 알파벳이 혼용된 긴 코드.
@@ -119,7 +128,7 @@ git push -u origin feature-D
 #### 1.7.1 clone
 
 ```sh
-git clone git@github.om:gyubin/git-tutorial.git
+git clone git@github.om:gyubin/git-tutorial.git custom_name
 ```
 
 #### 1.7.2 브랜치 구분해서 받아오기
@@ -144,6 +153,8 @@ git checkout -b feature-D origin/feature-D
 ```sh
 git pull origin feature-D
 ```
+
+- `git fetch` : 이 명령어는 리모트의 변화를 로컬에다 merge 하지 않는다. 리모트의 변화를 가져오기만 함. pull이 merge까지 자동으로 수행하는 점이 다르다.
 
 ### 1.9 .gitignore
 
