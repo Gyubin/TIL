@@ -141,3 +141,14 @@ GROUP BY price;
 - `MAX(column)`, `MIN(column` : 컬럼 값 중 최대값, 최소값 계산
 - `AVG(column)`: 컬럼 값의 평균 계산
 - `ROUND(value, digit)`: value를 소수점 digit 자리까지 표현. 만약 value만 입력하고 digit은 입력하지 않으면 정수로 표기된다.
+
+## 3. 
+
+```sql
+CREATE TABLE artists(id INTEGER PRIMARY KEY, name TEXT);
+```
+
+- primary key: 고유 구분자로 쓰인다. 위에서럼 컬럼명, 컬럼 타입 뒤에 `PRIMARY KEY`라고 써주면 된다. `id` 컬럼이 그렇게 쓰임.
+    + 절대 값이 NULL이어선 안되고
+    + 중복되지 않아야 한다.
+- foreign key: 다른 테이블의 primary key를 갖는 컬럼이다. 서로 다른 테이블의 row를 이 키 값을 통해 연결한다. 테이블의 foreign key는 다른 테이블의 primary key를 갖는다. 유니크(고유)하지 않아도 되고, NULL 값이어도 된다.
