@@ -142,7 +142,7 @@ GROUP BY price;
 - `AVG(column)`: 컬럼 값의 평균 계산
 - `ROUND(value, digit)`: value를 소수점 digit 자리까지 표현. 만약 value만 입력하고 digit은 입력하지 않으면 정수로 표기된다.
 
-## 3. 
+## 3. KEY
 
 ```sql
 CREATE TABLE artists(id INTEGER PRIMARY KEY, name TEXT);
@@ -152,3 +152,34 @@ CREATE TABLE artists(id INTEGER PRIMARY KEY, name TEXT);
     + 절대 값이 NULL이어선 안되고
     + 중복되지 않아야 한다.
 - foreign key: 다른 테이블의 primary key를 갖는 컬럼이다. 서로 다른 테이블의 row를 이 키 값을 통해 연결한다. 테이블의 foreign key는 다른 테이블의 primary key를 갖는다. 유니크(고유)하지 않아도 되고, NULL 값이어도 된다.
+
+## 4. JOIN
+
+```sql
+SELECT albums.name, albums.year, artists.name FROM albums, artists;
+```
+
+- `FROM` 뒤에 콤마로 구분해서 여러 테이블을 적어주면 컬럼을 한 번에 뽑을 수 있다. `cross join`이라고 불린다.
+- 두 개 이상의 테이블에서 select하려면 위 예처럼 앞에 테이블 이름을 명시해줘야한다. `.`으로 내부 컬럼 접근.
+- 각 테이블의 모든 row들을 결과로 주기 때문에 cross join은 별로 유용하지 않다.
+
+```sql
+SELECT
+  *
+FROM
+  albums
+JOIN artists ON
+  albums.artist_id = artists.id;
+```
+
+- 그래서 두 번째 예시처럼 사용한다. `albums`와 `artists` 테이블을 JOIN 하는데 artist_id 컬럼과 id 컬럼이 일치하도록 두 테이블의 관계를 정한다는 것. 결과가 그렇게 정렬되어 나온다.
+- 다른 테이블의 primary key를 가진 foreign key가 있는 테이블을 먼저 적어주는게 좋다. 그래야 순서가 보기 좋다.
+
+```sql
+SELECT * FROM albums LEFT JOIN artists
+ON albums.artist_id = artists.id;
+```
+
+- `Outer join`은 2개 이상의 테이블도 조합한다. 하지만 `inner join`과는 다르게 결합 조건이 필요 없다.
+- Instead, every row in the left table is returned in the result set, and if the join condition is not met, then NULL values are used to fill in the columns from the right table.
+- The left table is simply the first table that appears in the statement. Here, the left table is albums. Likewise, the right table is the second table that appears. Here, artists is the right table.
