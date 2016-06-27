@@ -180,6 +180,19 @@ SELECT * FROM albums LEFT JOIN artists
 ON albums.artist_id = artists.id;
 ```
 
-- `Outer join`은 2개 이상의 테이블도 조합한다. 하지만 `inner join`과는 다르게 결합 조건이 필요 없다.
-- Instead, every row in the left table is returned in the result set, and if the join condition is not met, then NULL values are used to fill in the columns from the right table.
-- The left table is simply the first table that appears in the statement. Here, the left table is albums. Likewise, the right table is the second table that appears. Here, artists is the right table.
+- 위 코드에서 LEFT JOIN 부분을 쓴 것이 `Outer join`이다. 이전의 그냥 JOIN 명령어를 쓴 `inner join`과는 다르게 결합 조건이 필요 없다. 대신 LEFT JOIN 왼쪽에 쓰여진 테이블의 모든 값이 결과에 포함된다. 만약 조건에 맞지 않다면 오른쪽 테이블의 컬럼 자리에넌 NULL 값이 들어간다.
+
+```sql
+SELECT
+  albums.name AS 'Album',
+  albums.year,
+  artists.name AS 'Artist'
+FROM
+  albums
+JOIN artists ON
+  albums.artist_id = artists.id
+WHERE
+  albums.year > 1980;
+```
+
+- `AS` : alias를 뜻하는 말로 결과의 컬럼의 이름을 저렇게 명명할 수 있다. alias는 single quotes 사이에 넣어야 한다.
