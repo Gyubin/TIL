@@ -196,3 +196,16 @@ WHERE
 ```
 
 - `AS` : alias를 뜻하는 말로 결과의 컬럼의 이름을 저렇게 명명할 수 있다. alias는 single quotes 사이에 넣어야 한다.
+
+## 5. Subqueries
+
+```sql
+SELECT *
+FROM flights
+WHERE origin in (
+    SELECT code
+    FROM airports
+    WHERE elevation < 2000);
+```
+
+- 쿼리 내에 다른 연관성 없는 쿼리를 조건으로 지정해줄 수 있다. 하위 쿼리는 독립적으로 작동한다.
