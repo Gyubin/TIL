@@ -33,11 +33,13 @@
     ////////////////
     // 이 코드가
     const App = function() {
-      return <ol>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-      </ol>;
+      return (
+        <ol>
+          <li>1</li>
+          <li>2</li>
+          <li>3</li>
+        </ol>
+      );
     }
 
     ////////////////
@@ -84,11 +86,13 @@
     // Create a new component.
     // This component should produce some HTML.
     const App = function() {
-      return <ol>
-        <li>AAA</li>
-        <li>BBB</li>
-        <li>CCC</li>
-      </ol>;
+      return (
+        <ol>
+          <li>AAA</li>
+          <li>BBB</li>
+          <li>CCC</li>
+        </ol>
+      );
     }
 
     // Take this component's generated HTML and put it ont the page in the DOM.
@@ -104,11 +108,12 @@
     /////////////
     // 이렇게 쓰면
     const App = function() {
-      return <ol>
-        <li>AAA</li>
-      </ol>;
+      return (
+        <ol>
+          <li>AAA</li>
+        </ol>
+      );
     }
-
     <App />
 
     /////////////
@@ -129,6 +134,160 @@
 
     React.createElement(App, null);
     ```
+
+### 2.1 타겟 지정하기
+
+```js
+const App = () => {
+  return (
+    <ol>
+      <li>AAA</li>
+    </ol>
+  );
+}
+ReactDOM.render(<App />, document.querySelector('.container'));
+```
+
+- 어느 위치에 렌더할지 두 번째 매개변수로 꼭 결정해줘야 한다.
+- 그리고 App을 ES6 문법인 arrow function으로 수정해준다. 이렇게 많이 쓴다.
+
+### 2.2 Components
+
+- 1 component per file
+- src 폴더에 `components` 폴더를 만들고 거기에 component 별로 파일을 각각 만든다.
+
+### 2.3 Youtube Search API 예제
+
+- [console.developers.google.com](https://console.developers.google.com) 접속
+    + API manager 페이지 접속
+    + Youtube data API 들어가서 Enable 버튼 클릭
+    + Credentials 메뉴로 들어가서 Create credentials 버튼 누르고 API Key 버튼에서 Browser key 버튼 누르기 
+    + 딱히 바꿀건 없고 Create 버튼 눌러서 완료한다.
+    + `index.js` 파일의 윗 부분에 `const API_KEY = "sdkjflskdjflskdjf";` 형태로 선언해준다.
+- npm의 youtube search module을 설치한다. API key를 가지고 검색어를 던지면 데이터를 받아오는 모듈이다.
+    + 해당 프로젝트 디렉토리에서 다음 명령어로 설치한다. `npm install --save youtube-api-search`
+    + `--save`의 의미는 디렉토리의 `package.json` 파일에 해당 모듈을 기록하겠다는 의미다. 이 파일만 있으면 나중에 `npm install` 명령어로 필요한 모듈을 한 번에 모두 설치할 수 있다. 
+- js 파일들끼리는 silo이기 때문에 서로 필요한 것을 사용하기 위해선 `import`, `export`가 필요하다.
+    + index.js 파일엔 맨 위에 `import SearchBar from './components/search_bar';` 라고 쓴다. search_bar.js 파일에서 SearchBar를 가져와서 쓰겠다는 의미다. React를 import 해올 때는 path 없이 그냥 폴더 디렉토리만 썼는데 node_modules 폴더에 있는건 알아서 가져오는 것 같다.
+    + `search_bar.js` 코드를 다음처럼 넣는다.
+
+    ```js
+    import React from 'react';
+    const SearchBar = () => {
+      return <input />;
+    }
+    export default SearchBar;
+    ```
+
+- 일반적으로 여러 줄의 JSX 코드는 `()`로 묶어주는 편이다.
+    + 만약 괄호를 쓰지 않는다면 return과 같은 줄에 첫 JSX 코드를 써줘야한다. 안 쓰면 에러 난다. 괄호를 썼을 때만 아래처럼 줄 바꿈해도 됨.
+
+    ```js
+    const App = () => {
+      return (
+        <ol>
+          <li>AAA</li>
+        </ol>
+      );
+    }
+    ```
+
+### 2.4 Class based components
+
+```js
+class SearchBar extends React.Component {
+  render () {
+    return <input />;
+  }
+}
+```
+
+- 지금까지 Function으로 돼있던 components들을 Class로 바꾸기
+- 위에 `extends`는 상속의 의미고, React.Component의 모든 기능을 활용할 수 있다는 의미가 된다.
+- 다만 `render` 메소드를 필수로 구현해야한다. 위 예제처럼 간단히 적을 수 있다. function 적지 않아도 된다.
+- `React.Component`처럼 앞에 React를 붙이고 싶지 않다면
+    + `import React, { Component } from 'react';`
+    + 위 코드처럼 쓰면 된다. `const Component = React.Component;`의 의미와 같다.
+- 속도는 함수형이 클래스형보다 더 빠르다.
+
+### 2.5 EventHandler
+
+```js
+class SearchBar extends React.Component {
+  render() {
+    return <input onChange={this.onInputChange} />;
+    /// JSX에서 js variable은 {} 안에 써준다. 아래처럼 줄일 수 있다.
+    // return <input onChange={event => console.log(event.target.value)} />;
+  }
+
+  onInputChange(event) {
+    console.log(event.target.value);
+  }
+}
+```
+
+- 일반적으로 `on`이나 `handle`을 함수 앞에 붙인다.
+- JSX에서 js 변수를 쓰려면 `{ }`안에다 써야한다.
+- HTML element에서 event에 쓰이는 콜백 함수는 매개변수로 event를 받는다. 
+- arrow function에서 매개변수, 실행문이 한 줄이면 각각 괄호, 중괄호를 없앨 수 있다.
+
+### 2.6 State object
+
+#### 2.6.1 개념
+
+- plain JavaScript Object다. 사용자의 이벤트를 기록하고 반응하는데 사용한다.
+- class-based component는 고유의 state object를 가지고 있는데 이게 변하면 곧바로 페이지를 re-render한다. 자식 components 역시 모두 렌더링한다.
+- fuctional component는 state가 없다.
+
+#### 2.6.2 constructor
+
+```js
+class SearchBar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { term: ' ' };
+  }
+
+  render() {
+    return (
+      <input onChange={event => this.setState({ term : event.target.value})} />; ///
+    );
+  }
+}
+```
+
+- `constructor`: 모든 ES6 클래스가 가지는 함수다. instance가 만들어질 때 무조건 호출된다.
+- instance들은 고유의 state를 가지고, 내부의 property-value 쌍은 개발자 마음대로 지정할 수 있다.
+- state를 변경할 때는 `this.setState({ term: value })` 함수를 사용한다. 자연스럽게 떠올릴만 한 this.state.term = something; 형태는 지양한다. 리액트는 뒤에서 많은 처리를 하는데 이런식으로 값만 딱 바꿔버리면 state가 변경되었는지 리액트가 모르기 때문이다.
+- 위처럼 onChange의 콜백 함수를 arrow function으로 하면 알아서 this가 lexical로 된다. 즉 arrow function의 scope가 아니라 함수가 실행된 surrounding이 this로 지정되는 것. 그래서 this에서 setState 함수가 호출 가능하다. 하지만 arrow function 대신 일반 함수를 onInputChange로 만들어서 아래에다 선언해두고 함수명만 적어서 활용하는 경우엔 `this.onInputChange.bind(this)` 이런 형태로 surrounding을 함수에 bind시켜줘야한다.
+
+#### 2.6.3 Controlled element
+
+```js
+render() {
+    return (
+      <div>
+        <input
+          value={this.state.term + '..'}
+          onChange={event => this.setState({term: event.target.value})} /> ///
+        <p>Value of the input: {this.state.term}</p>
+      </div>
+    );
+  }
+```
+
+- render 함수가 위와 같은 꼴일 때 input element의 value는 state에 의해 정해지게 된다. 이 때 input element를 controlled element라고 한다.
+- 위 코드의 경우 순서는 다음과 같다.
+    + input field에 키보드로 문자를 입력한다.
+    + arrow function이 실행되고 state의 term 값이 바뀐다.
+    + input의 value가 state의 term 값에 의해 바뀌게 된다.
+- 
+
+
+
+
+
 
 
 
