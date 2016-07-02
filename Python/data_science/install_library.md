@@ -22,7 +22,7 @@ pip install pandas
 pip install sympy
 pip install nose
 
-pip install statsmodels
+pip install statsmodels # 이것도 안된다.
 pip install zipline # 이건 설치가 잘 안된다.
 pip install quandl
 pip install scikit-learn
@@ -32,4 +32,8 @@ ipython profile create
 ipython qtconsole --matplotlib inline
 ```
 
-이정도 깔면 웬만한 건 다 깔렸다. 
+statsmodels는 파이썬 가상환경에서 pip로 안깔리더라. 아래처럼 easy_install로 깔아야 한다.
+
+```sh
+easy_install -U statsmodels
+```
