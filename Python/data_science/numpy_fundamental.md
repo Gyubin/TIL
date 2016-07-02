@@ -6,7 +6,7 @@ Numpy는 Python에서 사용되는 라이브러리다. 기본으로 지원되지
 
 ## 1. 설치
 
-### Option 1
+### 1.1 Option 1
 
 우선 `ml`이라는 이름으로(machine learning을 의미. 필수는 아니다.) Python 가상환경을 만들고 다음 명령어로 numpy를 설치한다.
 
@@ -14,7 +14,7 @@ Numpy는 Python에서 사용되는 라이브러리다. 기본으로 지원되지
 pip install numpy
 ```
 
-### Option 2
+### 1.2 Option 2
 
 Homebrew를 사용하고 있다면 다음처럼 설치도 가능하다.
 
@@ -33,7 +33,7 @@ brew install matplotlib --with-python3
 
 `import numpy`는 항상 필요하다.
 
-### A. 기본
+### 2.1 기본
 
 - numpy.ndarray 생성: `numpy.array(arr)` 매개변수로 리스트가 들어간다. 리스트 안에 또다시 리스트들이 있는데 각각 '행'을 의미한다. [[행], [행], [행], [행] ...] 이런 식이다. `numpy.array([[1, 2], [3, 4]])` 식으로 쓰이면 2 by 2 행렬이 생성된다.
 - numpy.ndarray.shape: `my_ndarray.shape` 생성한 ndarray 객체의 모양을 튜플 형태로 리턴한다. 2 by 4 행렬이라면, 즉 2행 4열 행렬이면 (2, 4)를 리턴한다.
@@ -47,7 +47,7 @@ brew install matplotlib --with-python3
 - `numpy.linspace(start, end, number_of_elements)` : arange와 비슷하다. 다만 step이 아니라 원하는 원소 개수를 매개변수로 넣는다. `numpy.linspace(0, 2, 9)`를 하면 array([0., 0.25, 0.5, 0.75, 1., 1.25, 1.5, 1.75, 2.]) 결과를 얻는다. 여기선 end가 포함이다. `x = linspace( 0, 2*pi, 100 )` `f = sin(x)` 의 예시도 있다.
 - numpy.ndarray.reshape: `my_ndarray.reshape(x, y)` 행렬 모양을 바꿀 수 있다. [[1, 2, 3], [4, 5, 6]] 의 행렬의 shape은 (2, 3)인데 reshape(3, 2)로 실행한다면 행렬 모양은 [[1, 2], [3, 4], [5, 6]]으로 바뀐다. 원소 수만 같으면 이렇게 순서대로 쭉 나열한 상태에서 그룹을 다시 지어줄 수 있다.
 - 연산
-    + 원소 개수와 shape이 일치하면 `+`, `-`, `*`, `/` 다 가능하고, 하나의 배열을 거듭제곱하는 것도 `**` 가능하다. 다만 `*`는 실제 원소끼리의 곱셈을 의미하고 행렬 연산에서 dot product는 `dot` 함수를 쓴다. dot(A, B)의 형태.
+    + 원소 개수와 shape이 일치하면 `+`, `-`, `*`, `/` 다 가능하고, 하나의 배열을 거듭제곱하는 것도 `**` 가능하다. 다만 `*`는 실제 원소끼리의 곱셈을 의미하고 행렬 연산에서 dot product는 `dot` 함수를 쓴다. `dot(A, B)`의 형태.
     + 비교 연산: a = numpy.arange(4)일 때 `a<3`의 결과는 `array([True, True, True, False])` 이다. 원소 하나하나에 적용된다.
 - 파이썬 기본 라이브러리에서 `sum(iterable)`, `min(iterable)`, `max(iterable)`는 매개변수로 iterable을 받는 형태로 사용된다. 하지만 numpy에서 같은 이름의 함수를 따로 만들었는데 이 땐 `.` notation으로 접근할 수 있다. a.sum(), a.min(), a.max() 같은 식이다.
     + sum 함수에서 매개변수로 axis가 들어갈 수 있다. a.sum(axis=0) 처럼 0 값이 들어가면 각 컬럼들의 합을, 1일 때는 각 행들의 합을 ndarray 객체로 리턴한다. 하나의 행으로만 나타낸다.
@@ -82,7 +82,7 @@ b[1:3, : ]
 - `for e in ndarray.flat: print(e)` : ndarray에서 `flat` 을 호출하면 모든 원소들을 하나씩 뽑아낼 수 있는 numpy.flatier object를 리턴한다. 하나씩 뽑아 내는 반복문 쓸 때 유용
 - `numpy.random.random((3,4))` : 난수를 생성해서 3행 4열 생성한다. 매개변수엔 튜플이 들어가고 원소 수가 곧 차원 수다. `A = floor(10*numpy.random.random((3, 4)))` 형태로 사용한다. 
 
-### B. 모양 바꾸는 함수들
+### 2.2 모양 바꾸는 함수들
 
 - `numpy.concatenate((ndarray, ndarray), axis=n)`
     + 배열을 합치는 함수다. 합칠 두 배열을 첫 번째 매개변수에 튜플 형태로 넣는다.
@@ -123,3 +123,15 @@ print(slice_X_different_sizes[2])
 - `ndarray.resize((x, y))` : reshape은 모양을 바꾼 값을 리턴하지만 resize는 호출된 객체 자체를 바꿔버린다.
 - `ndarray.reshape(x, -1)` : -1을 넣으면 다른 수에 맞춰서 자동으로 수를 조정해준다. 15개 원소인 ndarray에 reshape(5, -1)을 하면 자동으로 (5, 3) shape으로 모양을 바꿔준다.
 - `numpy.linalg.inv(A)` : 역행렬 구하기.
+
+### 2.3 사칙 연산
+
+```py
+A = numpy.array([[1, 2], [3, 4]])
+print(A + 2)
+print(A - 3)
+print(A * 2)
+print(A / 5)
+```
+
+ndarrary에 스칼라를 연산하면 모든 원소에 적용된다. 모든 원소 각각에 사칙연산이 적용된다.
