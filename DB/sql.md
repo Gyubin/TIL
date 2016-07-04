@@ -206,6 +206,61 @@ WHERE origin in (
     SELECT code
     FROM airports
     WHERE elevation < 2000);
+
+SELECT * 
+FROM flights 
+WHERE origin in (
+    SELECT code 
+    FROM airports 
+    WHERE faa_region = 'ASO');
 ```
 
 - 쿼리 내에 다른 연관성 없는 쿼리를 조건으로 지정해줄 수 있다. 하위 쿼리는 독립적으로 작동한다.
+
+```sql
+SELECT a.dep_month,
+       a.dep_day_of_week,
+       AVG(a.flight_count) AS average_flights
+  FROM (
+        SELECT dep_month,
+              dep_day_of_week,
+               dep_date,
+               COUNT(*) AS flight_count
+          FROM flights
+         GROUP BY 1,2,3
+       ) a
+ GROUP BY 1,2
+ ORDER BY 1,2;
+```
+
+- 복잡한 계산식도 한 번에 가능하다.
+- 우선 subquery를 분석하면
+    + flights 테이블에서
+    + `dep_month`, `dep_day_of_week`, `dep_date`, `Count(*)` 를 고른다. Count는 컬럼 이름을 flight_count로 표시한다.
+    + GROUP으로 묶는데 첫 번째, 두 번째, 세 번째 컬럼을 모두 사용한다. 즉 세 컬럼의 값을 모두 사용해서 고유의 그룹을 만든다는 뜻이다. 예를 들어 값이 (1월, 월요일, 3일)과 (1월, 화요일, 4일)은 다른 그룹으로 묶인다. 첫 번째 컬럼만을 활용했다면 이 두 값은 같은 그룹으로 묶일 것이다.
+    + GROUP BY에서 컬럼명이 너무 길 때는 숫자로 쓸 수 있다.
+    + subquery 뒤에 a를 붙여서 FROM의 결과물을 쉽게 a로 접근하게 alias를 지정했다.
+
+```sql
+SELECT a.dep_month,
+       a.dep_day_of_week,
+       AVG(a.flight_distance) AS average_distance
+  FROM (
+        SELECT dep_month,
+              dep_day_of_week,
+               dep_date,
+               sum(distance) AS flight_distance
+          FROM flights
+         GROUP BY 1,2,3
+       ) a
+ GROUP BY 1,2
+ ORDER BY 1,2;
+```
+
+- subquery
+    + flights 테이블에서
+    + 날짜별로 그룹으로 묶고
+    + 그룹의 데이터들의 모든 flight_distance의 합을 구한다.
+    + 결과를 a로 alias 지정
+- a의 결과 중에서 월과 요일을 group by로 뭉쳐서 뽑고
+- flight_distance는 다시 AVG로 평균을 내서 결과를 낸다.
