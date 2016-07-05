@@ -264,3 +264,59 @@ SELECT a.dep_month,
     + 결과를 a로 alias 지정
 - a의 결과 중에서 월과 요일을 group by로 뭉쳐서 뽑고
 - flight_distance는 다시 AVG로 평균을 내서 결과를 낸다.
+
+## 6. Correlated Subqueries
+
+correlated subquery에서 inner query는 outer query와 독립적으로 작동하지 않는다. 먼저 한 행이 outer query에서 처리되면 이 행이 inner query에서 다시 수행된다. 즉 각 row가 outer query에서 실행된 후 이어서 inner query에서 실행된다는 의미다.
+
+```sql
+SELECT id
+FROM flights AS f
+WHERE distance > (
+    SELECT AVG(distance)
+    FROM flights
+    WHERE carrier = f.carrier);
+```
+
+- id 값을 flights 테이블에서 선택하는데 다음부터 테이블을 f라고 지칭하겠다.
+- where로 조건을 준다. flights 테이블의 distance 컬럼이 속한 carrier의 평균보다 높은 것만.
+
+```sql
+SELECT carrier, id,
+       (SELECT COUNT(*)
+        FROM flights f
+        WHERE f.id < flights.id
+        AND f.carrier=flights.carrier) + 1
+            AS flight_sequence_number
+FROM flights;
+```
+
+- outer query
+    + flights 테이블에서
+    + carrier, id 컬럼과
+    + inner query의 결과물을 1 더 해서 flight_sequence_number 라는 이름으로 선택한다.
+- inner query
+    + 개수를 리턴한다.
+    + flights 테이블에서 가져오는데 f라고 지칭. AS를 생략해도 된다. outer query의 flights 테이블과 구분하기 위해서 지칭을 다르게 한거다.
+    + inner query의 id가 outer query의 id보다 작고, carrier가 똑같은 경우만 고른다.
+
+## 7. Union
+
+row를 결합하는 것을 `join`, column을 결합하는 것을 `union`이라고 한다.
+
+```sql
+# 중복 없이
+SELECT item_name FROM legacy_products
+UNION 
+SELECT item_name FROM new_products;
+
+# 중복 허용
+SELECT id, avg(a.sale_price) FROM (
+    SELECT id, sale_price FROM order_items
+    UNION ALL
+    SELECT id, sale_price FROM order_items_historic) AS a 
+GROUP BY 1;
+```
+
+- 각 SELECT 문의 결과는 동일한 수의 컬럼, 같은 데이터 타입, 같은 순서를 가져야한다.
+- 디폴트로 UNION은 distinct한 값만을 나타낸다. 만약 중복을 허한다면 `UNION ALL`을 쓰면 된다.
