@@ -320,3 +320,40 @@ GROUP BY 1;
 
 - 각 SELECT 문의 결과는 동일한 수의 컬럼, 같은 데이터 타입, 같은 순서를 가져야한다.
 - 디폴트로 UNION은 distinct한 값만을 나타낸다. 만약 중복을 허한다면 `UNION ALL`을 쓰면 된다.
+
+## 8. Intersect, Except
+
+```sql
+SELECT brand FROM new_products
+INTERSECT
+SELECT brand FROM legacy_products;
+```
+
+INTERSECT는 두 개의 SELECT 문을 결합해서 첫 번째 SELECT의 결과 중 두 번째 SELECT 결과와 동일한 row만 반환한다. 즉 두 개 SELECT의 공통 결과만 리턴하는 것.
+
+```sql
+SELECT brand FROM new_products
+EXCEPT
+SELECT brand FROM legacy_products;
+```
+
+EXCEPT는 첫 번째 SELECT에서만 유일하게 존재하는 row만 선택할 때 쓴다. 차집합 개념과 비슷하다.
+
+## 9. CASE
+
+```sql
+SELECT
+    CASE
+        WHEN elevation < 500 THEN 'Low'
+        WHEN elevation BETWEEN 500 AND 1999 THEN 'Medium'
+        WHEN elevation >= 2000 THEN 'High'
+        ELSE 'Unknown'
+    END AS elevation_tier
+    , COUNT(*)
+FROM airports
+GROUP BY 1;
+```
+
+- `CASE`, `END`: 조건절 시작과 끝
+- `AS elevation_tier`: CASE END 문도 하나의 결과를 리턴하기 때문에 alias로 쉽게 지칭하게 했다.
+- `WHEN`, `ELSE`: if, else 조건문이라 생각하면 된다. ELSE는 없어도 되는데 그렇게 되면 NULL이 리턴될 수 있다.
