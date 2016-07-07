@@ -166,7 +166,8 @@ ReactDOM.render(<App />, document.querySelector('.container'));
     + `index.js` 파일의 윗 부분에 `const API_KEY = "sdkjflskdjflskdjf";` 형태로 선언해준다.
 - npm의 youtube search module을 설치한다. API key를 가지고 검색어를 던지면 데이터를 받아오는 모듈이다.
     + 해당 프로젝트 디렉토리에서 다음 명령어로 설치한다. `npm install --save youtube-api-search`
-    + `--save`의 의미는 디렉토리의 `package.json` 파일에 해당 모듈을 기록하겠다는 의미다. 이 파일만 있으면 나중에 `npm install` 명령어로 필요한 모듈을 한 번에 모두 설치할 수 있다. 
+    + `--save`의 의미는 디렉토리의 `package.json` 파일에 해당 모듈을 기록하겠다는 의미다. 이 파일만 있으면 나중에 `npm install` 명령어로 필요한 모듈을 한 번에 모두 설치할 수 있다.
+    + index.js 파일에서 import해준다. `import YTSearch from 'youtube-api-search';` 
 - js 파일들끼리는 silo이기 때문에 서로 필요한 것을 사용하기 위해선 `import`, `export`가 필요하다.
     + index.js 파일엔 맨 위에 `import SearchBar from './components/search_bar';` 라고 쓴다. search_bar.js 파일에서 SearchBar를 가져와서 쓰겠다는 의미다. React를 import 해올 때는 path 없이 그냥 폴더 디렉토리만 썼는데 node_modules 폴더에 있는건 알아서 가져오는 것 같다.
     + `search_bar.js` 코드를 다음처럼 넣는다.
@@ -282,12 +283,104 @@ render() {
     + input field에 키보드로 문자를 입력한다.
     + arrow function이 실행되고 state의 term 값이 바뀐다.
     + input의 value가 state의 term 값에 의해 바뀌게 된다.
-- 
 
+### 2.7 Youtube 2
 
+```js
+YTSearch({key: API_KEY, term: 'surfboards'}, function(data){
+  console.log(data);
+});
+```
 
+- 첫 번째 매개변수: configuration object다. API_KEY로 인증해서, term에 들어가는 단어를 youtube에 검색하겠다는 의미.
+- 두 번째: call-back function
 
+```js
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import YTSearch from 'youtube-api-search';
+import SearchBar from './components/search_bar';
+import VideoList from './components/video_list';
+const API_KEY = "AIzaSyDDLeZ8zqTBtZNk2dRnbC17u0drwNevrQc";
 
+class App extends React.Component {
+  constructor(props) {
+    super(props);
 
+    this.state = {videos : []};
+    YTSearch({key: API_KEY, term: 'surfboards'}, videos => {
+      this.setState({ videos });
+    });
+  }
+  render() {
+    return (
+      <div>
+        <SearchBar />
+        <VideoList videos={this.state.videos} />
+      </div>
+    );
+  }
+}
 
+ReactDOM.render(<App />, document.querySelector('.container'));
+```
 
+- 그리고 index.js에 원래 있던 `App` functional component를 class 형태로 바꿔준다.
+- ES6에서 key, value가 같으면 object에서 한 번만 써주면 된다.
+
+```js
+// video_list.js 파일
+import React from 'react';
+import VideoListItem from './video_list_item';
+
+const VideoList = (props) => {
+  const videoItems = props.videos.map((video) => {
+    return <VideoListItem key={video.etag} video={video} /> ///
+  });
+  return (
+    <ul className="col-md-4 list-group">
+      {videoItems}
+    </ul> ///ul 끝
+  );
+};
+export default VideoList;
+```
+
+- video_list.js 파일을 편집한다.
+- JSX에서 HTML 클래스를 적용하려면 `className`으로 써주면 된다.
+- index.js 파일로 되돌아와서 VideoList를 import하고 render 메소드 안에서 init한다.
+    + 아래 코드에서 VideoList를 init할 때 값을 전달할 수 있는데 `videos`를 props라고 한다.
+    + 만약 function-based components를 class-based로 refactoring 해야한다면 props를 모두 this.props로 바꿔줘야한다. 중요.
+    + 아래 코드는 videos 하나만 보냈는데 공백으로 구분해서 여러개의 variable을 보낼 수 있다.
+
+    ```js
+    import VideoList from './components/video_list';
+    <VideoList videos={this.state.videos} /> /// in render method
+    ```
+
+- 다시 video_list.js 파일로 돌아와서 `import VideoListItem from './video_list_item';` 해준다.
+
+```js
+// video_list_item.js 파일 편집
+import React from 'react';
+const VideoListItem = ({video}) => { // (props) => {
+  // const video = props.video;
+  // 매개변수로 props를 받아서 위 코드처럼 video를 고르는 것은
+  // 매개변수로 {video} 를 넣는 것과 동일하다
+  return (
+    <li>{video.snippet.description}</li> ///
+  );
+}
+export default VideoListItem;
+```
+
+- 위 코드처럼 VideoListItem component를 만든다. props를 받는 형태로 하는데 VideoList에서도 VideoListItem init할 때 매개변수로 video를 전달해준다.
+- map 함수를 이용해서 array의 video 하나하나를 VideoListItem으로 init해서 li로 만든다.
+- 그리고 ul 안에다가 새로 만들어진 array를 바로 넣는데 그냥 이렇게 넣으면 에러가 난다. 이유는 다음과 같다.
+    + 정보들이 적혀있는 수십장의 카드를 가지고 있다고 가정하자.
+    + 근데 갑자기 누가 와서 중간에 어떤 카드의 정보를 수정해야한다고 말한다.
+    + 어떤 카드인지는 모르겠는데 그냥 바꿔줘!라고 말하면 나는 전체 카드를 싹 바꿀 수 밖에 없다.
+    + 하지만 카드에 id가 있다면, 특정 id의 카드만 수정하면 된다.
+    + 이처럼 React는 array의 아이템 하나하나에 unique id를 필요로 한다. 변경된 부분만 바꿀 수 있도록.
+- 해결 방법은 리스트 아이템을 생성하는 함수를 init할 때 property로 `key`와 유니크한 값을 전달하면 된다. 끝이다. 위위 코드를 보면 key를 video.etag로 전달한 것을 볼 수 있다.

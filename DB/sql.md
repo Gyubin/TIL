@@ -356,4 +356,6 @@ GROUP BY 1;
 
 - `CASE`, `END`: 조건절 시작과 끝
 - `AS elevation_tier`: CASE END 문도 하나의 결과를 리턴하기 때문에 alias로 쉽게 지칭하게 했다.
-- `WHEN`, `ELSE`: if, else 조건문이라 생각하면 된다. ELSE는 없어도 되는데 그렇게 되면 NULL이 리턴될 수 있다.
+- `WHEN 조건 THEN 결과`: 조건일 때 결과를 리턴한다. if와 실행절.
+- `ELSE`: ELSE는 없어도 되는데 그렇게 되면 NULL이 리턴될 수 있다.
+- `BETWEEN 500 AND 1999`: 범위 지정할 때.
