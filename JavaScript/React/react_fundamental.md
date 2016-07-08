@@ -268,7 +268,7 @@ class SearchBar extends React.Component {
 ```js
 render() {
     return (
-      <div>
+      <div className="search-bar">
         <input
           value={this.state.term + '..'}
           onChange={event => this.setState({term: event.target.value})} /> ///
@@ -302,27 +302,40 @@ import ReactDOM from 'react-dom';
 import YTSearch from 'youtube-api-search';
 import SearchBar from './components/search_bar';
 import VideoList from './components/video_list';
+import VideoDetail from './components/video_detail';
 const API_KEY = "AIzaSyDDLeZ8zqTBtZNk2dRnbC17u0drwNevrQc";
 
+// Create a new component.
+// This component should produce some HTML.
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {videos : []};
+    this.state = {
+      videos : [],
+      selectedVideo : null
+    };
     YTSearch({key: API_KEY, term: 'surfboards'}, videos => {
-      this.setState({ videos });
+      this.setState({
+        videos:videos,
+        selectedVideo: videos[0]
+      });
     });
   }
   render() {
     return (
       <div>
         <SearchBar />
-        <VideoList videos={this.state.videos} />
+        <VideoDetail video={this.state.selectedVideo}/> ///
+        <VideoList
+          videos={this.state.videos}
+          onVideoSelect={selectedVideo => this.setState({selectedVideo})} />
       </div>
     );
   }
 }
 
+// Take this component's generated HTML and put it ont the page in the DOM.
 ReactDOM.render(<App />, document.querySelector('.container'));
 ```
 
@@ -336,14 +349,21 @@ import VideoListItem from './video_list_item';
 
 const VideoList = (props) => {
   const videoItems = props.videos.map((video) => {
-    return <VideoListItem key={video.etag} video={video} /> ///
+    return (
+      <VideoListItem
+        onVideoSelect={props.onVideoSelect}
+        key={video.etag}
+        video={video} /> ///
+    );
   });
+
   return (
-    <ul className="col-md-4 list-group">
+    <ul className="col-lg-12 col-md-4 list-group">
       {videoItems}
-    </ul> ///ul 끝
+    </ul> ///
   );
 };
+
 export default VideoList;
 ```
 
@@ -364,14 +384,28 @@ export default VideoList;
 ```js
 // video_list_item.js 파일 편집
 import React from 'react';
-const VideoListItem = ({video}) => { // (props) => {
+
+const VideoListItem = ( {video, onVideoSelect} ) => {
   // const video = props.video;
   // 매개변수로 props를 받아서 위 코드처럼 video를 고르는 것은
-  // 매개변수로 {video} 를 넣는 것과 동일하다
+  // 매개변수로 {video} 를 넣는 것과 동일하다. 여러개 넣을 수도 있음.
+
+  const imageUrl = video.snippet.thumbnails.default.url;
+
   return (
-    <li>{video.snippet.description}</li> ///
+    <li onClick={()=>onVideoSelect(video)} className="list-group-item">
+      <div className="video-list media">
+        <div className="media-left">
+          <img className="media-object" src={imageUrl} />
+        </div>
+        <div className="media-body">
+          <div className="media-heading">{video.snippet.title}</div>
+        </div>
+      </div>
+    </li>
   );
 }
+
 export default VideoListItem;
 ```
 
@@ -384,3 +418,213 @@ export default VideoListItem;
     + 하지만 카드에 id가 있다면, 특정 id의 카드만 수정하면 된다.
     + 이처럼 React는 array의 아이템 하나하나에 unique id를 필요로 한다. 변경된 부분만 바꿀 수 있도록.
 - 해결 방법은 리스트 아이템을 생성하는 함수를 init할 때 property로 `key`와 유니크한 값을 전달하면 된다. 끝이다. 위위 코드를 보면 key를 video.etag로 전달한 것을 볼 수 있다.
+
+```js
+// video_detail.js 파일 편집
+import React from 'react';
+
+const VideoDetail = ({video}) => {
+  if (!video) {
+    return <div>Loding...</div> ///
+  }
+  const videoId = video.id.videoId;
+  const url = `https://www.youtube.com/embed/${videoId}`;
+
+  return (
+    <div className="video-detail col-md-8">
+      <div className="embed-responsive embed-responsive-16by9">
+        <iframe className="embed-responsive-item" src={url}></iframe>
+      </div>
+      <div className="details">
+        <div>{video.snippet.title}</div>
+        <div>{video.snippet.description}</div>
+      </div>
+    </div>
+  );
+}
+
+export default VideoDetail;
+```
+
+- 위 코드의 가장 위에 `!video`로 조건 달아준 것은 props가 Null일 경우를 처리해주는 코드다.
+- ES6 문법에서 `` `code` `` 처럼 쓰면 일종에 format 형태로 사용할 수 있다. 정확한 명칭은 나중에 따로 알아보겠지만 위 코드의 url 부분이 사용예이다.
+- div의 className은 강의에 나온 것을 그대로 쓴 것이고, iframe에 src 부분을 넣으면 그 url의 내용을 보여준다.
+- VideoDetail component는 props의 video 요소를 활용해서 youtube 영상을 재생하고 상세 정보를 띄워주는 부분이다.
+- 동시에 이 Component를 index.js 파일에서 SearchBar init한 위치 바로 아래에서 init해주는데 video라는 props 요소 이름으로 state의 selectedVideo를 넣어주는 것이다.
+    + 아래 코드에서 보면 state에 selectedVideo라는 값을 추가했고
+    + VideoDetail init할 때 넣어주는 것을 볼 수 있다.
+
+    ```js
+    this.state = {
+      videos : [],
+      selectedVideo : null
+    };
+    <VideoDetail video={this.state.selectedVideo}/> ///
+    ```
+
+- VideoList에 이벤트 구현
+    + 우선 첫 번째 코드 그룹에서 VideoList component를 init할 때 props 요소를 하나 더 써준다. 아래처럼 onVideoSelect에 함수를 넣어 전달하면 된다.
+    + 두 번째 코드 그룹에서 보면 전달받은 onVideoSelect를 다시 VideoListItem에 전달한다.
+    + 세 번째 코드그룹에서 전달받은 onVideoSelect를 li element의 onClick의 callback function으로 활용한다. 각각의 아이템에 video가 할당되어있으므로 매개변수로 바로 써주면 된다. 여기서 onclick에 그냥 `onVIdeoSelect(video)`를 바로 넣어주는 것이 아니라 굳이 arrow function을 활용하는 것은 this가 가리키는 것이 달라서 그러는 것 같다.
+
+    ```js
+    //index.js에서 init할 때 
+    <VideoList
+      videos={this.state.videos}
+      onVideoSelect={selectedVideo => this.setState({selectedVideo})} /> ///
+
+    // video_list.js에서 VideoListItem init할 때
+    <VideoListItem
+      onVideoSelect={props.onVideoSelect}
+      key={video.etag}
+      video={video} /> ///
+
+    // video_list_item.js
+    return (
+      <li onClick={()=>onVideoSelect(video)} className="list-group-item">
+        // ... 생략
+      </li> ///
+    );
+    ```
+
+- css 파일을 수정한다. style 폴더의 style.css 파일이다.
+    + component의 class나 function을 만들 땐 SearchBar 형태의 camel case로 하고, 파일명은 under bar로 search_bar.js 형태, css에서 클래스 명은 dash를 활용하면 좋다. `className="search-bar"`
+
+    ```css
+    search-bar {
+      margin: 20px;
+      text-align: center;
+    }
+
+    .search-bar input {
+      width: 75%;
+    }
+
+    .video-item img {
+      max-width: 64px;
+    }
+
+    .video-detail .details {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .list-group-item {
+      cursor: pointer;
+    }
+
+    .list-group-item:hover {
+      background-color: #eee;
+    }
+    ```
+
+### 2.8 SearchBar 검색어 적용하기
+
+#### 2.8.1 
+
+```js
+// index.js 파일 수정
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      videos : [],
+      selectedVideo : null
+    };
+
+    this.videoSearch('클래시로얄');
+  }
+
+  videoSearch(term) {
+    YTSearch({key: API_KEY, term: term}, videos => {
+      this.setState({
+        videos:videos,
+        selectedVideo: videos[0]
+      });
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <SearchBar onSearchTermChange={term => this.videoSearch(term)}/>
+        <VideoDetail video={this.state.selectedVideo}/>
+        <VideoList
+          videos={this.state.videos}
+          onVideoSelect={selectedVideo => this.setState({selectedVideo})} />
+      </div>
+    );
+  }
+}
+
+// Take this component's generated HTML and put it ont the page in the DOM.
+ReactDOM.render(<App />, document.querySelector('.container'));
+```
+
+- YTSearch 메소드를 constructor 바깥으로 뺀다. init할 때만 실행되는게 아니라 callback function으로 활용하기 위함이다.
+- SearchBar init할 때 props로 위에서 만든 메소드를 넘겨준다.
+
+```js
+// search_bar.js 파일 수정
+import React, { Component } from 'react';
+
+class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { term: ' ' };
+  }
+
+  render() {
+    return (
+      <div className="search-bar">
+        <input
+          value={this.state.term}
+          onChange={event => this.onInputChange(event.target.value)} />
+      </div>
+    );
+  }
+
+  onInputChange(term) {
+    this.setState({term});
+    this.props.onSearchTermChange(term);
+  }
+}
+
+export default SearchBar;
+```
+
+- input이 `onChange`할 때마다 props로 전달받은 `onSearchTermChange` 메소드를 호출하도록 만든다.
+- 맨 위에서 search_bar.js 파일을 처음 만들 때 위처럼 함수를 따로 빼서 onChange에 넣으려고 `bind(this)`를 썼는데 위처럼 사용하면 되겠다.
+
+#### 2.8.2 Throttling user input: lodash
+
+```sh
+npm install --save lodash
+```
+
+- terminal에서 `lodash`를 인스톨한다.
+- 설치 후 index.js 파일에서 `import _ from 'lodash';` 로 불러온다.
+
+```js
+//index.js 파일
+render() {
+  const videoSearch = _.debounce((term) => { this.videoSearch(term) }, 300);
+  return (
+    <div>
+      <SearchBar onSearchTermChange={videoSearch}/>
+      <VideoDetail video={this.state.selectedVideo}/>
+      <VideoList
+        videos={this.state.videos}
+        onVideoSelect={selectedVideo => this.setState({selectedVideo})} />
+    </div>
+  );
+}
+```
+
+- `render` 메소드 부분만 편집한다.
+- 원래 썼던 `this.videoSearch(term)` 부분을 lodash의 `debounce`로 감싸주면 된다.
+- 두 번째 매개변수로 오는 것이 지연시간이다. 즉 함수 실행을 지연시킬 때 활용한다. 밀리세컨드 단위다. 300이면 0.3초.
