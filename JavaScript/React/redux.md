@@ -1,14 +1,6 @@
 # Redux
 
-1. 모든 데이터, 상태는 하나의 state tree에 저장이 된다.
-
-2. state tree 는 read only 하다. action을 통해서만 상태를 변경할수 있다.
-
-3. Only Pure Function
--입력받은 인자의 값을 직접 수정하지 않는다. 새롭게 객체를 복사해 생성한 다음 이에 새로운 상태를 추가, 수정한다.
-- side effect가 일어나서는 안된다. api 를 부른다거나 하는 예측 불가능한 다른 행동을 해서는 안되고 오직 입력받은 데이터를 기반으로한 동작만 진행한다.
-
-모든 데이터를 single object에 집어넣는다. state라고 한다. component 다룰 때 썼던 state와는 다르다. application level의 state다.
+React가 View를 관리하는 라이브러리라면 Redux는 데이터를 관리하는 라이브러리다.
 
 ## 1. Reducer
 
@@ -23,10 +15,11 @@
 ```
 
 - Application-level state는 single object다.
-- books와 activeBook은 각각 다른 reducer에 의해 생성된다. books는 Books Reducer에 의해, activeBook은 ActiveBook reducer에 의해서.
+- `books와` `activeBook은` 각각 다른 reducer에 의해 생성된다. books는 Books Reducer에 의해, activeBook은 ActiveBook reducer에 의해서.
 - 즉 reducer는 application-level state의 value 부분이고, 이 value를 만들어내는 것이라 표현해도 된다. key 이름은 맘대로 해도 된다.
 - 데이터 종류가 두 개라면 reducer도 2개다. Application-level state object에 2개의 요소가 속해있는 셈.
 - 데이터가 하나면 하나의 object가 value가 되지만, 두 개라면 Array에 여러개의 object가 들어간다.
+- `reducers` 폴더의 각 데이터 js 파일들은 같은 위치의 `index.js` 파일에 import 되어서 아래 코드처럼 뭉쳐지고, global state가 된다.
 
 ### 1.2 생성 및 연결
 
@@ -109,3 +102,108 @@ export default connect(mapStateToProps)(BookList);
 - `BookList` container에서 활용하는 데이터는 books이므로 mapStateToProps 함수에선 위처럼 return값을 조정해준다.
 - 마지막으로 import했던 connect 함수를 활용해서 마지막 export에서 적힌 것처럼 적어준다. 일반 BookList component가 아니라 mapStateToProps로 Redux와 연결된 container를 만들어서 export하는 것이다.
 - 그리고 위 경우에선 기존 Component 만들 때와 달리 this.state가 constructor에 없다. 하지만 Redux와 mapStateToProps로 연결되면서 state가 바뀌면 BookList도 바로바로 다시 render되게 된다.
+
+## 4. Actions
+
+### 4.1 개념
+
+![Imgur](http://i.imgur.com/9P9HN0H.png)
+
+- 웹 페이지에서 변화는 유저의 클릭 같은 직접적인 이벤트 트리거나, 로딩이 끝난 시점 같은 간접적인 트리거로 시작된다. Redux 구조 하에서 이벤트 트리거가 일어나면 Action Creator가 호출된다.
+- Action Creator는 Action object를 리턴하는 function이다. object 내에는 Type과 데이터가 존재한다.
+    + `type`: action을 설명하는 문자열 상수
+    + data: reducer에서 생성하는 데이터처럼 적으면 된다.
+- action은 자동으로 모든 reducer에게 보내진다. 그래서 주로 위 그림에서도 볼 수 있듯이 reducer에서 `switch`문으로 type을 분기해서 특정 작업을 하게된다. 특정 작업은 주로 action의 요소로 들어온 데이터를 리턴하는 작업이다.
+- reducer가 state와 연결되어있기 때문에 리턴하면 연결된 state의 한 요소의 값을 바꾸게 된다. 위 그림에서는 `{title:Javascript}` 부분이 `{title:Book 2}`로 바뀌는 것이다.
+- 그 후에 state가 변했다는 것을 container에 알리게 되고, 그 container가 다시 render되게 된다.
+
+### 4.2 Action 연결 시키기
+
+- `actions/index.js` 파일에 action creator function을 만든다.
+    + action, 즉 js plain object를 리턴하는 것이고 type과 payload(데이터) property를 갖는다. type은 주로 문자열 상수 variable인데 일단은 아래처럼 적어두었다.
+
+    ```js
+    export default function selectBook(book) {
+      // selectBook is a action creator.
+      // It needs to return an action, an object with a type property.
+      return {
+        type: 'BOOK_SELECTED',
+        payload: book
+      };
+    }
+    ```
+
+- 만들어진 function이 book list 화면에서 특정 책 부분이 선택될 때마다 호출되어야 하므로 `book_list.js`에 import시킨다. `import { selectBook } from '../actions/index';`
+- action을 모든 reducer에 보내는 역할을 하는 `bindActionCreators` 함수를 import 한다. `import { bindActionCreators } from 'redux';`
+- 아래쪽에 `mapDispatchToProps` 함수를 만들고, `connect` 함수의 매개변수로 추가해준다. 아래 코드.
+    + `dispatch`는 callback function인데 모든 action을 받아서 reducer 각각에 뿌려주는 역할을 한다.
+    + `mapDispatchToProps` 함수 역시 `mapStateToProps`와 같은 역할을 한다. `this.props`에서 호출해서 사용할 수 있도록 만든다. 아래 코드에서는 key인 selectBook이 this.props.selectBook 형태로 호출 가능해진다.
+
+    ```js
+    function mapDispatchToProps(dispatch) {
+      return bindActionCreators({ selectBook : selectBook }, dispatch);
+    }
+    export default connect(mapStateToProps, mapDispatchToProps)(BookList);
+    ```
+
+### 4.3 event 연결
+
+```js
+renderList() {
+  return this.props.books.map((book) => {
+    return (
+      <li
+        key={book.title}
+        onClick={ () => this.props.selectBook(book) }
+        className="list-group-item ">
+        {book.title}
+      </li> ///
+    );
+  })
+}
+```
+
+- `book_list.js` 파일의 `renderList` 함수를 수정한다. li element에 click event를 넣어준다.
+
+## 5. Active Book 부분 구현
+
+### 5.1 reducer 만들기
+
+```js
+export default function(state=null, action) {
+  switch(action.type) {
+    case 'BOOK_SELECTED':
+      return action.payload;
+  }
+  return state
+}
+```
+
+- 모든 reducer는 두 개의 매개변수를 받는다.
+    + `state` : application level이 아니라 해당 reducer가 관리하는 state다.
+    + `action`
+- `undefined`를 리턴하면 에러가 나므로 state의 기본값이 null이 되도록 값을 지정해준다.
+- reducer 안에서 state를 mutate하는 일은 없어야 한다. 함수의 내용은 정말 단순하게 특정 type에서 어떤 state를 리턴할 것인지 정도여야 한다. state의 값을 조정하면 안된다.
+- `reducers/index.js` 파일에 `ActiveBookReducer`를 import한다.
+
+    ```js
+    import { combineReducers } from 'redux';
+    import BooksReducer from './reducer_books';
+    import ActiveBookReducer from './reducer_active_book';
+
+    const rootReducer = combineReducers({
+      books: BooksReducer,
+      activeBook: ActiveBookReducer
+    });
+
+    export default rootReducer;
+    ```
+
+## 요약
+
+- 모든 데이터, 상태는 하나의 state tree에 저장이 된다.
+- state tree 는 read only 하다. action을 통해서만 상태를 변경할수 있다.
+- Only Pure Function
+    + 입력받은 인자의 값을 직접 수정하지 않는다. 새롭게 객체를 복사해 생성한 다음 이에 새로운 상태를 추가, 수정한다.
+    + side effect가 일어나서는 안된다. api 를 부른다거나 하는 예측 불가능한 다른 행동을 해서는 안되고 오직 입력받은 데이터를 기반으로한 동작만 진행한다.
+    + 모든 데이터를 single object에 집어넣는다. state라고 한다. component 다룰 때 썼던 state와는 다르다. application level의 state다.
