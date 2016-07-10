@@ -179,12 +179,19 @@ export default function(state=null, action) {
 }
 ```
 
+- 동작 순서
+    + action.js 파일은 action creator function을 export한다.
+    + action creator는 action object를 리턴하는 function인데 object는 `type` property를 꼭 가지고 있어야 한다.
+    + action creator function은 이벤트의 callback function으로 활용된다. 필요한 component 등에 import 되어서 활용된다.
+    + 이벤트가 발생하고 해당 callback function인 action creator가 실행되면 action object가 리턴되는데 이것은 자동으로 모든 reducer에 전달된다.
+    + 모든 reducer는 object의 type property를 확인해서 타겟이 자신이면 state를 바꿔준다. 이 때 switch문을 활용한다. 여기서 타겟이 아닐 경우를 위해 항상 switch문의 `default`를 설정해주거나 switch 바깥에 그냥 state를 변형없이 바로 return하는 부분을 넣어준다.
 - 모든 reducer는 두 개의 매개변수를 받는다.
     + `state` : application level이 아니라 해당 reducer가 관리하는 state다.
-    + `action`
-- `undefined`를 리턴하면 에러가 나므로 state의 기본값이 null이 되도록 값을 지정해준다.
+    + `action`: action이 발생되었을 때 모든 reducer에게 전달되는 object.
+- 처음 실행할 땐 이전 state가 없는 상태이기 때문에 `undefined`일 것이다. 하지만 이를 리턴하면 에러가 나므로 state의 기본값을 ES6 문법으로 정해준다. `null`을 넣거나 초기값을 따로 변수로 만들어서 대입해주면 된다.
 - reducer 안에서 state를 mutate하는 일은 없어야 한다. 함수의 내용은 정말 단순하게 특정 type에서 어떤 state를 리턴할 것인지 정도여야 한다. state의 값을 조정하면 안된다.
 - `reducers/index.js` 파일에 `ActiveBookReducer`를 import한다.
+    + `combineReducers` 함수에 들어가는 object의 key는 global state의 property가 된다. 즉 이름이 같아지므로 동일하게 쓰면 된다.
 
     ```js
     import { combineReducers } from 'redux';
