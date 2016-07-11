@@ -208,8 +208,8 @@ export default function(state=null, action) {
 
 ## 요약
 
-- 모든 데이터, 상태는 하나의 state tree에 저장이 된다.
-- state tree 는 read only 하다. action을 통해서만 상태를 변경할수 있다.
+- 모든 데이터, 상태는 하나의 state tree에 저장이 된다. JavaScript plain object이며 **store**라고 지칭한다. store는 read only고 action을 통해서만 상태를 변경할수 있다.
+- store는 하나지만 로직을 통해 특정 그룹의 데이터들을 리듀서로 따로 관리할 수 있다. 그래서 reducer의 매개변수로 들어가는 state가 store가 아니라고 하는 것이다.
 - Only Pure Function
     + 입력받은 인자의 값을 직접 수정하지 않는다. 새롭게 객체를 복사해 생성한 다음 이에 새로운 상태를 추가, 수정한다.
     + side effect가 일어나서는 안된다. api 를 부른다거나 하는 예측 불가능한 다른 행동을 해서는 안되고 오직 입력받은 데이터를 기반으로한 동작만 진행한다.
