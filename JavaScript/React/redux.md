@@ -170,7 +170,8 @@ renderList() {
 ### 5.1 reducer 만들기
 
 ```js
-export default function(state=null, action) {
+// reducer_active_book.js
+export function(state=null, action) {
   switch(action.type) {
     case 'BOOK_SELECTED':
       return action.payload;
@@ -179,6 +180,10 @@ export default function(state=null, action) {
 }
 ```
 
+- `export default something` vs `export something`
+    + default: 한 파일에서 하나만 export할 수 있다. import할 때는 `{ }` 쓰지 않는데 이름은 내 마음대로 지정할 수 있다. React에선 Component 파일에서 하나의 Component만 만드는게 컨벤션인데 그래서 이 땐 주로 default를 써서 export한다.
+    + non default: "named export"를 뜻한다. 한 파일에서 여러개의 함수나 클래스를 export할 수 있다. 대신 import할 때는 `{ }`로 감싸서 정확한 이름을 명시해줘야 한다.
+    + export default와 named export는 한 파일에서 동시에 사용 가능하다. react 모듈에서 `import React, { Component } from 'react';`라고 쓰는 것을 보면 알 수 있다.
 - 동작 순서
     + action.js 파일은 action creator function을 export한다.
     + action creator는 action object를 리턴하는 function인데 object는 `type` property를 꼭 가지고 있어야 한다.
@@ -189,6 +194,8 @@ export default function(state=null, action) {
     + `state` : application level이 아니라 해당 reducer가 관리하는 state다.
     + `action`: action이 발생되었을 때 모든 reducer에게 전달되는 object.
 - 처음 실행할 땐 이전 state가 없는 상태이기 때문에 `undefined`일 것이다. 하지만 이를 리턴하면 에러가 나므로 state의 기본값을 ES6 문법으로 정해준다. `null`을 넣거나 초기값을 따로 변수로 만들어서 대입해주면 된다.
+    + 공식문서에선 `initialObject` 식으로 기본값을 만들고 함수의 기본값으로 넣는 것으로 설명한다.
+    + 강의에선 `book_detail.js`에서 if 문으로 state의 해당 키 밸류가 null일 때 다른 JSX으로 표현된 요소들을 리턴하는 것으로 예를 들었다.
 - reducer 안에서 state를 mutate하는 일은 없어야 한다. 함수의 내용은 정말 단순하게 특정 type에서 어떤 state를 리턴할 것인지 정도여야 한다. state의 값을 조정하면 안된다.
 - `reducers/index.js` 파일에 `ActiveBookReducer`를 import한다.
     + `combineReducers` 함수에 들어가는 object의 key는 global state의 property가 된다. 즉 이름이 같아지므로 동일하게 쓰면 된다.
@@ -206,10 +213,49 @@ export default function(state=null, action) {
     export default rootReducer;
     ```
 
+### 5.2 BookDetail Container
+
+```js
+// book_detail.js 파일 편집
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+class BookDetail extends Component {
+  render() {
+    if (!this.props.book) {
+      return (
+        <div>Select a book to get started.</div> ///
+      );
+    }
+    return (
+      <div>
+        <h3>Details for:</h3>
+        <div>TITLE: {this.props.book.title}</div>
+        <div>PAGES: {this.props.book.pages}</div>
+      </div>
+    );
+  }
+}
+function mapStateToProps(state) {
+  return {
+    book: state.activeBook
+  };
+}
+export default connect(mapStateToProps)(BookDetail);
+```
+
+- export 수정
+    + `BookDetail` 클래스를 export하던 부분은 지우고 아래 쪽에 함수 2개를 추가한다.
+    + `mapStateToProps` 함수는 object를 리턴하는데 value 부분은 `reducers/index.js` 파일에 기술되어있는 key다.
+    + `connect` 함수를 써서 연결시키고 export한다.
+- state 없을 때 조건 분기: `this.props.book`이 null일 경우엔 그냥 선택하라는 메시지만 띄운다.
+- state가 존재할 때는 타이틀과 페이지를 띄워준다.
+
 ## 요약
 
 - 모든 데이터, 상태는 하나의 state tree에 저장이 된다. JavaScript plain object이며 **store**라고 지칭한다. store는 read only고 action을 통해서만 상태를 변경할수 있다.
-- store는 하나지만 로직을 통해 특정 그룹의 데이터들을 리듀서로 따로 관리할 수 있다. 그래서 reducer의 매개변수로 들어가는 state가 store가 아니라고 하는 것이다.
+- store는 하나지만 로직을 통해 특정 그룹의 데이터들을 리듀서로 따로 관리할 수 있다. 그래서 reducer의 매개변수로 들어가는 state가 store가 아니라고 하는 것이다. 다르게 말하면 application-level state는 reducer들로 구성된다고 말할 수 있다.
+- container나 일반 component에서 application-level(redux-level) state가 아닌 그 component만의 state를 만들어서 사용할 수 있다. Youtube 예제에서 나왔던 class 내에서 constructor로 내부에서 `this.state`로 할당해서 쓰던 것처럼. 예를 들어 SearchBar에서 검색어를 저장할 때 redux level까지는 필요없다.
 - Only Pure Function
     + 입력받은 인자의 값을 직접 수정하지 않는다. 새롭게 객체를 복사해 생성한 다음 이에 새로운 상태를 추가, 수정한다.
     + side effect가 일어나서는 안된다. api 를 부른다거나 하는 예측 불가능한 다른 행동을 해서는 안되고 오직 입력받은 데이터를 기반으로한 동작만 진행한다.
