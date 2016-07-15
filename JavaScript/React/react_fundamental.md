@@ -369,6 +369,7 @@ export default VideoList;
 
 - video_list.js 파일을 편집한다.
 - JSX에서 HTML 클래스를 적용하려면 `className`으로 써주면 된다.
+  + 대부분의 기본 HTML의 속성들은 JSX에서 snakeCase 형태로 적어주면 된다. `onClick`처럼 첫 글자만 소문자, 다음부터는 단어 간격으로 대문자를 처음에 적어주면 대부분 먹힌다고 보면 된다.
 - index.js 파일로 되돌아와서 VideoList를 import하고 render 메소드 안에서 init한다.
     + 아래 코드에서 VideoList를 init할 때 값을 전달할 수 있는데 `videos`를 props라고 한다.
     + 만약 function-based components를 class-based로 refactoring 해야한다면 props를 모두 this.props로 바꿔줘야한다. 중요.
