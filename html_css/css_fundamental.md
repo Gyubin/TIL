@@ -2,6 +2,26 @@
 
 css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 대해서 정리해 나가는 파일
 
+## 0. 종류 별 분류
+
+- 폰트
+  + `font-size`
+  + `color`
+  + `font-family`
+- 배경: `background-color`
+- 텍스트 정렬: `text-align`
+
+    ```html
+    <body>
+      <h3 style="text-align:center">Favorite Football Teams</h3>
+      <ol>
+      <li style="text-align:left">The Hawthorn Football Club</li> 
+        <li style="text-align:center">San Franscisco 49ers</li>
+        <li style="text-align:right">Barcelona FC</li>
+      </ol>     
+    </body>
+    ```
+
 ## 1. 기본
 
 - 브라우저 지원 : 앞에 붙인다. `-webkit-`, `-moz-`, `-o-`
@@ -215,3 +235,4 @@ q:lang(no) { quotes: "~" "~"; }
   color: white;
 }
 ```
+
