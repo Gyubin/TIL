@@ -22,8 +22,11 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     </body>
     ```
 
+- 텍스트 줄간격 조절: `line-height: 100%`
+
 ## 1. 기본
 
+- HTML 링크: `<link rel="stylesheet" type="text/css" href="file_name.css">.`
 - 브라우저 지원 : 앞에 붙인다. `-webkit-`, `-moz-`, `-o-`
 - `#` -> `.` -> `나머지` : 스타일 겹칠 때 적용 우선순위
 - `text-transform: uppercase` : 대문자로 바꾸기
@@ -236,3 +239,49 @@ q:lang(no) { quotes: "~" "~"; }
 }
 ```
 
+## 5. display, visible
+
+### 5.1 display: 어떻게 보여질 것인가
+
+#### 5.1.1 inline
+
+- span, strong, em, label, a, img 등의 태그들이 있다.
+- 줄 바꿈이 일어나지 않는다.
+- width, height 속성을 변경할 수 없다.
+- `display: inline;` : inline element로 바꾼다.
+
+#### 5.1.2 block
+
+- 영역을 나타내는 대부분의 태그들. div, section, article, p, ol, ul, table
+- 가로 전체를 사용하며 줄바꿈된다.
+- width, height 속성 변경 가능.
+- `display: block;` : block element로 바꾼다.
+
+#### 5.1.3 none
+
+- 보이지 않는 속성
+
+#### 5.1.4 inline-block
+
+- block 박스로 만들어지나, inline 처럼 한 줄로 배치가 된다.
+- margin, width, height 속성 지정 가능
+- 기본이 block이거나 inline이거나 모두 이 속성으로 바꿔줄 수 있다.
+- `display: inline-block`: inline-block element로 바꾼다.
+- 상, 하 여백을 margin과 line-height 두가지 속성으로 제어 가능
+- inline-block 속성을 가진 태그끼리 연속으로 사용하면 좌우 5px 정도의 여백이 자동으로 적용된다.
+- IE7 이하는 다음 코드처럼 적용한다.
+
+    ```css
+    div {
+      display: inline-block;
+      *display: inline;
+      *zoom: 1;
+    }
+    ```
+
+### 5.2 visible: 보이게 할 것인가 말 것인가
+
+- `visibility: visible;` : 기본값으로 요소가 그대로 보인다.
+- `visibility: hidden;` : 숨기지만, 자신의 영역은 계속 차지한다. 결국 투명임.
+- `visibility: collapse;` : table 태그에서만 지정할 수 있는 속성이다. 해당 테이블의 행, 열을 숨긴다. 표의 행 열 위치가 뭉개지지 않기 때문에 table에서 사용하면 좋다. 여전히 투명하게 공간을 차지하고, 다른 태그에서 쓰면 hidden처럼 동작한다.
+- `visibility: inherit` : 부모 요소의 값을 상속
