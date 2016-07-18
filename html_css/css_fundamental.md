@@ -5,11 +5,25 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 ## 0. 종류 별 분류
 
 - 폰트
-  + `font-size`
-  + `color`
-  + `font-family`
+    + `font-size` : 크기
+    + `color` : 색깔
+    + `font-family` : 폰트 종류
+    + `font-weight` : 폰트 굵기. bold로 지정해도 되고, 100 단위로 지정해도 좋다. `normal`은 400, `lighter`는 400 이하, `bold`는 700, `bolder`는 700 이상.
+    + `font-style`: `italic`으로 지정하는 용도로 많이 사용
+    + `font-variant : small-caps;` : 대문자 형태를 소문자 크기로 보여주는.
+- 위 폰트 속성을 `font`에다가 다 박을 수도 있다. 순서는 `font : font-style font-variant font-weight font-size/line-height font-family`
+- 텍스트 줄간격 조절: `line-height: 100%`
+    + px, % 단위 넣어서 사용 가능.
+    + 그냥 숫자만 적으면 `em`으로 인식
+    + 글씨 크기가 여러가지인 부분에선 상대단위 쓰는 것을 추천.
+    + 수직정렬에 이용하기도 함.
+- `text-decoration`
+    + `none` : 기본값
+    + `underline`: 밑줄
+    + `overline`: 윗줄
+    + `line-through`: 중앙 취소선같이 생긴 것.
 - 배경: `background-color`
-- 텍스트 정렬: `text-align`
+- `text-align`: 텍스트 정렬
 
     ```html
     <body>
@@ -22,19 +36,24 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     </body>
     ```
 
-- 텍스트 줄간격 조절: `line-height: 100%`
-
 ## 1. 기본
 
+- 크기 단위
+    + `px`: 모니터의 픽셀을 나타냄. 고정적인 단위다.
+    + `%`: 상위 요소에 대한 상대적 단위.
+    + `em`: 해당 element의 폰트 크기에 대한 상대적 단위다. 1em이 해당 폰트 크기와 같다. 그래서 폰트 크기에 따라 동적으로 크기가 변함. 소수점은 `.5` 처럼 표시한다. 그런데 폰트 사이즈를 em으로 지정하면 부모 엘리먼트의 폰트 크기를 참조한다.
+- 색상
+    + 기본 색상 종류: aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, orange, purple, red, silver, teal, white, yellow
+    + RGB: `RGB(255, 0, 0)`
+    + HEX: `#ffcc00`
 - HTML 링크: `<link rel="stylesheet" type="text/css" href="file_name.css">.`
 - 브라우저 지원 : 앞에 붙인다. `-webkit-`, `-moz-`, `-o-`
-- `#` -> `.` -> `나머지` : 스타일 겹칠 때 적용 우선순위
 - `text-transform: uppercase` : 대문자로 바꾸기
 - `letter-spacing: 3px;` : 글자 간격 3px
 - `box-sizing: border-box;` : 설정된 width, height 값을 무조건 지킨다. 이 속성이 없을 때 padding 값이 있으면 태그의 범위가 더 넓어진다. 즉 전체 가로가 width + padding left, right 값이 되는 것. 하지만 속성이 있으며녀 무조건 가로는 width다.
 - `border: none;` : input box에서 테두리선 없애기. 자동으로 있게 마련이다.
 - `outline: none;` : 입력 부분이 focus 되더라도 테두리선으로 강조표시 하지 않음.
-- `transition: all 0.2s ease-in-out;` : [참고링크](https://css-tricks.com/almanac/properties/t/transition/) `transition: [transition-property] [transition-duration] [transition-timing-function] [transition-delay];` 형태로 사용한다. 
+- `transition: all 0.2s ease-in-out;` : [참고링크](https://css-tricks.com/almanac/properties/t/transition/) `transition: [transition-property] [transition-duration] [transition-timing-function] [transition-delay];` 형태로 사용한다.
 
 ## 2. selector
 
@@ -42,6 +61,22 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 - `tag[attributes=value]` : tag 뒤에 대괄호를 쓰면 속성에 접근할 수 있다.
 - `:focus` : colon을 한 번쓰면 다음에 이벤트가 올 수 있다.
 - `::pseudo` : 태그는 없지만 존재하는 placeholder같은 것들을 붙잡을 때 쓴다.
+- 여러 개 선택할 때: 쉼표로 구분한다. 자식 선택할 때도 쉼표로 구분하는 것을 적용할 수 있다.
+
+    ```css
+    h1, p, a, .container, #gyubin {
+        color: aqua;
+    }
+    h1, .container p, a {
+        color: aqua;
+    }
+    ```
+
+- 우선순위
+    + `#` -> `.` -> `나머지` : 스타일 겹칠 때 적용 우선순위
+    + 아래 쪽으로 읽어내려가기 때문에 아래쪽이 최종 적용
+    + 자식을 선택한 부분이 있다면 더 구체적인 부분이 적용된다. 그냥 `div`보다 `.container div` 형태가 더 구체적이므로 후자 적용
+
 
 ## 3. layout - position property
 
@@ -285,3 +320,23 @@ q:lang(no) { quotes: "~" "~"; }
 - `visibility: hidden;` : 숨기지만, 자신의 영역은 계속 차지한다. 결국 투명임.
 - `visibility: collapse;` : table 태그에서만 지정할 수 있는 속성이다. 해당 테이블의 행, 열을 숨긴다. 표의 행 열 위치가 뭉개지지 않기 때문에 table에서 사용하면 좋다. 여전히 투명하게 공간을 차지하고, 다른 태그에서 쓰면 hidden처럼 동작한다.
 - `visibility: inherit` : 부모 요소의 값을 상속
+
+## 6. 폰트
+
+### 6.1 CSS에서 적용 방법
+
+```css
+body{
+  font-family: "돋움", dotum, "굴림", gulim, arial, helvetica, sans-serif;
+}
+```
+
+- 순서대로 우선순위가 적용되는데 첫 번째가 없으면 다음이 적용된다.
+- 한글로 안돼있는 경우가 있어서 위처럼 같은 폰트지만 영어로도 다음 순서로 적어주는게 일반적.
+- 마지막의 `sans-serif`는 폰트가 아니라 형태를 나타내므로 앞 폰트가 하나도 없다면 sans-serif 형태의 폰트를 적용해라 라는 의미다.
+- 한글 이름이나 띄워쓰기가 있는 폰트는 쌍따옴표로 감싸준다.
+
+### 6.2 sans-serif, serif
+
+- serif는 꺾쇠가 있는것, sans는 없는 것.
+- 
