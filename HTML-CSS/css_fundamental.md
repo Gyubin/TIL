@@ -29,12 +29,37 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     <body>
       <h3 style="text-align:center">Favorite Football Teams</h3>
       <ol>
-      <li style="text-align:left">The Hawthorn Football Club</li> 
+        <li style="text-align:left">The Hawthorn Football Club</li> 
         <li style="text-align:center">San Franscisco 49ers</li>
         <li style="text-align:right">Barcelona FC</li>
       </ol>     
     </body>
     ```
+
+- `text-indent` : 양수는 들여쓰기, 음수 값을 주면 내어쓰기. 주로 `em` 값을 준다.
+- `text-transform`: 글자를 강제로 대, 소문자로 바꾼다.
+    + `uppercase`: 대문자로
+    + `lowercase`: 소문자로
+    + `capitalize`: 각 단어의 첫 글자를 대문자로
+- 글자 간격
+    + `letter-spacing`: 자간을 설정한다. 0이 기본 값이다.
+    + `word-spacing: `: 단어 사이 띄어쓰기 간격 조절. 0이 기본값.
+-`vertical-align`: 연달아 오는 inline 속성의 엘리먼트 간의 정렬을 말한다. 일반적인 중앙 정렬, 중앙 배치 그런게 아니다.
+    + `baseline` : 텍스트 베이스라인 기준. 기본값.
+    + `sub` : 아래 첨자
+    + `super` : 윗 첨자
+    + `top` : 해당 줄의 가장 높은 요소 기준으로 위에 정렬
+    + `text-top` : 부모 요소의 글자를 기준으로 맨 위에 정렬
+    + `bottom` : 해당 줄의 가장 낮은 요소를 기준으로 맨 아래에 정렬
+    + `text-bottom` : 부모 요소의 글자를 기준으로 맨 아래에 정렬
+    + `middle` : 부모 요소의 글자를 기준으로 가운데 정렬
+    + `숫자단위(px)` : 베이스 라인 기준으로 양수는 위, 음수는 아래
+    + `비율단위(%)` : line-height 기준으로 양수 비율은 위로, 음수 비율은 아래
+- `white-space`
+    + `nowrap` : 모든 줄바꿈 무시. 한 줄로 쭉 표시된다. br 태그도, 속한 박스도 무시하고 줄바꿈 일어나지 않는다.
+    + `pre` : pre 요소와 동일. 띄어쓰기 O, 줄바꿈 O, 박스 초과 O
+    + `pre-line` : 띄어쓰기 X, 줄바꿈 O, 박스 초과 X
+    + `pre-wrap` : 띄어쓰기 O, 줄바꿈 O, 박스 초과 X
 
 ## 1. 기본
 
@@ -323,8 +348,6 @@ q:lang(no) { quotes: "~" "~"; }
 
 ## 6. 폰트
 
-### 6.1 CSS에서 적용 방법
-
 ```css
 body{
   font-family: "돋움", dotum, "굴림", gulim, arial, helvetica, sans-serif;
@@ -336,7 +359,24 @@ body{
 - 마지막의 `sans-serif`는 폰트가 아니라 형태를 나타내므로 앞 폰트가 하나도 없다면 sans-serif 형태의 폰트를 적용해라 라는 의미다.
 - 한글 이름이나 띄워쓰기가 있는 폰트는 쌍따옴표로 감싸준다.
 
-### 6.2 sans-serif, serif
+## 7. 배경 이미지
 
-- serif는 꺾쇠가 있는것, sans는 없는 것.
-- 
+- `background-image: url('../img/bg.png');`
+- `background-repeat`
+    + `repeat` : 이미지 바둑판 모양으로 반복. 기본값.
+    + `repeat-x` : 가로로 반복
+    + `repeat-y` : 세로로 반복
+    + `no-repeat` : 한 번만 보여주고 반복 없음
+- `background-position`
+    + 수치 값: `px` 또는 `%`로 지정. 기준은 좌우로는 좌측, 상하로는 상 기준. %는 이미지의 사이즈 기준으로 상대값이라고 한다.
+    + 문자 값: `top`, `bottom`, `left`, `right`, `center`
+    + 한 개 값만 지정할 수도 있고, 공백으로 구분해서 두 개 값을 입력할 수 있다.
+    + 한 개 값을 **수치**로 입력하면 x좌표 값이 되고, y좌표는 자동으로 `center`가 된다. 하지만 **문자** 값으로 하나만 입력하면 각 값의 성질에 따라 x 혹은 y 값이 정해지고, 나머지 값은 역시 center가 된다. center 값을 하나만 넣게되면 당연히 정 중앙에 위치.
+    + 두 개 값을 수치로 입력하면 순서대로 x, y 좌표로 적용된다. 다만 문자값으로 입력하면 순서 상관없다. 그래도 순서 지키는게 좋을듯.
+    + `background-position: 100% 16px;`
+    + `background-position: right bottom;`
+- `background-size`: position에서와 같은 원리로 수치나 퍼센트를 한 개 혹은 두 개 입력해주면 된다. 문자값은 없다.
+- `background-attachment` : 배경이미지가 보이는걸 어떻게 할지.
+    + `scroll` : 기본 값. 해당 element의 그 위치에 고정되어있다. 스크롤을 하더라도 이미지는 움직이지 않는다.
+    + `local` : 스크롤을 하면 사라진다.
+    + `fixed` : background-position의 좌표를 뷰포트 기준으로
