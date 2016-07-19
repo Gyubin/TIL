@@ -18,7 +18,7 @@
 
 ## 3. 의사코드
 
-```c
+```
 function Dijkstra(G, w, s)
     for each vertex v in V[G]   // 초기화
         d[v] := infinity
