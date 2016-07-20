@@ -380,3 +380,62 @@ body{
     + `scroll` : 기본 값. 해당 element의 그 위치에 고정되어있다. 스크롤을 하더라도 이미지는 움직이지 않는다.
     + `local` : 스크롤을 하면 사라진다.
     + `fixed` : background-position의 좌표를 뷰포트 기준으로
+
+## 8. border
+
+`top`, `bottom`, `left`, `right` 네 변에 적용 가능.
+
+### 8.1 border-width
+
+```css
+div {
+  border-top-width : 3px;
+}
+```
+
+- border-방향-width 형태로 작성
+- px 값을 많이 사용.
+
+### 8.2 border-style
+
+```css
+div {
+  border-right-style : dotted;
+}
+```
+
+- border-방향-style 형태로 사용
+- `none` : 기본값. 선 없음
+- `solid` : 실선
+- `dotted` : 점선
+- `dashed` : 바느질 선. 긴선 띄우고 짧은 점 반복
+- `double` : 이중 선. width가 최소한 3px은 되어야 볼 수 있다.
+- `groove` : 입체적으로 움푹 들어간 것처럼. 최소 굵기 2px
+- `ridge` : groove와 반대로 돌출
+- `inset` : 요소 전체가 안으로 들어가 보임
+- `outset` : inset의 반대
+
+### 8.3 border-color
+
+```css
+div {
+  border-bottom-color : #aaa;
+}
+```
+
+### 8.4 조합
+
+```css
+/* width style color 순서로 준다.*/
+div {
+  border-top : 3px dotted red;
+}
+```
+
+```css
+div {
+  border-width: 3px 2px 1px 2px; /* top, right, bottom, left */
+  border-width: 3px 1px 2px; /* top, (right+left), bottom */
+  border-color : red #333; /* (top+bottom) (right+left) */
+}
+```
