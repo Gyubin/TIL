@@ -439,3 +439,68 @@ div {
   border-color : red #333; /* (top+bottom) (right+left) */
 }
 ```
+
+## 9. Box model
+
+![box-model](http://webberstd.cdn1.cafe24.com/img/css-1/box-model.png)
+
+### 9.1 margin, padding
+
+- margin은 element 바깥, padding은 안쪽
+- 기본: top, right, bottom, left 속성 줄 수 있고, 나눠 쓸수도 한 번에 적용할 수도 있다. px, em, %로 값을 조절한다.
+- 서로 **붙어있는 element의 margin은 더 큰 값으로 정해진다.** 합쳐지는게 아니다.
+
+### 9.2 width, height, border
+
+- width, height는 border, margin, padding과 겹치는 값이 아니다. 독립적인 값.
+- border 2px, padding 4px, margin 4px인데 전체 너비가 100px이고 싶다면 width를 90px로 줘야한다.
+
+## 10. list-style
+
+### 10.1 list-style-type
+
+```css
+ul {
+  list-style-type : circle;
+}
+```
+
+- ul
+    + `none` : 장식 없음
+    + `disc` : 채워진 원. 보통 기본값
+    + `circle` : 속이 빈 원
+    + `square` : 채워진 사각형
+- ol
+    + `decimal` : 숫자
+    + `lower-alpha` : 소문자 순서
+    + `upper-alpha` : 대문자
+    + `lower-roman` : 로마자 소문자 숫자
+    + `upper-roman` : 로마자 대문자 숫자
+
+### 10.2 list-style-image
+
+```css
+ul {
+  list-stype-image : url('../img/dot.png');
+}
+```
+
+### 10.3 list-style-position
+
+```css
+ul {
+  list-style-position : inside; /* 불릿이 글 문단 내부에 위치 */
+  list-style-position : outside; /* 기본값 */
+}
+```
+
+### 10.4 조합 가능
+
+```css
+ul {
+  list-style : square url('../img/dot.png') inside;
+}
+```
+
+- `type - image - position` 순서로.
+- 타입과 이미지 모두 지정하면 image가 로드되지 않았을 때 type으로 보여진다.
