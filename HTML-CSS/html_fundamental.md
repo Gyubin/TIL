@@ -31,26 +31,6 @@ html에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     + `<div>`
     + `<p>` : 문단. 한 주제의 글 뭉치들을 넣으면 된다.
     + `<pre>` : 시 같은 특정한 형태가 있는 텍스트를 넣을 때. 공백이 다 적용된다.
-- 표
-    + `<table>` 태그로 전체를 감싼다.
-    + 행을 뜻하는 `<tr>` 태그를 table 하위에 두고
-    + 컬럼은 tr 태그 하위에 `<td>` 태그를 여러개 넣으면 된다.
-
-    ```html
-    <body>
-      <table border="1px">
-        <tr>
-          <td>111</td>
-          <td>222</td>
-        </tr>
-        <tr>
-          <td>333</td>
-          <td>444</td>
-        </tr>
-      </table>
-    </body>
-    ```
-
 - Escape characters
     + `&nbsp;` `&#160;`: 한 칸 띄우기
     + `&amp;` `&#38;`: &
@@ -155,3 +135,166 @@ html에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 
     <p><dfn><abbr title="Hyper Text Markup Language">HTML</abbr></dfn>은 웹 페이지 작성을 위한 마크 업 언어입니다.</p>
     ```
+
+## 5. 테이블
+
+- `<table>` 태그로 전체를 감싼다.
+    + `summary` 속성: 표에 대한 설명을 적어준다.
+- `<caption>` : table element 안에서 맨 첫번째로 나와야 함. 접근성의 관점에서 필수로 넣어야 한다. 표의 제목 역할.
+- `<colgroup>`: caption 다음에 와서 열을 한 번에 모아서 속성을 지정하는데 사용한다. 여러개 만들어서 사용할 수 있다.
+    + `span` 속성은 한 번에 컬럼을 몇 개 선택할 것이냐다. 아래 예제에서는 1, 2번째 컬럼을 선택해서 10% 너비 지정하고, 배경색을 red로 했다.
+    + 자동으로 다음 두 개는 3번째, 4번째다.
+
+    ```html
+    <table>
+      <colgroup>
+        <col span="2" width="10%" style="background-color:red">
+        <col width="40%;" style="background-color:yellow">
+        <col width="40%;">
+      </colgroup>
+      <tr>
+        <th rowspan="2">출품물</th>
+        <th rowspan="2">작품규격</th>
+        <td rowspan="2">A4 패널 매수(
+          <input type="text" style="width:60px;" align="right" />)매
+        </td>
+        <td>
+          <input type="radio" value="A4 패널 가로 (29.7 x 21.0 cm)" />
+          A4 패널 세로 (21.0 x 29.7 cm)
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="radio" value="A4 패널 세로 (21.0 x 29.7 cm)" />
+          A4 패널 가로 (29.7 x 21.0 cm)
+        </td>
+      </tr>
+    </table>
+    ```
+
+- `<thead>`, `<tbody>`, `<tfoot>`: 행을 그룹화하는 요소. table element의 자식으로 caption, colgroup 다음에 오게 된다.
+    + `<thead>`: 열의 제목으로 구성된 행의 집합. table element 내에서 한 번만 쓸 수 있음. tbody나 tfoot보다 먼저 선언되어야 한다.
+    + `<tbody>`: 여러번 선언해서 그룹화할 수 있다. 아래 코드에선 남, 여를 tbody로 구분해서 그룹핑했다.
+    + `<tfoot>`: 한 번만 쓸 수 있고, tbody보다 위에 선언해도 맨 마지막에 위치한다.
+
+    ```html
+    <table>
+      <thead>
+        <tr>
+          <th>이름</th>
+          <th>나이</th>
+          <th>성별</th>
+          <th>100M 달리기</th>
+          <th>윗몸 일으키기</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>홍길동</td>
+          <td>22세</td>
+          <td>남</td>
+          <td>15.25</td>
+          <td>29</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <td>황진이</td>
+          <td>20세</td>
+          <td>여</td>
+          <td>16.12</td>
+          <td>41</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">참가자 평균</td>
+          <td>15.7</td>
+          <td>35</td>
+        </tr>
+      </tfoot>
+    </table>
+    ```
+
+- 위 예제처럼 행을 뜻하는 `<tr>` 태그를 상위 태그 아래에 두고, `<td>` 태그를 그 하위에 여러개 사용해서 값을 넣어준다.
+- `scope` 속성: `th` element에서 사용 가능한 속성이다. 해당 th 요소가 어느 영역의 제목을 뜻하는 지를 정의
+    + `row`: 행에 있는 셀들에 적용
+    + `col`: 같은 열에 있는 셀들에 적용
+    + `rowgroup`: 동일한 행 집합에 있는 다른 모든 셀에 적용. 요소가 행 집합을 가리킬 때에만 사용
+    + `colgroup`: 동일한 열 집합이 있는 다른 모든 셀에 적용. 요소가 열 집합을 가리킬 때에만 사용
+
+    ```html
+    <table style="width:100%; font-size:12px;">
+      <caption>참가자 별 점수 표</caption>
+      <colgroup style="background:#fff;border-right:2px solid #333;">
+        <col>
+      </colgroup>
+      <colgroup style="background:#eee;border-right:3px double #333;">
+        <col>
+        <col>
+      </colgroup>
+      <colgroup>
+        <col>
+        <col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th rowspan="2" scope="rowgroup">thead</th>
+          <th colspan="2" scope="colgroup">참가자 (colgroup)</th>
+          <th colspan="2" scope="colgroup">항목 (colgroup)</th>
+        </tr>
+        <tr>
+          <th scope="col">이름 <br>(col)</th>
+          <th scope="col">나이 <br>(col)</th>
+          <th scope="col">100M 달리기 <br>(col)</th>
+          <th scope="col">윗몸 일으키기 <br>(col)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th rowspan="3" scope="rowgroup">tbody</th>
+          <th colspan="4" scope="rowgroup">남성 (rowgroup)</th>
+        </tr>
+        <tr>
+          <th scope="row">홍길동 (row)</th>
+          <td>24</td>
+          <td>15.44</td>
+          <td>31</td>
+        </tr>
+        <tr>
+          <th scope="row">임꺽정 (row)</th>
+          <td>31</td>
+          <td>16.3</td>
+          <td>28</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <th rowspan="3" scope="rowgroup">tbody</th>
+          <th colspan="4" scope="rowgroup">여성 (rowgroup)</th>
+        </tr>
+        <tr>
+          <th scope="row">장옥빈 (row)</th>
+          <td>29</td>
+          <td>18.12</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <th scope="row">심청이 (row)</th>
+          <td>21</td>
+          <td>17.1</td>
+          <td>33</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="rowgroup">tfoot</th>
+          <th colspan="2" scope="row">평균 (row)</th>
+          <td>16.74</td>
+          <td>28</td>
+        </tr>
+      </tfoot>
+    </table>
+    ```
+
+- 마지막으로 테이블로 레이아웃 잡지는 말자.
