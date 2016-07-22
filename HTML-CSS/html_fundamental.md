@@ -115,3 +115,43 @@ html에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 
 - a의 href 속성에 `#`으로 시작하는 형태로 적어주면 된다. 원하는 곳의 id 값을 적어주면 된다.
 - 해당 부분은 id 속성을 지정해주면 된다. 주로 헤딩을 이용.
+
+## 3. 비추천 element
+
+### 3.1 절대 네버
+
+- `<font>`: css에서 적용해야 함.
+- `<center>` : 문단 정렬은 `text-align: center;` 을 사용한다.
+- `<blink>`, `<marquee>` : 깜빡이고 흐르는 효과를 가진다. 매우 산만함.
+
+### 3.2 사용 지양
+
+- `<iframe>` : 특별한 경우가 아니라면 사용하지 말자. 웹접근성, 검색엔진 접근에서 불리하다.
+- `<big>`, `<small>` : 크게 작게 보여주는 요소. css로 하자.
+- `<i>`, `<b>`, `<s>` : 이탤릭, 굵게, 취소선. `em`, `strong`, `del`을 쓰자.
+
+## 4. 문구 요소
+
+- `<abbr>` : 축약어(abbreviation)을 나타낸다. 마우스 커서를 갖다대면 툴팁이 뜬다.
+
+    ```html
+    <abbr title="World Wide Web">WWW</abbr>는 언터넷에 연결된...
+    ```
+
+- `<address>` : 해당 사이트를 만든 사람의 연락처를 나타낸다. 주소 외에도 이메일, 전화번호 등 다양한 정보 담을 수 있음. 저작권 표기는 안에 담지 않는다.
+
+    ```html
+    <address>
+      <p><a href="mailto:geubin0414@gmail.com">손규빈</a></p>
+      <p>서울 특별시 서대문구</p>
+      <p>010-1234-5678</p>
+    </address>
+    ```
+
+- `<dfn>` : 정의. definition을 뜻한다. 이 element를 쓰려면 dfn이 속한 블록에서 설명이 포함되어야 한다. dfn 요소에 title 속성으로 설명을 넣든지, 안에 abbr 요소에서 title 속성을 넣든지 하면 된다.
+
+    ```html
+    <p><dfn>언감생심</dfn>은 감히 바랄 수도 없다는 뜻의 사자성어입니다.</p>
+
+    <p><dfn><abbr title="Hyper Text Markup Language">HTML</abbr></dfn>은 웹 페이지 작성을 위한 마크 업 언어입니다.</p>
+    ```
