@@ -82,10 +82,70 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 
 ## 2. selector
 
-- `grand parents child` : 태그를 순서대로 한 칸 씩 띄워서 쓰면 자식을 의미한다.
-- `tag[attributes=value]` : tag 뒤에 대괄호를 쓰면 속성에 접근할 수 있다.
-- `:focus` : colon을 한 번쓰면 다음에 이벤트가 올 수 있다.
-- `::pseudo` : 태그는 없지만 존재하는 placeholder같은 것들을 붙잡을 때 쓴다.
+### 2.1 자식, 형제
+
+- 자식 선택자
+    + ` ` 공백: `grand parents child` 처럼 element를 순서대로 한 칸 씩 띄워서 쓰면 모든 자식을 의미한다. 자식의 자식, 자식의 자식의 자식 element도 선택된다.
+    + `>` : `grand > parents > child` 처럼 `>`로 구분해서 쓰면 바로 연결된 직속 자식만이 선택된다.
+- `+` : 인접 형제 선택자. Orange, Banana만 폰트 색이 빨강으로 바뀐다.
+
+    ```css
+    <div class="abc">
+      <p>Apple.</p>
+      <p>Orange.</p>
+      <p>Banana.</p>
+    </div>
+
+    p + p {
+      color: red;
+    }
+    ```
+
+- `~`: 일반 형제 선택자. 아래 코드에서 Orange, Banana 변경. 바로 옆에 인접하지 않더라도 형제라면 선택된다.
+
+    ```css
+    <div class="abc">
+      <p>Apple.</p>
+      <p>Orange.</p>
+      <div>Something else</div>
+      <p>Banana.</p>
+    </div>
+
+    p ~ p {
+      color: red;
+    }
+    ```
+
+### 2.2 pseudo-class 선택자
+
+#### 2.2.1 링크 관련
+
+- `:link` : href 속성이 있는 element 선택.
+- `:visited` : 방문한 링크
+- `:hover` : 해당 엘리먼트 위에 커서가 올 때. 링크 아니라도 적용 가능
+- `:active` : 마우스로 링크를 클릭한 순간
+
+위 네 가지 선택자는 모두 같은 우선순위라서 순서에 따라 적용되는 것이 달라진다. 그러므로 a 태그를 쓸 때는 순서에 유의해야 함. 즉 **:link > :visited > :hover > :active** 순으로.
+
+#### 2.2.2 다른 것
+
+- `:focus` : colon을 한 번쓰면 다음에 이벤트가 올 수 있는데 focus는 input element에서 초점이 와있는 것을 말한다. a element에서도 가능.
+- `:first-child` : 첫 번째 자식인 것만 선택한다. 해당 태그 중에서 첫 번째를 선택하는 것이 아니라 다양한 태그들 중에서 첫 번째다. 아래 코드는 p 선택 안된다.
+
+    ```html
+    <style type="text/css">
+      p:first-child{
+        color: red;
+      }
+    </style>
+    <div class="abc">
+      <div>Something else</div>
+      <p>Apple.</p>
+      <p>Orange.</p>
+    </div>
+    ```
+
+- `::pseudo` : 태그 자체를 선택하는 것이 아니라 태그의 특정 '상태'를 선택한다. 또는 placeholder같은 것들을 붙잡을 때 쓸 수도 있다.
 - 여러 개 선택할 때: 쉼표로 구분한다. 자식 선택할 때도 쉼표로 구분하는 것을 적용할 수 있다.
 
     ```css
@@ -97,6 +157,7 @@ css에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     }
     ```
 
+- `tag[attributes=value]` : tag 뒤에 대괄호를 쓰면 속성에 접근할 수 있다.
 - 우선순위
     + `#` -> `.` -> `나머지` : 스타일 겹칠 때 적용 우선순위
     + 아래 쪽으로 읽어내려가기 때문에 아래쪽이 최종 적용
@@ -504,3 +565,98 @@ ul {
 
 - `type - image - position` 순서로.
 - 타입과 이미지 모두 지정하면 image가 로드되지 않았을 때 type으로 보여진다.
+
+## 11. 크로스 브라우징
+
+### 11.1 CSS 초기화
+
+- 브라우저 엔진마다 약간씩 다른 점이 있기 때문에 초기 세팅을 동등하게 하는 방법을 많이 쓴다.
+- 하지만 잘못된 초기화를 쓰면 나중에 고치기가 쉽지 않기 때문에 초반에는 직접 하나하나 크로스 브라우징 하는 것도 좋다.
+- font 관련 속성은 절대 초기화에 넣지 않는 것이 좋다. 상속 개념에서 굉장히 힘들어진다. 그냥 body, html에 한 번만 적용해주면 된다.
+
+```css
+/* 모든 요소. *를 쓰면 살짝 느려진다하여 아래처럼 하나하나 지정하기도 함 */
+* {
+  margin: 0;
+  padding: 0;
+}
+html, body, div, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ul, ol, li, table, tr, th, td
+{
+  margin: 0;
+  padding: 0;
+}
+```
+
+```css
+/* 기본 모양은 거의 안 쓴다. */
+ol,ul {
+  list-style: none;
+}
+```
+
+```css
+/* img border 없애기 */
+img {
+  border: none;
+}
+```
+
+### 11.2 IE Hack
+
+#### 11.2.1 비추천
+
+- `*`: IE7 이하(6, 7)
+- `_`: IE6 이하
+- 이런 방법은 코드를 지저분하게 할 수 있다.
+
+```css
+div {
+  color: red;
+  *color: blue; /* IE 7이하 용 */
+  _color : green; /* IE6 용 */
+}
+```
+
+#### 11.2.2 추천
+
+html 파일에서 IE에서만 스타일시트를 링크하는 방식이다.
+
+```html
+<!--[if IE 7]>
+<link href="ie7.css" type="text/css" rel="stylesheet" />
+<![endif]-->
+
+<!--[if IE 6]>
+<p>당신은 구형 IE6을 사용하고 있습니다. 최신 브라우저를 통해 더 나은 웹을 경험해보세요.</p>
+<![endif]-->
+```
+
+아래 코드는 버전의 범위를 지정한다.
+
+```html
+<!--[if lt IE 8]>
+<p>이 문구는 IE8이 포함되지않은 하위 브라우저, 즉 IE7,6에서 보여지게 됩니다.</p>
+<![endif]-->
+```
+
+- `lt` : less than - 미만 (명시된 버전 미 포함)
+- `lte` : less than or equal to - 이하 (명시된 버전 포함)
+- `gt` : greater than - 초과 (명시된 버전 미 포함)
+- `gte` : greater than or equal to - 이상 (명시된 버전 포함)
+
+### 11.3 메타 이용
+
+```html
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+```
+
+- 위 메타 태그가 있으면 IE 버전이 9더라도 7과 동일하게 랜더링 해준다. `7`, `8`, `edge` 등의 값을 입력할 수 있다.
+- 하지만 **비추천**. 하위 브라우저 모드가 점점 제대로 안되기도 하고 CSS3 사용도 잘 안되는 등의 부작용이 많다.
+
+
+
+
+
+
+
+
