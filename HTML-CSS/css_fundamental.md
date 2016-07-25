@@ -362,7 +362,7 @@ q:lang(no) { quotes: "~" "~"; }
 
 ## 5. display, visible
 
-### 5.1 display: 어떻게 보여질 것인가
+### 5.1 display: 어떻게 보여줄 것인가
 
 #### 5.1.1 inline
 
@@ -380,7 +380,7 @@ q:lang(no) { quotes: "~" "~"; }
 
 #### 5.1.3 none
 
-- 보이지 않는 속성
+- 보이지 않게 함. 아예 공간을 차지하지도 않는다.
 
 #### 5.1.4 inline-block
 
@@ -663,7 +663,7 @@ html 파일에서 IE에서만 스타일시트를 링크하는 방식이다.
     + 2순위 제작자 선언: 제작자가 넣은 시트 중 중요 표시한 속성
     + 3순위 제작자 선언: 제작자가 넣은 스타일 시트
     + 4순위 사용자 선언: 사용자의 스타일 시트
-    + 5순위 User Agent 선언   브라우저의 기본 스타일 시트
+    + 5순위 User Agent 선언: 브라우저의 기본 스타일 시트
 
     ```css
     /* 여기서 color 속성은 덮어씌워지지 않고 red로 유지된다.
@@ -678,3 +678,66 @@ html 파일에서 IE에서만 스타일시트를 링크하는 방식이다.
       color: blue;
     }
     ```
+
+### 12.2 제작자의 스타일 시트 내에서
+
+올림픽 순위에서처럼 금 1개가 은 100개를 이기는 것처럼 계산하면 된다.
+
+- 금메달: 선택자가 아니라 요소에 직접 스타일 주는 경우. `<a style="color:red;">`
+- 은메달: id(#) 선택자. `#a`이면 1이되고, `#a #b`가 되면 2로 계산
+- 동메달: 클래스 선택자(`.abc`), 속성 선택자(`::`), pseudo-class 선택자(`a:link`)
+- 흙메달: element 이름(p, h1 같은 요소 자체의 이름)으로 준 선택자와 pseudo-element 선택자.
+
+## 13. overflow, float, clear
+
+### 13.1 개념
+
+- `overflow`: 박스 모델에서 콘텐츠(텍스트, 다른 요소 모두 포함)가 박스를 벗어날 때 어떻게 할 것인지 결정한다. 예를 들어 박스의 높이를 벗어나면 스크롤할지, 숨길지 결정.
+    + `visible`: 기본. 벗어나더라도 모두 보임.
+    + `scroll`: 박스 모델을 벗어나면 스크롤로 확인해야함.
+    + `hidden`: 벗어나면 숨김
+    + `auto`: scroll은 스크롤 바가 항상 노출. auto는 박스를 벗어날 때만 노출.
+- `float`: block 속성을 그대로 inline처럼 수평으로 나열 가능.
+    + `none`: 기본 속성. 안 띄운다.
+    + `left`: 왼쪽으로 띄운다.
+    + `right`: 오른쪽으로
+- `clear`: float 속성 해제
+    + `none`: 해제 안한다.
+    + `left`: float left를 해제
+    + `right`: float right 해제
+    + `both`: left, right 모두 해제
+
+### 13.2 배치
+
+```html
+<div class="float-frame">
+  <div class="float-unit">A</div>
+  <div class="float-unit">B</div>
+  <div class="float-unit">C</div>
+  <div class="float-unit">D</div>
+</div>
+```
+
+위 코드에서 `.float_unit`가 float로 띄워진다면 `.float-frame`은 height 값이 없어지게 된다. 일반적으로 div는 내부 콘텐츠에 따라 height값이 결정되는데 내부 콘텐츠가 float 되면서 인식을 못하기 때문이다. 만약 배경색 등의 효과가 필요하다면 문제가 될 수 있다.
+
+#### 13.2.1 빈 요소 넣기
+
+```html
+<div class="float-frame">
+  <div class="float-unit">A</div>
+  <div class="float-unit">B</div>
+  <div class="float-unit">C</div>
+  <div class="float-unit">D</div>
+  <div style="clear:both;"></div>
+</div>
+```
+
+clear 속성을 준 element를 텍스트 없이 넣는다. `span`, `br`을 사용하기도 하는데 span을 넣는다면 `display:block;` 속성으로 블록 요소로 바꿔줘야한다.
+
+#### 13.2.2 overflow 이용
+
+부모 요소에 `overflow:hidden;` 속성을 넣어준다. 이러면 떠있는 요소도 부모가 인식하게 된다. 뿐만 아니라 자식 요소의 margin 값도 인식하게 된다. IE8 이상에서만 작동하고 7이하에서는 `zoom:1`을 이용하면 된다.
+
+다만 재밌는 현상이 나타나기도 한다. 원래라면 기본값인 `overflow:visible` 상태에서 padding과 border가 없고 자식요소가 margin-top을 가지고 있다면 마치 부모요소인 자신이 margin-top을 가지고 있는 것처럼 보여진다. 자식의 margin-top은 없고.
+
+하지만 `overflow:hidden` 상태에선 margin-top을 부모 요소가 쓰는게 아니라 내부에서 자식이 margin-top을 갖는 것처럼 보여진다. 부모 요소가 padding, border 속성을 갖고 있다면 overflow:hidden이 있는 것과 같은 현상이 발생한다.
