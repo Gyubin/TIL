@@ -741,3 +741,45 @@ clear 속성을 준 element를 텍스트 없이 넣는다. `span`, `br`을 사�
 다만 재밌는 현상이 나타나기도 한다. 원래라면 기본값인 `overflow:visible` 상태에서 padding과 border가 없고 자식요소가 margin-top을 가지고 있다면 마치 부모요소인 자신이 margin-top을 가지고 있는 것처럼 보여진다. 자식의 margin-top은 없고.
 
 하지만 `overflow:hidden` 상태에선 margin-top을 부모 요소가 쓰는게 아니라 내부에서 자식이 margin-top을 갖는 것처럼 보여진다. 부모 요소가 padding, border 속성을 갖고 있다면 overflow:hidden이 있는 것과 같은 현상이 발생한다.
+
+## 14. table
+
+- `border-collapse`: 오직 table 태그에만 적용 가능 
+    + `collapse`: 셀이 합쳐져서 공백도 없고 테두리도 겹쳐진다.
+    + `separate`: 셀이 분리되어 사이에 공간 있음
+
+    ```css
+    table {
+      border-collapse: collapse;
+    }
+    ```
+
+- `border-spacing`: border-collapse가 separate일 때, 셀 간의 공백 크기 조절. 역시 table element에만 적용 가능
+
+    ```css
+    table {
+      border-collapse: separate;
+      border-spacing: 4px;
+    }
+    ```
+
+- `table-layout`: 테이블 셀의 너비를 따로 지정하지 않으면 내부 element 너비에 따라 결정된다. 셀에 너비를 주더라도 내부 element, 전체 테이블 width 때문에 적용이 안될 수도 있다.
+    + `auto`: 기본적인 상태 그대로 내용에 따른 유연한 방식으로 출력
+    + `fixed`: 내부 요소를 무시하고 딱딱하게 너비를 잡는 방식으로 출력
+
+    ```css
+    table {
+      table-layout: fixed
+    }
+    ```
+
+- `vertical-align`: th, td에 쓰여서 텍스트 수직정렬.
+    + `top`: 위
+    + `middle`: 중앙
+    + `bottom`: 아래
+
+    ```css
+    td {
+      vertical-align: middle;
+    }
+    ```
