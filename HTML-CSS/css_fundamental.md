@@ -783,3 +783,22 @@ clear 속성을 준 element를 텍스트 없이 넣는다. `span`, `br`을 사�
       vertical-align: middle;
     }
     ```
+
+- `caption-side`: caption의 위치 지정. `top`, `bottom`
+
+    ```css
+    caption {
+        caption-side: bottom;
+    }
+    ```
+
+- table 처럼 display 하기. element를 table의 요소처럼 만든다. 그 후엔 각 테이블 혹은 테이블의 다른 요소들에 적용할 수 있었던 css 속성을 적용할 수 있다. 다만 colspan, rowspan은 안됨.
+    + `display: table;`
+    + `display: table-caption;`
+    + `display: table-row;`
+    + `display: table-cell;`
+    + `display: table-column-group; `
+    + `display: table-column;`
+    + `display: table-header-group;`
+    + `display: table-footer-group;`
+    + `display: table-row-group;`
