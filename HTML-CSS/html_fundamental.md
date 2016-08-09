@@ -72,11 +72,6 @@ html에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
 
 ## 1. 기본
 
-- `meta` : 문서의 특성을 적어준다. 인코딩 방식이나 검색용 키워드
-    + `<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">` 이렇게 주로 쓴다. 추가로 아래처럼 더 쓸 수도 있다.
-    + `<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />`
-    + `<meta name="Description" content="소개 내용" />` : 검색엔진에서 사이트 제목 아래쪽에 나오는 설명 부분
-    + `<meta name="robots" content="noindex, nofollow" />` : 검색엔진이 이걸 보면 색인하지 않는다. 사적인 페이지로 사용할 때.
 - `<!-- comment -->`: 주석
 - class, id 규칙
     + 첫 글자는 알파벳으로. 두 번째 이후부터 `-`, `_` 사용 가능
@@ -298,3 +293,21 @@ html에 대해서 공부하면서 새로운 것들, 외워둘 것들 등등에 �
     ```
 
 - 마지막으로 테이블로 레이아웃 잡지는 말자.
+
+## 6. meta
+
+문서의 특성을 적어준다. 인코딩 방식이나 검색용 키워드
+
+- 화면 크기: `<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />`
+    + 모바일 디바이스처럼 화면이 작은 경우에 화면이 축소되어 딱 맞게 보여진다.
+    + `width=device-width` : 페이지 너비가 기기의 너비가 된다. `initial-scale=1.0`과 동일한 효과
+    + `minimum-scale=1.0` : 줌 아웃을 할 때 가장 줄어들 수 있는 비율. 0.8이라면 실제 페이지의 80%까지 더 축소 가능. 1이면 축소 불가
+    + `maximum-scale=1.0` : 줌 인 할 때 가장 커질 수 있는 비율. 2라면 두 배까지 확대 가능, 1이라면 확대 불가
+    + `user-scalable=no` : 줌 인,  줌 아웃 불가능. `minimum-scale=1.0, maximum-scale=1.0` 둘 다 선언한 것과 같은 효과
+- `<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />`: 올바른 문자셋을 넣어줘야 안 깨진다. `UTF-8`이나 `EUC-KR`을 주로 사용하는데 UTF 쓰는게 제일 낫다.
+- `<meta name="Description" content="소개 내용" />` : 검색엔진에서 사이트 제목 아래쪽에 나오는 설명 부분. 페이스북에 공유했을 때 텍스트가 뜬다.
+- `<meta name="Keywords" content="키워드들의 나열, abc, 123" />` : 페이지의 주요 내용을 키워드로 적어둔다. 검색엔진에게 유용. 무작위로 엄청 많이 넣으면 스팸으로 걸러질 수도 있는데 이것 때문에 요즘엔 아예 수집하지 않을 수도 있다고 함.
+- `<meta name="author" content="Gyubin Son" />`: 페이지 제작자 이름을 쓴다.
+- `<meta name="robots" content="noindex, nofollow" />` : 검색엔진이 이걸 보면 색인하지 않는다. 사적인 페이지로 사용할 때.
+- `<meta http-equiv="refresh" content="10;url=http://google.com/" />`: 10초 후에 해당 url로 이동시킨다. 하지만 이 방식은 좋지 않음. 뒤로 가기 기록에도 남지 않아서 [301 리디렉션](https://support.google.com/webmasters/answer/93633?hl=ko)을 이용하는게 좋다고 한다.
+- `<meta http-equiv="X-UA-Compatible" content="IE=edge" />` : 해당 IE 모드로 렌더링. edge 모드로 해서 최신 모드로 렌더링되게 하는게 좋다. 하위버전은 버그가 많아지고 있어서 비추천
