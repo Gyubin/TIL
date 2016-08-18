@@ -86,3 +86,41 @@ int main(int argc, char **argv);
     + white-space로 구분해서 하나하나 받아들인다. 만약 공백을 포함하고 싶다면 쌍따옴표로 감싸준다.
     + 파일 명이 언제나 들어가기 때문에 argc는 항상 최소 1이다. 즉 argv[0]은 언제나 존재함.
 - `argv` : 문자열을 가리키는 포인터가 들어있는 포인터 배열이다.
+
+## 5. 동적 할당
+
+배열의 길이가 정해지지 않았을 때 코드의 변수를 통해 동적으로 할당하는 방법이다.
+
+### 5.1 malloc
+
+```c
+#include <stdlib.h>
+#define LEN 42
+
+int     main(void)
+{
+    int     i;
+    char    *str;
+
+    str = (char *)malloc(sizeof(*str) * (LEN + 1));
+    i = 0;
+    while (i < LEN)
+    {
+        str[i] = '0' + (i % 10);
+        i++;
+    }
+    str[i] = '\0';
+    ft_putstr(str);
+    ft_putchar('\n');
+    free(str);
+    return (0);
+}
+```
+
+- `#include <stdlib.h>` 라이브러리 사용한다.
+- `(char *)` : malloc의 리턴 타입이 void pointer다. 어떤 타입의 배열일지 알 수 없으니까. 그래서 원하는 형태로 캐스팅해줘야 한다.
+- `sizeof(*str) * (LEN + 1)` : 어떤 타입이 배열 안에 들어갈지에 따라 메모리 할당 크기가 달라진다. sizeof 함수를 사용하면 쉽게 원소의 크기를 알 수 있고, 이 경우엔 문자열이므로 널 문자까지 계산해서 길이에 1을 더한 값을 곱해줬다.
+- `free(str)` : 사용하고 난 후엔 꼭 메모리 할당을 해제해준다.
+- 정수형 배열 `arr`을 포인터 형태로 함수의 매개변수로 전달할 때
+    + `int arr[4];`로 정의했다면 무조건 배열 포인터 `int (*ptr)[4]` 형태로 전달해야 한다. 더블 포인터를 쓸 수 없다.
+    + `(int *)malloc(sizeof(*arr) * len)` 형태로 동적할당했다면 `int **ptr` 형태로 매개변수전달이 가능하다.
