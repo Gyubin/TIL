@@ -128,3 +128,16 @@ int     main(void)
 - 정수형 배열 `arr`을 포인터 형태로 함수의 매개변수로 전달할 때
     + `int arr[4];`로 정의했다면 무조건 배열 포인터 `int (*ptr)[4]` 형태로 전달해야 한다. 더블 포인터를 쓸 수 없다.
     + `(int *)malloc(sizeof(*arr) * len)` 형태로 동적할당했다면 `int **ptr` 형태로 매개변수전달이 가능하다.
+
+## 6. 입출력
+
+### 6.1 입력
+
+- `#include <stdio.h>` -> `scanf("%d %s %c", &int, str, &c);` : 입력 포맷을 정해주고 입력된 값이 들어갈 변수의 주소값을 넣어준다.
+- `#include <stdio.h>` -> `getchar();` 딱 한 글자 char 타입을 불러온다.
+
+### 6.2 출력
+
+- `#include <stdio.h>` -> `printf("%d %s %c", int, str, c);` : 가장 쉽고 편한 출력 함수.
+- `#include <stdio.h>` -> `putchar(c);` 한 글자 출력
+- `#include <unistd.h>` -> `write(1, &c, 1);` : 캐릭터 하나의 주소값을 받아서 출력하는 함수다. putchar와 비슷
