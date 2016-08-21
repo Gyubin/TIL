@@ -141,3 +141,19 @@ int     main(void)
 - `#include <stdio.h>` -> `printf("%d %s %c", int, str, c);` : 가장 쉽고 편한 출력 함수.
 - `#include <stdio.h>` -> `putchar(c);` 한 글자 출력
 - `#include <unistd.h>` -> `write(1, &c, 1);` : 캐릭터 하나의 주소값을 받아서 출력하는 함수다. putchar와 비슷
+
+## 7. 전처리기
+
+### 7.1 include
+
+- `#include` : 컴파일 전에 특정 파일을 불러온다. 만약 특정 파일을 include 해놓고 `cpp main.c` 명령어를 쳐 보면 어떤 파일을 불러왔는지 볼 수 있다.
+- 제공되는 라이브러리(stdio.h 또는 stdlib.h 같은)는 `#include <stdio.h>` 형태로 쓸 수 있지만 사용자가 직접 만든 라이브러리는 `#include "../my_header.h"` 처럼 적어줘야 한다. 헤더가 현재 파일과 다른 경로에 있다면 표시해줘야 함.
+
+### 7.2 define
+
+- `#define target change` : 딱 그 단어만 바꾼다. abc를 xyz로 바꾼다면 앞 뒤 공백으로 구분된 abc만 잡아서 xyz로 바꾼다. zabc, abcz, zabcz는 바꾸지 않는다. 그리고 문자열 내에 있는 단어 역시 바꾸지 않는다.
+
+### 7.3 선언
+
+- 다른 .c 파일에 있는 함수를 현재 파일에서 쓰려면 맨 위에 선언해줘야 한다.
+- 다만 재밌는 것은 다른 파일의 함수의 이름만 똑같이 해주면 리턴 타입과 매개변수는 달라져도 컴파일은 된다. 이렇게 하진 않겠지만 괴상하다.
