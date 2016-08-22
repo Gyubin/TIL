@@ -142,18 +142,82 @@ int     main(void)
 - `#include <stdio.h>` -> `putchar(c);` 한 글자 출력
 - `#include <unistd.h>` -> `write(1, &c, 1);` : 캐릭터 하나의 주소값을 받아서 출력하는 함수다. putchar와 비슷
 
-## 7. 전처리기
+## 7. 전처리문
+
+컴파일러가 컴파일하기 전에 처리되는 작업이라서 전처리다. 코드를 하나하나 수정하지 않고 스위치 온/오프하듯 적용할 수 있어서 특정 상황을 조절할 때 사용한다. 종류는 `#define`, `#if`, `#ifdef`, `#ifndef`, `#defined`, `#undef` 등이 있고 항상 첫 문자로 #이 사용된다.
+
+- 파일 처리 : `#include`
+- 형태 정의 : `#define`, `#undef`
+- 조건 처리 : `#if`, `#ifdef`, `#ifndef`, `#else`, `#elif`, `#endif`
+    + `#if` : …이 참이라면
+    + `#ifdef` : …이 정의되어 있다면
+    + `#ifndef` : …이 정의되어있지 않다면
+    + `#else` : #if나 #ifdef에 대응
+    + `#elif` : “else + if”의 의미
+    + `#endif` : #if, #ifdef, #infdef 의 끝
+- 에러 처리 : `#error`
+- 디버깅 : `#line`
+- 컴파일 옵션 처리 : `#pragma`
 
 ### 7.1 include
 
-- `#include` : 컴파일 전에 특정 파일을 불러온다. 만약 특정 파일을 include 해놓고 `cpp main.c` 명령어를 쳐 보면 어떤 파일을 불러왔는지 볼 수 있다.
-- 제공되는 라이브러리(stdio.h 또는 stdlib.h 같은)는 `#include <stdio.h>` 형태로 쓸 수 있지만 사용자가 직접 만든 라이브러리는 `#include "../my_header.h"` 처럼 적어줘야 한다. 헤더가 현재 파일과 다른 경로에 있다면 표시해줘야 함.
+- `#include` : 컴파일 전에 특정 파일을 불러온다. 만약 특정 파일을 include 해놓고 `cpp main.c` 명령어를 쳐 보면 어떤 파일을 불러왔는지 볼 수 있다. 정말 단순하게 헤더 파일에 있는 내용들을 위에 붙여넣는 역할을 한다.
+- 단순히 붙여넣기만 하기 때문에 만약 `stdio.h`를 사용하는 파일이 여러개라면 수많은 텍스트들이 붙여넣어진다. 그래서 이미 include 되었으면 추가로 include하지 않겠다는 표시를 해야 한다. 그게 ifndef 같은 전처리다.
+- 제공되는 라이브러리(stdio.h 또는 stdlib.h 같은)는 `#include <stdio.h>` 형태로 쓸 수 있다. `< >` 표시는 표준 디렉토리에 있다는 말. 사용자가 직접 만든 라이브러리는 `#include "../my_header.h"` 처럼 적어줘야 한다. 헤더가 현재 파일과 다른 경로에 있다면 표시해줘야 함.
 
-### 7.2 define
+### 7.2 define, undef
 
 - `#define target change` : 딱 그 단어만 바꾼다. abc를 xyz로 바꾼다면 앞 뒤 공백으로 구분된 abc만 잡아서 xyz로 바꾼다. zabc, abcz, zabcz는 바꾸지 않는다. 그리고 문자열 내에 있는 단어 역시 바꾸지 않는다.
+- 함수를 지정할 수 도 있다.
 
-### 7.3 선언
+    ```c
+    #define SUM(x) ((x) = (x) + (x))
+    ```
+
+- 지정한 것을 해제도 가능
+
+    ```c
+    #define ADD(a, b) (a + b)
+    #undef ADD(a, b)
+    ```
+
+### 7.3 조건 전처리기
+
+#### 7.3.1 if, endif
+
+```c
+#define A 1
+#if A
+    source code.....
+#endif
+```
+
+위 코드는 전처리된다. 참 거짓 구분할 수 있고, A 말고 숫자 1을 그대로 써도 된다.
+
+#### 7.3.2 ifdef
+
+```c
+#define MYDEF /* MYDEF는 값은 가지지 않았지만 어쨋든 정의는 되었다 */
+#ifdef YOURDEF /* 만약 YOURDEF가 정의되어 있다면... */
+    #define BASE 10 /* BASE == 10 */
+#elif MYDEF /* 그외에 MYDEF가 정의되었다면... */
+    #define BASE 2 /* BASE == 2 */
+#endif
+```
+
+이 땐 아래 MYDEF 조건 부분에서 통과돼서 BASE는 2로 치환된다.
+
+#### 7.3.3 #ifndef 헤더명_H__ ~ #endif
+
+```c
+#ifndef STDIO_H__
+#define STDIO_H__
+#endif
+```
+
+헤더 파일이 중복 선언되는 것을 피하기 위함이다. 중복으로 선언되면 신택스 에러가 나기 떄문에 #ifndef를 사용해서 선언되어있으면 선언을 하지 않게 만든다. stdio.h 에는 위와 같은 코드가 애초에 삽입되어있다.
+
+### 7.4 선언
 
 - 다른 .c 파일에 있는 함수를 현재 파일에서 쓰려면 맨 위에 선언해줘야 한다.
 - 다만 재밌는 것은 다른 파일의 함수의 이름만 똑같이 해주면 리턴 타입과 매개변수는 달라져도 컴파일은 된다. 이렇게 하진 않겠지만 괴상하다.
