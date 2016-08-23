@@ -351,3 +351,73 @@ int main()
     + 정수형 크기인 4만큼 이동한 주소값에 문자 배열이 위치하고 시작하며 20만큼 차지한다.
     + 이후 바로 구조체 배열의 다음 원소인 구조체가 위치한다.
 - 구조체 간의 사칙연산은 불가능하고 대입 연산 `=` 만 허용된다. 같은 타입일 때만 가능하고 값이 복사된다.
+
+## 10. ENUM - 열거형
+
+```c
+enum color {RED = 1, GREEN = 3, BLUE = 5};
+
+int main(void)
+{
+    enum color c1 = RED;
+    enum color c2 = GREEN;
+    enum color c3 = BLUE;
+
+    return (0);
+}
+```
+
+- 글로벌 스코프에서 선언하고, 함수 내에서 값을 받아와서 사용한다.
+- 값을 지정해주지 않으면 0부터 1씩 증가한 값이 들어간다.
+- 중간에 값을 지정해주면 첫 상수는 무조건 0이고, 지정해준 값 다음 값은 + 1이 되어서 들어간다.
+- 만약 열거형이 2개 이상이라면 하나로 합치는 것이 좋다.
+
+```c
+enum days {MON, TUE, WED, THU, FRI, SAT, SUN};
+
+int main(void)
+{
+    enum days day;
+
+    scanf("%d", &day);
+    switch (day)
+    {
+        case MON:
+            printf("Hello");
+            break;
+        case TUE:
+            printf("Dude~");
+            break;
+    }
+    return (0);
+}
+```
+
+## 11. UNION - 공용체
+
+```c
+union u_data
+{
+    int d1;
+    double d2;
+    char d3;
+}
+
+int main(void)
+{
+    union u_data data;
+
+    data.d1 = 1;
+    printf("%d, %f, %c\n", data.d1, data.d2, data.d3);
+    data.d2 = 3.3;
+    printf("%d, %f, %c\n", data.d1, data.d2, data.d3);
+    data.d3 = 'a';
+    printf("%d, %f, %c\n", data.d1, data.d2, data.d3);
+    return (0);
+}
+```
+
+- 구조체와 같은 형태지만 다른 용도로 쓰인다.
+- 특정 값을 받아야할 때 이것이 정수인지, 실수인지, 캐릭터인지 모를 경우가 있다. 그 때 각각을 모두 선언하기엔 메모리 낭비이기 때문에 결국 하나만 사용하면 되도록 메모리 효율을 좋게 한 형태가 유니언이다.
+- 그래서 구조체가 모든 멤버들에게 메모리를 각각 할당해주는 것과 달리 유니언은 가장 큰 멤버의 메모리 크기를 사용하고 그것을 공유한다. 멤버 중 하나에 값이 할당되면 나머지 멤버는 사용할 수 없다.
+- 위 예제를 보면 대입된 값 외의 변수의 값은 사용할 수 없다는 것을 알 수 있다.
