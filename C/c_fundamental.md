@@ -148,6 +148,7 @@ int     main(void)
     + 첫 번째 매개변수는 file descriptor다. 0, 1, 2로 값을 지정해줄 수 있는데 순서대로 `STDIN`, `STDOUT`, `STDERROR`다. 일반적으론 1을 써서 출력하지만 만약 에러 발생시 출력할 곳을 정한다면 2로 하면 된다.
     + 두 번째 매개변수는 출력할 원료(?) 버퍼다. 버퍼에서 어떤 값을 읽어오게 된다.
     + 세 번째 매개변수는 얼마나 읽어올건지 정하는 바이트 단위 값이다.
+    + 썼을 때 성공하면 쓴 바이트 크기를 리턴한다. 실패하면 -1 리턴
 
 ### 6.3 커서 이동
 
@@ -179,6 +180,87 @@ int     get_str_len(void)
     }
     lseek(0, 0, SEEK_SET);
     return (len);
+}
+```
+
+### 6.4 파일
+
+- 기본 틀
+    + 파일과의 스트림을 열고 -> 제대로 열었는지 체크
+    + 닫고 -> 제대로 닫았는지 체크
+    + open 매개변수의 의미는 쓰기와 만들기 모드로 열고, 권한 역시 같은 걸로 준다는 의미다.
+
+    ```c
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
+
+    int main(void)
+    {
+        int fd;
+
+        fd = open("file_name", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+        if (fd == -1)
+        {
+            ft_putstr("open() failed\n");
+            return (1);
+        }
+        ft_putnbr(fd);
+        if (close(fd) == -1)
+        {
+            ft_putstr("close() failed\n");
+            return (1);
+        }
+        return (0);
+    }
+    ```
+
+- 문자 하나 출력, 문자열 출력 함수. 둘 다 원하는 원하는 파일에다 출력하는 형태로 기존에 써오던 것과는 약간 다르다.
+
+    ```c
+    void    ft_putchar(int fd, char c)
+    {
+        write(fd, &c, 1);
+    }
+
+    void    ft_putstr_fd(int fd, char *str)
+    {
+        write(fd, str, ft_strlen(str));
+    }
+    ```
+
+- 추가 예제
+    + 버프 사이즈를 정해놓고 한방에 크게 읽어온다. 읽어온 바이트를 ret 변수가 저장하기 때문에 그 수치를 이용해서 문자열 끝에 NULL 문자를 넣어줘서 문자열을 마무리한다.
+
+```c
+int main(void)
+{
+    int fd;
+    int ret;
+    char buf[BUF_SIZE + 1];
+
+
+    fd = open("42", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+    if (fd == -1)
+    {
+        ft_putstr("open() failed\n");
+        return (1);
+    }
+    while (ret = read(fd, buf, BUF_SIZE))
+    {
+        buf[ret] = '\0';
+        ft_putnbr(ret);
+        ft_putstr(buf);
+    }
+    ft_putnbr(fd);
+    ft_putchar(fd, 'Z');
+    ft_putstr_fd(fd, "Hello World!\n")
+    if (close(fd) == -1)
+    {
+        ft_putstr("close() failed\n");
+        return (1);
+    }
+    return (0);
 }
 ```
 
@@ -490,3 +572,13 @@ int main(void)
 - 위 예제는 map 함수와 숫자를 2배로 하는 함수를 사용해본 것이다.
 - 함수를 넘겨줄 때 `&`를 활용해서 이름만 적어주면 된다.
 - 재밌는 것은 함수를 map 안에서 활용할 때는 `(*f)` 형태로 적어주지 않아도 된다. 컴파일러가 알아서 해주기 때문에 그냥 f 형태로 사용하면 된다. `*f`, `************f`도 주소값을 찍어주면 다 똑같다.
+
+## 13. Data Structure - 자료구조
+
+- Data type = data + operation
+    + 자료형은 데이터와 연산 명령들이 합해진 개념이다.
+    + 예를 들어 정수 자료형이라면 정수 형태의 데이터와 사칙연산 + 나머지 연산이 포함된 개념이다.
+- 알고리즘 성능 측정 기준
+    + 공간 복잡도(Space Complexity): 얼마나 적은 메모리를 쓰느냐
+    + 시간 복잡도(Time Complexity): 얼마나 적은 시간이 걸리느냐
+    + 보통 시간에 대한 비용이 공간 비용보다 더 높기 때문에 시간만 주로 쓴다. 하지만 임베디드 쪽에서는 반대가 되기도 한다.
