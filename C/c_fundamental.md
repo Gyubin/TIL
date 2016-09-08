@@ -20,6 +20,7 @@
     + `double *ptr = (double *)0;`
     + `char *ptr = '\0';`
     + `int *ptr = NULL;`
+- 포인터의 `+` 연산은 단순히 1이 더해지는게 아니라 포인터의 이동을 뜻한다. int 형이라면 4바이트가 이동하고, char 타입이라면 1바이트가 이동하는 식.
 
 ## 1. 자료형
 
@@ -53,7 +54,13 @@
 
 ### 1.4 배열
 
-- `int[] arr = {1, 2, 3};`
+- 정수형 1차원 배열 선언
+    + `int arr[] = {1, 2, 3};` : 이렇게 원소 수를 지정 안해도 알아서 할당된다.
+    + `int arr[3] = {0, };` or `int arr[3] = {0};` : 모든 원소를 0으로 초기화
+- 정수형 2차원 배열 선언
+    + `int values[2][3] = {{3, 5, 7}, {4, 6, 8}};`
+    + `int values[2][3] = {3, 5, 7, 4, 6, 8};`
+- 문자열이 들어있는 배열의 타입은 `char **` 더블 포인터다. 
 
 ## 2. 제어문
 
@@ -103,16 +110,24 @@ int     main(void)
     char    *str;
 
     str = (char *)malloc(sizeof(*str) * (LEN + 1));
-    i = 0;
-    while (i < LEN)
+    if (!str)
     {
-        str[i] = '0' + (i % 10);
-        i++;
+        memset(str, 0, sizeof(*str) * LEN + 1);
+        i = 0;
+        while (i < LEN)
+        {
+            str[i] = '0' + (i % 10);
+            i++;
+        }
+        str[i] = '\0';
+        ft_putstr(str);
+        ft_putchar('\n');
+        free(str);
     }
-    str[i] = '\0';
-    ft_putstr(str);
-    ft_putchar('\n');
-    free(str);
+    else
+    {
+        ft_putstr("malloc error!\n");
+    }
     return (0);
 }
 ```
@@ -120,6 +135,8 @@ int     main(void)
 - `#include <stdlib.h>` 라이브러리 사용한다.
 - `(char *)` : malloc의 리턴 타입이 void pointer다. 어떤 타입의 배열일지 알 수 없으니까. 그래서 원하는 형태로 캐스팅해줘야 한다.
 - `sizeof(*str) * (LEN + 1)` : 어떤 타입이 배열 안에 들어갈지에 따라 메모리 할당 크기가 달라진다. sizeof 함수를 사용하면 쉽게 원소의 크기를 알 수 있고, 이 경우엔 문자열이므로 널 문자까지 계산해서 길이에 1을 더한 값을 곱해줬다.
+- 동적 할당이 안 된 경우를 대비해서 꼭 체크해준다.
+- `memset`: 원형은 `void *memset(void *ptr_strart, int value, size_t count);`이다. count 크기만큼 value로 값을 대입한다.
 - `free(str)`
     + 전체 프로그램이 종료되면 결국 사용한 메모리 모두가 해제되지만 직접 해제해주는 것이 좋다.
     + 동적할당한 함수가 종료되더라도 여전히 메모리는 사용 중이다.
