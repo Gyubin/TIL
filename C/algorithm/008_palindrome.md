@@ -1,3 +1,8 @@
+# Palindrome
+
+처음부터, 뒤로부터 읽어도 똑같이 읽히는 단어를 팰린드롬이라 한다. 다음 코드는 팰린드롬 판별 함수다.
+
+```c
 #include <unistd.h>
 
 void    ft_putchar(char c);
@@ -38,3 +43,4 @@ void    ft_putstr(char *str)
     while (*str)
         ft_putchar(*str++);
 }
+```
