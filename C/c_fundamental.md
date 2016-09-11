@@ -54,6 +54,8 @@
 
 ### 1.4 배열
 
+#### 1.4.1 선언
+
 - 정수형 1차원 배열 선언
     + `int arr[] = {1, 2, 3};` : 이렇게 원소 수를 지정 안해도 알아서 할당된다.
     + `int arr[3] = {0, };` or `int arr[3] = {0};` : 모든 원소를 0으로 초기화
@@ -61,6 +63,82 @@
     + `int values[2][3] = {{3, 5, 7}, {4, 6, 8}};`
     + `int values[2][3] = {3, 5, 7, 4, 6, 8};`
 - 문자열이 들어있는 배열의 타입은 `char **` 더블 포인터다. 
+
+#### 1.4.2 배열 포인터
+
+- 퀵 정렬 코드를 보면서 지금까지 틀리게 알고 있었던 것을 깨달았다.
+- 아래 `func1`, `func2`는 동작 원리가 같다.
+- 주소값을 넘겨주는 것이기 때문에 func의 바깥에 있는 main 함수의 arr 배열은 func 호출 이후에 값이 바뀌게 된다.
+- `int arr[]` 처럼 선언하는 방식은 함수의 매개변수에서만 가능하다.
+- 원래는 이게 바뀌면 안되는 줄 알았다. 무조건 더블 포인터를 써야하는 건 줄 알았다.
+
+```c
+#include <stdio.h>
+
+void func1(int *arr1)
+{
+    arr1[0] = 100;
+}
+
+void func2(int arr1[])
+{
+    arr1[0] = 100;
+}
+
+int main(void)
+{
+    int arr[2] = {1, 2};
+    printf("prev: %d\n", arr[0]);
+    func1(arr);
+    // func2(arr);
+    printf("post: %d\n", arr[0]);
+    return (0);
+}
+```
+
+- 문자열의 경우도 마찬가지다.
+
+```c
+#include <unistd.h>
+
+void    func(char *str);
+void    func1(char str[])
+void    ft_putchar(char c);
+void    ft_putstr(char *str);
+
+int     main(void)
+{
+    char str[] = "abcde";
+
+    ft_putstr(str);
+    ft_putchar('\n');
+    func(str);
+    // func1(str);
+    ft_putstr(str);
+    return (0);
+}
+
+void    func(char *str)
+{
+    str[0] = 'A';
+}
+
+void    func1(char str[])
+{
+    str[0] = 'A';
+}
+
+void    ft_putchar(char c)
+{
+    write(1, &c, 1);
+}
+
+void    ft_putstr(char *str)
+{
+    while (*str)
+        ft_putchar(*str++);
+}
+```
 
 ## 2. 제어문
 
