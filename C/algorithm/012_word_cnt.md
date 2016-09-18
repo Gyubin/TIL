@@ -8,26 +8,33 @@
 ```c
 #include <stdio.h>
 
+int     is_sep(char c);
+
 int     main(void)
 {
-    char    ch;
-    char    prev;
-    int     cnt;
+    int     i, cnt;
+    char    str[1000001];
 
+    scanf("%[^\n]s", str);
     cnt = 0;
-    while ((ch = getchar()) == ' ')
-        ;
-    while ((ch = getchar()) != '\n')
+    i = 0;
+    while (str[i])
     {
-        if (ch == ' ')
+        if (!is_sep(str[i]) && is_sep(str[i + 1]))
             cnt++;
-        prev = ch;
+        i++;
     }
-    printf("%d\n", prev == ' ' ? cnt : cnt + 1);
+    printf("%d\n", cnt);
+    return (0);
+}
+
+int     is_sep(char c)
+{
+    if (c == ' ' || c == '\0')
+        return (1);
     return (0);
 }
 ```
 
-- 맨 앞에 띄워쓰기가 여러개 될 수도 있어서 모두 스킵한다.
-- 개행문자가 나오기 전까지 반복해서 띄워쓰기를 만날 때마다 cnt를 1씩 더해준다.
-- 문장의 끝에서 마지막 단어를 포함했는지 안했는지 체크한다. 이전 문자를 기록해뒀다가 개행문자 전이 띄워쓰기라면 이미 체크가 되어있을거고, 문자라면 체크가 안되었을테니 1을 더해준다.
+- 현재 문자가 알파벳이고, 그 다음 문자가 공백일 때만 단어 개수를 1씩 늘렸다.
+- scanf에서 입력 조건을 커스텀 설정했다. 개행 문자를 만날 때까지 받아들인다.
