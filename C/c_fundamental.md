@@ -214,6 +214,21 @@ int     main(void)
 - `(char *)` : malloc의 리턴 타입이 void pointer다. 어떤 타입의 배열일지 알 수 없으니까. 그래서 원하는 형태로 캐스팅해줘야 한다.
 - `sizeof(*str) * (LEN + 1)` : 어떤 타입이 배열 안에 들어갈지에 따라 메모리 할당 크기가 달라진다. sizeof 함수를 사용하면 쉽게 원소의 크기를 알 수 있고, 이 경우엔 문자열이므로 널 문자까지 계산해서 길이에 1을 더한 값을 곱해줬다.
 - 동적 할당이 안 된 경우를 대비해서 꼭 체크해준다.
+
+### 5.2 calloc
+
+- `void* calloc(size_t elt_count, size_t elt_size);` : 함수 원형이다. 두 번째 매개변수만큼의 크기를 첫 번째 매개변수 개수만큼 할당한다.
+    + `arr = (int *)calloc(5, sizeof(int));`
+-  malloc과 다른 점은 자동으로 0으로 초기화된다는 점이다.
+
+### 5.3 realloc
+
+- `void* realloc(void* memblock, size_t size);` : 함수의 원형. 첫 번째 매개변수로 이미 할당된 포인터 변수를 넣고, 바꾸고싶은 공간 크기를 두 번째 매개변수로 넣어준다.
+    + `realloc(arr, sizeof(int)*10);`
+- 이미 동적할당된 변수의 크기를 바꿀 때 사용한다.
+
+### 5.4 memset, free
+
 - `memset`: 원형은 `void *memset(void *ptr_strart, int value, size_t count);`이다. count 크기만큼 value로 값을 대입한다.
 - `free(str)`
     + 전체 프로그램이 종료되면 결국 사용한 메모리 모두가 해제되지만 직접 해제해주는 것이 좋다.
