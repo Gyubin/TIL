@@ -47,3 +47,10 @@
 
 - 다른 사람들이 만든 이미지를 쓸 수 있다. AWS Marketplace에서 보면 사람들이 올린 이미지를 볼 수 있다. 더 쉽게는 https://aws.amazon.com/marketplace 로 들어가서 원하는것을 고르면 된다. 대표적으로 wordpress(HVM 버전 선택하는게 좋다.)
 - 이미지에 대한 가격과 AWS 사용 가격이 따로 표시돼있으니 총 합계 가격을 잘 확인해야 한다.
+
+## 5. 아키텍쳐
+
+![Imgur](http://i.imgur.com/Xwr0JeH.png)
+
+- 위와 같은 구조가 기본적으로 자주 쓰인다고 한다. AWS Beanstalk을 활용하면 쉽게 한 번에 구축 가능하다.
+- 관련 링크: [pdf](https://github.com/cloudtrack/yonsei-class)
