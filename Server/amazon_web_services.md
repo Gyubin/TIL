@@ -50,7 +50,7 @@
 
 ## 5. 아키텍쳐
 
-![Imgur](http://i.imgur.com/Xwr0JeH.png)
+![Imgur](http://i.imgur.com/Xwr0JeHh.png)
 
 - 위와 같은 구조가 기본적으로 자주 쓰인다고 한다. AWS Beanstalk을 활용하면 쉽게 한 번에 구축 가능하다.
 - 관련 링크: [pdf](https://github.com/cloudtrack/yonsei-class)
@@ -85,3 +85,33 @@
     + 피크를 기록하고 있는 부분을 살펴봐서 적당한 타입으로 결정하면 된다.
     + 다시 Images의 AMIs로 가서 만들어진 이미지를 우클릭한 후 Launch를 선택한다. 미리 의사결정했던 타입을 선택하고 진행하면 된다.
     + Elastic IP 메뉴로 다시 가서 해당 IP를 먼저 disassociate한 후 associate한다.
+
+### 6.4 Scale out
+
+![elb](http://i.imgur.com/nKfNRjy.png)
+
+- 기본적으로 스케일 아웃보다 스케일업을 먼저 적용한다. 더 쉽고 단순하다. 스케일 업에서 한계를 만난다든가 낭비가 심해지면 스케일 아웃을 한다.
+- 우선 웹 앱은 크게 "Web Server", "Middle ware", "Database"로 구성되어있다.
+    + Web Server: nginx, apache
+    + Middle ware: django, rails, jsp
+    + Database: MySQL, NoSQL
+- 먼저 세 구성 요소가 한 컴퓨터에 모두 위치해있었던 것에서 각각을 다른 컴퓨터로 떼어낸다.
+- Database scale out
+    + 사용량이 늘어나면 DB에서 먼저 문제가 발생하는데 이 땐 컴퓨터를 또 하나 만들어서 Database 담당을 2개로 늘린다. 즉 Master와 Slave 두 개의 데이터베이스가 존재하는 것. master에는 쓰기 작업만 하고, slave에는 읽기 작업만 한다. 이 분기는 미들웨어에서 처리한다. 변경이 일어나면 최대한 빠른 시간 내에 master에서 slave로 복제를 하는 방식. 이런식으로 slave를 여러개 늘리는 방식으로 한다.
+    + 그래도 안되면 샤딩이란 방법을 쓴다. 즉 마스터를 2개로 쪼개서 1-1000번 유저는 Master1을, 1000-2000번 유저는 Master2를 쓰는 방식.
+- Middle ware scale out
+    + 똑같은 미들웨어를 하나 더 만들어서 한 번은 미들웨어1, 한 번은 미들웨어2로 보내주면 된다.
+- Web Server scale out
+    + 첫 번째 방식은 DNS 서비스를 이용하는 것. 도메인과 여러 개의 IP를 연결해서 각 IP가 다른 Web server로 연결되도록 하는 것.
+    + 두 번째 방식은 Load balancer를 이용하는 것. AWS에 ELB(Elastic Load balancer)라는 서비스가 있다. 웹서버 바로 전에서 ELB가 사용자 접속을 받아서 알아서 분산시켜준다. ELB는 웹서버가 살았는지 죽었는지 알 수 있고, 성능이 각각의 웹서버가 어떤 상황인지 알 수 있기 때문에 그걸 바탕으로 분배한다.
+    + ELB는 AWS가 알아서 관리하는 것이기 때문에 죽지 않는다. managed라고 표현하는데 실제로 우리가 구현하면 높은 비용이 든다. 매우 편리.
+
+![Imgur](http://i.imgur.com/nb86AYf.png)
+
+- ELB 적용해보기
+    + Create Load balancer 메뉴 선택.
+    + Load Balancer Port는 사용자가 접속할 때, Instance Port는 로드 밸런서가 웹서버에 접속할 때 사용하는 방식, 포트다.
+    + 프로토콜을 선택할 때 만약 우리 서비스가 HTTPS를 쓴다면 추가해주면 된다. 다만 로드밸런서와 인스턴스 사이에서 인스턴스 포트를 HTTPS로 해 줄 필요는 없다. 둘 사이는 안전하다.
+    + Security group은 HTTP로 모든 IP에서 접속 가능하게 한다.
+    + Configure Health Check: ELB가 각 인스턴스의 상태를 확인하기 위해 정기적으로 접속을 해본다. Ping Protocol, Ping Port, Ping Path를 설정해주면 되고 Ping path의 접속이 가능하면 컴퓨터가 살아있다라고 생각한다. 그 아래 고급 설정에서 Response Timeout은 이 이상 걸리면 죽었다고 혹은 성능이 안좋다 판단하는 기준이고, Interval은 헬스 체크 주기이고, Threshold는 조건에 최소 몇 번 맞지 않으면 죽었다고 판단, 재 시도해서 최소 몇번 이상 오케이가 뜨면 다시 살아났다고 판단하는 기준이다.
+    + 인스턴스를 당장은 추가 안해도 일단 생성해놓을 수 있다.
