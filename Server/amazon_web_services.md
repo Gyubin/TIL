@@ -87,9 +87,9 @@
     + 다시 Images의 AMIs로 가서 만들어진 이미지를 우클릭한 후 Launch를 선택한다. 미리 의사결정했던 타입을 선택하고 진행하면 된다.
     + Elastic IP 메뉴로 다시 가서 해당 IP를 먼저 disassociate한 후 associate한다.
 
-### 6.4 Scale out
+### 6.3 Scale out
 
-#### 6.4.1 기본 내용
+#### 6.3.1 기본 내용
 
 ![elb](http://i.imgur.com/nKfNRjy.png)
 
@@ -109,7 +109,7 @@
     + 두 번째 방식은 Load balancer를 이용하는 것. AWS에 ELB(Elastic Load balancer)라는 서비스가 있다. 웹서버 바로 전에서 ELB가 사용자 접속을 받아서 알아서 분산시켜준다. ELB는 웹서버가 살았는지 죽었는지 알 수 있고, 성능이 각각의 웹서버가 어떤 상황인지 알 수 있기 때문에 그걸 바탕으로 분배한다.
     + ELB는 AWS가 알아서 관리하는 것이기 때문에 죽지 않는다. managed라고 표현하는데 실제로 우리가 구현하면 높은 비용이 든다. 매우 편리.
 
-#### 6.4.2 ELB
+#### 6.3.2 ELB
 
 ![Imgur](http://i.imgur.com/nb86AYf.png)
 
@@ -134,7 +134,7 @@
     + 로드 밸런서로 들어가서 여러번 새로고침해보면 접속 정보가 번갈아서 뜨는 것을 확인할 수 있다.
     + 역시 위에서 만들었던 부하발생기를 이용해서 테스트하면 된다. `ab -n 100 -c 10 로드밸런서도메인/index.php`
 
-#### 6.4.3 Auto Scaling
+#### 6.3.3 Auto Scaling
 
 - ELB에 인스턴스를 붙이는 작업을 자동화할 수 있다. 자동으로 인스턴스를 생성하고 삭제하는 것을 Auto Scaling이라고 한다.
 - Auto Scaling 메뉴
@@ -160,3 +160,14 @@
     + Auto scaling에서 썼던 alarm에 대한 관제탑 같은 서비스다. 들어가보면 만들었던 알람들이 현재 울리는 알람은 "ALARM"이라고, 아닌 알람은 "OK"라고 표시가 돼있을 것이다.
     + 실시간으로 변경되는 것을 확인할 수 있다. 역시 부하 발생기를 이용해서 접속 수를 엄청 많이 해놓고 시간을 기다리면 오토스케일링 되는 것을 볼 수 있다.
 - 모두 사용이 끝났으면 오토 스케일링 그룹, 알람, ELB, 부하발생기 인스턴스를 모두 삭제한다. 그리고 SNS 서비스에 가면 또 뭔가가 있을거다 그것도 삭제.
+
+## 7. AWS 제어하기
+
+- CLI
+    + `pip install awscli` : 먼저 CLI로 제어할 수 있는 프로그램 설치한다.
+    + `aws configure` : 나의 AWS 계정과 연결하기 위해 설정을 시작하는 명령어
+    + `aws ec2 describe-instances` : ec2의 상태를 텍스트로 뿌려주는 기본적인 명령어다.
+- API
+    + 웹 서버의 주소로 접근할 수 있다.
+    + `https://ec2.amazonaws.com/?Action=DescribeInstances` : 뒤에 인증키에 대한 것을 붙여넣어줘야하지만 이런 형태로 요청을 하면 xml 결과가 나온다.
+- nodejs로 제어하기: https://opentutorials.org/module/1946/11768
