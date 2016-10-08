@@ -175,3 +175,19 @@
     + 웹 서버의 주소로 접근할 수 있다.
     + `https://ec2.amazonaws.com/?Action=DescribeInstances` : 뒤에 인증키에 대한 것을 붙여넣어줘야하지만 이런 형태로 요청을 하면 xml 결과가 나온다.
 - nodejs로 제어하기: https://opentutorials.org/module/1946/11768
+
+## 7. RDS - 관계형 데이터 베이스
+
+### 7.1 제공 서비스
+
+- MySQL : 가장 대표적인.
+- MariaDB : MySQL을 만든 창업자가 만든 데이터베이스. 그래서 MySQL과 원리가 같아서 100% 호환된다.
+- Aurora : 아마존에서 직접 만든 것. 역시 MySQL과 호환된다.
+- PostgreSQL, ORACLE, SQL Server도 제공.
+
+### 7.2 사용
+
+- RDS로 들어가서 Launch Instance 한다.
+- MariaDB를 선택하고, 개발 테스트용이라면 Dev/Test를 선택한다. AZ 사용에 따른 비용 차이다. AZ는 실 서버에선 하는게 좋다.
+- 상세 설정 페이지에서는 라이센스, 버전은 그대로 두고, 인스턴스 클래스는 적절한 것을 택한다. 맨 아래에 DB의 이름과 마스터 사용자 아이디, DB 비밀번호를 설정한다.
+- 마지막 고급 세팅: Public Accessible은 같은 VPC가 아니더라도 접속하게 할 것인지를 선택하는 것. db 이름 설정하고, 백업은 해당 날짜마다 백업해준다. 백업은 그 날짜의 DB 새로운 인스턴스를 생성해준다. 짧게 설정할수록 비싸진다.
