@@ -24,6 +24,7 @@
 - 사용 방법
     + GUI: S3 들어가서 bucket을 만든다. region은 서비스 지역과 가장 가까운 곳으로 선택하면 된다. 업로드 버튼을 눌러서 파일을 올리면 되고, 올리면 각 파일마다 고유 링크가 만들어진다. 하지만 이렇게 사용하는 경우는 거의 없다.
     + SDK: nodejs를 이용한 S3 SDK. https://opentutorials.org/module/1946/11797
+- 기본적으로 파일을 올리면 private 상태다.
 
 ### 1.3 RDS - Relational Database Service
 
@@ -207,3 +208,14 @@
 - 쓰기 작업만 일어나는 master instance를 두고, 읽기를 전담하는 slave를 추가로 만든다. master에서 수정 작업이 일어나면 최대한 빠른 시간 내에 즉시 수정 내역을 slave가 받아서 동기화하는 방식으로 진행된다.
 - 인스턴스를 선택한 후 우측 상단에 Instance Actions에서 Create Read Replica를 선택한다.
 - Source로 master가 될 instance를 정해주고 생성한다.
+
+## 8. Elastic Beanstalk
+
+- 위에서 하나하나 했던 스케일 작업들을 클릭 몇 번으로 한 방에 자동 생성할 수 있는 기능이다.
+- Create beanstalk 버튼을 누르고 디폴트 세팅으로 바로 생성할 수도 있고, 상세 설정에서 하나하나 지정해줄 수도 있다.
+- RDS는 기본 설정에 없어서 안에 들어가서 지정해주면 된다. EC2, RDS, Load balancer 하나하나 설정 지정 가능.
+- 예를 들어 워드프레스를 이 환경으로 올린다면
+    + wordpress.org 에 들어가서 최신 워드프레스 zip 파일을 받아서 beanstalk에 업로드한다. 그럼 알아서 적용된다.
+    + S3: 워드프레스 플러그인이 있다. 검색하면 2가지가 나오는데 서로 의존적이라 둘 다 깔아야함.
+    + RDS: 설치 후 웹으로 접속하면 초기 설정 화면이 나오는데 DB 호스트를 우리의 AWS RDS 웹 주소를 적어주면 된다.
+- terminate할 때는 Beanstalk를 지우면 만들어진 모든게 지워지므로 편리하지만 위험할 수도 있다. 다만 지울 때 S3는 바로 지워지지 않는데 상세 설정 들어가서 Lifecycle을 조절해서 알아서 지워지도록 하면 된다.
