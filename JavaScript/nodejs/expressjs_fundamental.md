@@ -37,3 +37,15 @@ app.get('login', function(req, res){
   res.send("Login please.");
 })
 ```
+
+### 2.2 정적 파일 서비스
+
+- `app.use(express.static('public'));` : app.js 파일에 public이란 디렉토리를 만들고 앞의 코드를 입력한다. 해당 디렉토리에 정적 파일이 위치한 것으로 지정하겠다는 의미다. 주로 디렉토리명을 `public`으로 한다.
+- 이후 public 디렉토리에 텍스트 파일이든 이미지파일이든 파일 자체는 `도메인/파일명`으로 브라우저에서 접근할 수 있게 된다.
+- img 태그에서 소스로 접근할 때도 역시 다음처럼 루트에서 파일명으로 바로 접근하면 된다.
+
+    ```js
+    app.get('/ny', function(req, res){
+      res.send('<h2>I Love NY!</h2> <img src="/ny.png"/>');
+    });
+    ```
