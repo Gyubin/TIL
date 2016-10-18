@@ -122,6 +122,36 @@ http.createServer((req, res) => {
     console.log("Program has ended");
     ```
 
+- `fs` 파일 관리 모듈
+    + `fs.readdir(path, function)` : path의 모든 파일들의 이름을 얻어낼 수 있는 함수. function은 error와 file 배열을 매개변수로 받는다.
+    + `fs.writeFile(file_name, data, function)` : file_name은 경로와 파일명까지 포함하는 값이고, data는 그 파일에 기록할 데이터, function은 error를 매개변수로 받아서 쓰기에 실패했을 때 실행된다.
+    + `fs.readFile(file_name, encoding, function)` : 역시 file_name은 경로까지 포함하고, encoding은 utf-8로 맞춰주면 편하다. 콜백함수는 error, data를 매개변수로 받고 위 다른 함수와 방식이 같다.
+
+    ```js
+    fs.readdir('./data', (err, files) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      }
+      res.render('home', {topics:files});
+    });
+
+    fs.writeFile('./data/' + title, desc, (err) => {
+      if (err){
+        res.status(500).send('Internal Server Error');
+      }
+      res.redirect('/topic/' + title);
+    });
+
+    fs.readFile('./data/' + id, 'utf-8', (err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      }
+      res.send(data);
+    });
+    ```
+
 - Port에 대해서
     + 총 65536개의 포트가 있다.
     + 웹 서버를 80번 포트에 열어두고 listening하게 둔다.

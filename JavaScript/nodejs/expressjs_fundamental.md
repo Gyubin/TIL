@@ -28,17 +28,29 @@ Node.js의 웹 프레임워크다.
 
 ## 3. 라우팅
 
-- 사용자가 접근하는 URL마다 각각 다른 작업을 해주는 것을 의미
-- 아래처럼 `get` 함수에 URL과 콜백함수를 지정해주면 된다.
+- 사용자가 접근하는 URL마다 각각 다른 작업을 해주는 것을 의미. 아래처럼 `get` 함수에 URL과 콜백함수를 지정해주면 된다.
 
-```js
-app.get('/', function(req, res){
-  res.send('Hello home page');
-});
-app.get('login', function(req, res){
-  res.send("Login please.");
-})
-```
+    ```js
+    app.get('/', function(req, res){
+      res.send('Hello home page');
+    });
+    app.get('login', function(req, res){
+      res.send("Login please.");
+    })
+    ```
+
+- URL을 여러개 지정해줄 수도 있다. 배열에 여러 문자열이 들어간 형태다. 아래처럼 조건 분기를 해주면 각기 처리가 가능하다. 공통된 작업은 그 위에 처리해서 코드량 줄일 수 있다.
+
+    ```js
+    app.get(['/topic', '/topic/:id'], (req, res) => {
+      let id = req.params.id;
+      if (id) {
+        // '/topic/:id'로 들어온 내용
+      } else {
+        // '/topic'으로 들어온 내용
+      }
+    });
+    ```
 
 ## 4. 템플릿 엔진
 
@@ -65,11 +77,13 @@ app.get('login', function(req, res){
     + `app.set('view engine', 'pug');`
     + `app.set('views', './views');` -> 생략해도 기본값으로 지정되어있긴 하다.
 - 프로젝트 디렉토리에 views 디렉토리 만들고 그 안에 pug 파일을 넣으면 된다.
-- 템플릿 엔진을 이용할 땐 res.send가 아니라 render를 사용한다. 라우터는 다음처럼 쓴다. temp.pug 파일을 띄운다는 의미다.
+- 템플릿 엔진을 이용할 땐 res.send가 아니라 `render`를 사용한다. 라우터는 다음처럼 쓴다. temp.pug 파일을 띄운다는 의미다.
+- `res.redirect`는 해당 주소로 보낸다는 의미다. 라우터와 컨트롤러 function을 다시 거치게 된다.
 
     ```js
     app.get('/template', function(req, res){
       res.render('temp');
+      // res.redirect('/topic/' + title);
     });
     ```
 
@@ -192,8 +206,19 @@ html
     })
     ```
 
-### 7. 꿀팁 supervisor
+## 7. 꿀팁 supervisor
 
 - `node app.js`로 앱을 실행하면 계속 껐다 켰다해야하기 때문에 귀찮다.
 - `supervisor app.js`라고 실행하면 파일의 변경을 supervisor가 watch하고 있다가 감지해서 알아서 껐다 켜준다.
 - 전역 설치하고 쓰면 된다: `npm install supervisor -g`
+
+## 8. 상태 관련
+
+에러가 났을 때 상태메시지와 함꼐 전달한다.
+
+```js
+res.status(500).send('Internal Server Error');
+res.status(403).end();
+res.status(400).send('Bad Request');
+res.status(404).sendFile('/absolute/path/to/404.png');
+```
