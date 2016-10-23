@@ -8,11 +8,11 @@
 - 가지고 있는 동전으로 금액을 만들 수 있는 가짓수를 출력한다.
 - 첫째줄에 전체 케이스, 둘째줄에 동전 종류 수, 셋째줄에 동전 종류, 넷째줄에 만들어야 할 금액을 입력받는다.
 
-## 2. 코드
+## 2. 내가 짠 재귀 코드
 
 ### 2.1 파이썬 코드
 
-속도가 느려서 통과하지 못한 코드다. 수정 필요.
+속도가 느려서 통과하지 못한 코드다.
 
 ```py
 def calculate_kinds(coin_types, money):
@@ -43,5 +43,39 @@ if __name__ == '__main__':
 
 ### 2.2 C 코드
 
+똑같은 원리로 C 코드로 변환했지만 역시 시간초과가 나온다.
+
 ```c
+#include <stdio.h>
+
+int cal(int *arr, int len, int money)
+{
+    int cnt, i;
+
+    cnt = 0;
+    if (money % arr[0] == 0)
+        cnt = 1;
+    if (len != 1)
+        for (i = 0; i < money / arr[0]; i++)
+            cnt += cal(&arr[1], len - 1, money - arr[0] * i);
+    return (cnt);
+}
+
+int main(void)
+{
+    int cases, kinds, money, i;
+    int arr[20];
+
+    scanf("%d", &cases);
+    while (cases--)
+    {
+        scanf("%d", &kinds);
+        i = 0;
+        while (i < kinds)
+            scanf("%d", &arr[i++]);
+        scanf("%d", &money);
+        printf("%d\n", cal(arr, kinds, money));
+    }
+    return (0);
+}
 ```
