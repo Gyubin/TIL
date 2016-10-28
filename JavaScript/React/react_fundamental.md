@@ -182,6 +182,7 @@ ReactDOM.render(<App />, document.querySelector('.container'));
 
 - 일반적으로 여러 줄의 JSX 코드는 `()`로 묶어주는 편이다.
     + 만약 괄호를 쓰지 않는다면 return과 같은 줄에 첫 JSX 코드를 써줘야한다. 안 쓰면 에러 난다. 괄호를 썼을 때만 아래처럼 줄 바꿈해도 됨.
+    + 또한 변수로 JSX 코드를 저장할 때는 JSX 엘리먼트가 하나여야 한다. 즉 p 태그 2개를 나열한 것을 변수로 받을 수는 없다는 듯. div에 p가 2개 포함된 것은 받을 수 있다.
 
     ```js
     const App = () => {
@@ -629,3 +630,37 @@ render() {
 - `render` 메소드 부분만 편집한다.
 - 원래 썼던 `this.videoSearch(term)` 부분을 lodash의 `debounce`로 감싸주면 된다.
 - 두 번째 매개변수로 오는 것이 지연시간이다. 즉 함수 실행을 지연시킬 때 활용한다. 밀리세컨드 단위다. 300이면 0.3초.
+
+## 3. Virtual DOM
+
+참고링크: [Codecademy](https://www.codecademy.com/articles/react-virtual-dom), [React Kung Fu](http://reactkungfu.com/2015/10/the-difference-between-virtual-dom-and-dom/)
+
+```js
+var hello = <h1>Hello world</h1>; /// JSX code
+
+ReactDOM.render(hello, document.getElementById('app')); // works.
+ReactDOM.render(hello, document.getElementById('app')); // do nothing.
+```
+
+리액트의 특별한 점은 Virtual DOM을 활용한다는 것이다. 그 예로 위 코드에서 첫 번째 render함수는 동작하지만 두 번째 render 함수는 동작하지 않는다. 달라진 것이 없기 때문이다.
+
+- 문제점
+    + DOM 조작은 현대 인터렉티브 웹에서 가장 중요한 부분이지만 js 연산 중에서 가장 시간을 많이 잡아먹는 것이기도 하다.
+    + 이는 js 프레임워크가 해야할 일 이상으로 DOM을 많이 업데이트하기 떄문이다.
+    + 예를 들어서 10개 아이템이 들어있는 리스트가 있다고 하자. 첫 번째 리스트를 체크했을 때 대부분의 js 프레임워크는 전체 리스트를 다시 빌드한다. 이는 필요한 일에 비해 10배나 더 많은 일이다. 한 개의 아이템만 바뀌었고 나머지 9개는 그대로다.
+    + 리스트를 다시 빌드하는 것은 큰 일이 아니지만 현대의 웹사이트는 엄청난 양의 DOM 조작이 필요하다. 비효율적인 업데이트는 큰 무제다.
+    + 이 문제를 해결하기 위해 virtual DOM을 사용한다.
+- The Virtual DOM
+    + 리액트에서 모든 DOM 객체는 매칭되는 virtual DOM 객체를 가지고 있다. virtual DOM 객체는 DOM 객체의 가벼운 카피 본이다.
+    + virtual DOM은 실제 DOM과 같은 속성을 가지지만 화면에 표시되는 것을 바로 바꿀 수는 없다.
+    + DOM 조작은 느리다. 하지만 virtual DOM 조작은 실제로 화면에 렌더링 할 필요가 없기 때문에 매우 빠르다. 실제 집을 짓는 것이 아닌 청사진에서 집을 그려보는 것을 생각하면 된다.
+- How it helps
+    + JSX 요소를 렌더링할 때 모든 virtual DOM 객체는 업데이트된다.
+    + 비효율적으로 보이겠지만 사실은 매우 빠르게 이뤄진다.
+    + virtual DOM이 업데이트되면 React는 virtual DOM과 바로 이전 업데이트에서 만들어진 virtual DOM 스냅샷을 비교한다.
+    + 이전 버전의 virtual DOM과 새로운 virtual DOM을 비교하면서 React는 어느 부분이 바뀌었는지를 알아낸다. 이 작업을 "diffing" 이라고 한다.
+    + 어느 부분이 바뀌었는지 알게되면 React는 실제 DOM에서 딱 그 부분만 업데이트한다. 
+- 정리
+    + 모든 virtual DOM이 업데이트된다.
+    + 이전 버전의 virtual DOM 스냅샷과 비교해서 어느 부분이 변했는지 알아낸다.
+    + 바뀐 부분만 실제 DOM에서 바뀌고 그 부분만 다시 렌더링한다.
