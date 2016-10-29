@@ -664,3 +664,9 @@ ReactDOM.render(hello, document.getElementById('app')); // do nothing.
     + 모든 virtual DOM이 업데이트된다.
     + 이전 버전의 virtual DOM 스냅샷과 비교해서 어느 부분이 변했는지 알아낸다.
     + 바뀐 부분만 실제 DOM에서 바뀌고 그 부분만 다시 렌더링한다.
+
+## 4. JSX 기억할 것들 
+
+- JSX에서 self closing tag는 무조건 `/`를 붙여야한다. 일반 HTML에서는 `<br />`을 `<br>`이라고 써도 되지만 JSX에선 첫 번째만 올바르다.
+- JSX에서 JavaScript 코드를 쓰려면 `{ }` 안에 쓰면 된다. 없이 쓰면 일반 HTML처럼 그대로 텍스트로 출력된다.
+- HTML에서는 이벤트 핸들러가 모두 소문자다. 하지만 JSX에선 snakeCase로 쓴다. `onClick`, `onMouseOver` 등으로 앞에 on을 붙이면 된다. 다른 여러 이벤트들은 [공식 문서](https://facebook.github.io/react/docs/events.html#supported-events)에 적혀있다.
