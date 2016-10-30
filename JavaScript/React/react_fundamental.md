@@ -419,6 +419,19 @@ export default VideoListItem;
     + 어떤 카드인지는 모르겠는데 그냥 바꿔줘!라고 말하면 나는 전체 카드를 싹 바꿀 수 밖에 없다.
     + 하지만 카드에 id가 있다면, 특정 id의 카드만 수정하면 된다.
     + 이처럼 React는 array의 아이템 하나하나에 unique id를 필요로 한다. 변경된 부분만 바꿀 수 있도록.
+- 모든 리스트가 키를 가질 필요는 없다. 다음 두 경우 중 하나라면 키를 넣어준다. 둘 중 아무것도 아니라면 키 넣을 필요 없다.
+    + 리스트 아이템에 뭔가 상태 데이터가 있는 경우. 예를 들어 to-do 리스트에서 각 아이템의 체크 여부 상태가 기록되어있어야한다면 유니크한 키를 넣어준다.
+    + 렌더링이 다시 일어날 때 리스트 아이템이 섞일 수 있는 상황이라면 키를 넣어준다. 예를 들어 검색 결과같은 경우다.
+
+    ```js
+    var people = ['Rowe', 'Prevost', 'Gare'];
+    var peopleLIs = people.map(function(person, i){
+      return <li key={'person_' + i}>{person}</li>; /// key 삽입
+    });
+    var result = <ul>{peopleLIs}</ul>; /// ul 태그
+    ReactDOM.render(result, document.getElementById('app'));
+    ```
+
 - 해결 방법은 리스트 아이템을 생성하는 함수를 init할 때 property로 `key`와 유니크한 값을 전달하면 된다. 끝이다. 위위 코드를 보면 key를 video.etag로 전달한 것을 볼 수 있다.
 
 ```js
@@ -667,6 +680,36 @@ ReactDOM.render(hello, document.getElementById('app')); // do nothing.
 
 ## 4. JSX 기억할 것들 
 
+### 4.1 기본적인 것
+
 - JSX에서 self closing tag는 무조건 `/`를 붙여야한다. 일반 HTML에서는 `<br />`을 `<br>`이라고 써도 되지만 JSX에선 첫 번째만 올바르다.
 - JSX에서 JavaScript 코드를 쓰려면 `{ }` 안에 쓰면 된다. 없이 쓰면 일반 HTML처럼 그대로 텍스트로 출력된다.
 - HTML에서는 이벤트 핸들러가 모두 소문자다. 하지만 JSX에선 snakeCase로 쓴다. `onClick`, `onMouseOver` 등으로 앞에 on을 붙이면 된다. 다른 여러 이벤트들은 [공식 문서](https://facebook.github.io/react/docs/events.html#supported-events)에 적혀있다.
+
+### 4.2 제어문
+
+#### 4.2.1 조건문
+
+- JSX 내에서 `{ }`를 통해 JavaScript 코드를 작성할 때 안에서 if 문은 못 쓴다. 하지만 3항 연산자(ternary operator)는 쓸 수 있다. `x ? y : z` 형태다.
+- `&&` 사용하기: 자주사용하는 형태라고 한다. 조건이 참일 때만 list 아이템을 출력하는 형태다. `{!conditional_thing && <li>This will appear.</li>}`
+
+#### 4.2.2 반복문
+
+- `map` 함수를 활용한 방식: list 아이템들을 원소로 가지고 있는 array를 반환한다. ul 태그 안에 이 array를 끼워넣으면 인식한다.
+
+    ```js
+    var strings = ['Home', 'Shop', 'About Me'];
+    var listItems = strings.map(function(string){
+      return <li>{string}</li>; /// 원소 하나하나씩 작업
+    });
+    <ul>{listItems}</ul> /// 호출
+
+    // ==================================
+
+    var liArray = [
+      <li>item 1</li>, 
+      <li>item 2<li>, 
+      <li>item 3</li>
+    ];
+    <ul>{liArray}</ul> /// 이런 형태도 가능하다는 것.
+    ```
