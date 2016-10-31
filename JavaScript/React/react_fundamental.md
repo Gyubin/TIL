@@ -103,6 +103,7 @@
     + 위 코드처럼 함수를 만들면 이것은 component는 클래스 혹은 factory 등의 의미로 사용된다. React에서 하나의 component class로 여겨진다는 의미다.
     + 그래서 render할 때 App 자체를 넘기는게 아니라 instance를 만들어서 넘겨야한다.
     + `React.createElement` 함수가 그 역할을 하고 이 함수를 만드는 JSX 문법이 `<App />` 형태다. babeljs.io에서 테스트를 해보면 다음처럼 나온다. 그리고 `<App></App>` 할 필요 없이 `<App />`하면 편하다.
+    + 또한 꼭 App으로 대문자로 시작해야하는 이유가 html tag와 구분이 되어야하기 때문이다. 클래스 만들 때 클래스명을 대문자로 시작해야 함.
 
     ```js
     /////////////
@@ -196,6 +197,8 @@ ReactDOM.render(<App />, document.querySelector('.container'));
 
 ### 2.4 Class based components
 
+#### 2.4.1 상속 받아서 쓰기(udemy 강의)
+
 ```js
 class SearchBar extends React.Component {
   render () {
@@ -211,6 +214,19 @@ class SearchBar extends React.Component {
     + `import React, { Component } from 'react';`
     + 위 코드처럼 쓰면 된다. `const Component = React.Component;`의 의미와 같다.
 - 속도는 함수형이 클래스형보다 더 빠르다.
+
+#### 2.4.2 createClass 함수 그대로 쓰기(codecademy)
+
+```js
+var MyComponentClass = React.createClass({
+  render: function () {
+    return <h1>Hello world</h1>; /// JSX
+  }
+});
+```
+
+- `React.createClass` : Component를 만드는 Factory class다. 매개변수로 JavaScript Object 하나를 받는다.
+- 매개변수인 Object는 하나의 Property를 가진다. `render` 함수. JSX 코드를 리턴하면 된다.
 
 ### 2.5 EventHandler
 
