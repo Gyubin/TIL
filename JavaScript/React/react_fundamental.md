@@ -226,9 +226,11 @@ var MyComponentClass = React.createClass({
 ```
 
 - `React.createClass` : Component를 만드는 Factory class다. 매개변수로 JavaScript Object 하나를 받는다.
-- 매개변수인 Object는 하나의 Property를 가진다. `render` 함수. JSX 코드를 리턴하면 된다.
+- 매개변수인 Object는 여러 property를 가질 수 있는데 `render` 함수는 무조건 있어야 한다. JSX 코드를 리턴하면 된다.
 
 ### 2.5 EventHandler
+
+#### 2.5.1 클래스 내에서 사용할 경우
 
 ```js
 class SearchBar extends React.Component {
@@ -248,6 +250,29 @@ class SearchBar extends React.Component {
 - JSX에서 js 변수를 쓰려면 `{ }`안에다 써야한다.
 - HTML element에서 event에 쓰이는 콜백 함수는 매개변수로 event를 받는다. 
 - arrow function에서 매개변수, 실행문이 한 줄이면 각각 괄호, 중괄호를 없앨 수 있다.
+
+#### 2.5.2 React.createClass 함수 사용할 때
+
+```js
+var Talker = React.createClass({
+  talk: function() {
+    for (var speech = '', i = 0; i < 10000; i++) {
+      speech += 'blah ';
+    }
+    alert(speech);
+  },
+  render: function () {
+    return <Button talk={this.talk}/>; ///JSX
+  }
+});
+ReactDOM.render(<Talker />, document.getElementById('app')
+);
+```
+
+- Talker 컴포넌트의 함수를 Button 컴포넌트로 보내려는 상황이다.
+- 우선 보낼 함수가 createClass 매개변수인 object의 property로 있어야 한다.
+- `this`로 접근해서 Button의 prop으로 보낸다.
+- Button 컴포넌트 파일의 JSX에서 `{this.props.talk}` 형태로 받아서 onClick property의 value로 넣어주면 된다.
 
 ### 2.6 State object
 
@@ -300,6 +325,26 @@ render() {
     + input field에 키보드로 문자를 입력한다.
     + arrow function이 실행되고 state의 term 값이 바뀐다.
     + input의 value가 state의 term 값에 의해 바뀌게 된다.
+
+#### 2.6.4 그냥 props 쓰기
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var Greeting = React.createClass({
+  render: function () {
+    return <h1>Hi there, {this.props.firstName}!</h1>; /// JSX
+  }
+});
+ReactDOM.render(
+  <Greeting firstName='Gyubin' />, 
+  document.getElementById('app')
+);
+```
+
+- React Component 클래스를 인스턴스화할 때 property로 들어간 값을 `this.props`에서 접근할 수 있다.
+- property 값을 줄 때 문자열이라면 그냥 자연스럽게 쓰면 되지만 정수나 배열 같은 경우를 넣을 때는 `{}` 안에 넣어주면 된다.
 
 ### 2.7 Youtube 2
 

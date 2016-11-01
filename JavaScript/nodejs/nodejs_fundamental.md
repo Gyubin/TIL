@@ -158,3 +158,13 @@ http.createServer((req, res) => {
     + 사용자가 `http://a.com:80` 이라고 웹브라우저 주소창에 치면 해당 포트에서 리스닝하고 있는 웹서버가 응답하는 것.
     + 80번 포트는 디폴트라서 안 치면 자동으로 80번으로 연결된다.
 - Node.js의 함수들은 기본적으로 비동기 형태다. 함수명에 `Sync`가 붙어있으면 동기 방식. 필요하다면 쓰지만 웬만하면 쓰지 않는 것을 추천.
+- 모듈을 불러오는 것은 `require`를 쓰면 되지만 내보낼 때는 `module.export`를 쓴다. 내가 만든 js 파일에서 내보낼 객체를 설정해주면 된다. 아래 코드에서 만약 require를 다른 파일에서 한다면 `console.log(require('./mine.js').furutirst)` 형태로 쓰는 것이 가능하다. 정확히 export 한 객체를 리턴한다.
+
+    ```js
+    var faveManifestos = {
+      futurist: 'http://bit.ly/1lKuB2I',
+      SCUM:     'http://bit.ly/1xWjvYc',
+      cyborg:   'http://bit.ly/16sbeoI'
+    };
+    module.exports = faveManifestos;
+    ```
