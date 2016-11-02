@@ -276,13 +276,112 @@ ReactDOM.render(<Talker />, document.getElementById('app')
 
 ### 2.6 State object
 
+#### 2.6.0 props
+
+- state를 하기 전에 먼저 props를 짚고 넘어간다.
+- state가 Component가 가지는 고유의 상태 정보라면 props는 Component에 어떤 정보를 전달할 때 사용한다. 즉 props는 다른 컴포넌트에 의해 변하는 값, state는 컴포넌트 스스로에 의해 변하는 값이다.
+- React Component 클래스를 인스턴스화할 때 property로 들어간 값을 `this.props`에서 접근할 수 있다.
+- property 값을 줄 때 문자열이라면 그냥 자연스럽게 쓰면 되지만 정수나 배열 같은 경우를 넣을 때는 `{}` 안에 넣어주면 된다.
+
+    ```js
+    var React = require('react');
+    var ReactDOM = require('react-dom');
+
+    var Greeting = React.createClass({
+      render: function () {
+        return <h1>Hi there, {this.props.firstName}!</h1>; /// JSX
+      }
+    });
+    ReactDOM.render(
+      <Greeting firstName='Gyubin' />, 
+      document.getElementById('app')
+    );
+    ```
+
+- 기본값 설정할 수 있다. `getDefaultProps` 이름으로 함수를 만들어서 object를 리턴해주면 된다. props 값이 만약 전달되지 않아서 undefined라면 아래 코드처럼 리턴되는 object의 값들이 디폴트 값이 된다.
+
+    ```js
+    var React = require('react');
+    var ReactDOM = require('react-dom');
+
+    var Button = React.createClass({
+      getDefaultProps: function() {
+        return {text:'I am a button'};
+      },
+      render: function () {
+        return <button>{this.props.text}</button>; /// JSX
+      }
+    });
+    ReactDOM.render(<Button />, document.getElementById('app'));
+    ```
+
 #### 2.6.1 개념
 
 - plain JavaScript Object다. 사용자의 이벤트를 기록하고 반응하는데 사용한다.
 - class-based component는 고유의 state object를 가지고 있는데 이게 변하면 곧바로 페이지를 re-render한다. 자식 components 역시 모두 렌더링한다.
 - fuctional component는 state가 없다.
 
-#### 2.6.2 constructor
+#### 2.6.2 React.createClass 활용하기(codecademy)
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var green = '#39D1B4';
+var yellow = '#FFD712';
+
+var Toggle = React.createClass({
+  getInitialState: function () {
+    return {color:green};
+  },
+  changeColor: function () {
+    var newColor = this.state.color == green ? yellow : green;
+    this.setState({color:newColor});
+  },
+  render: function () {
+    return (
+      <div style={{background: this.state.color}}>
+        <h1>Change my color</h1>
+        <button onClick={this.changeColor}>Change color</button>
+      </div> ///JSX code end
+    );
+  }
+});
+ReactDOM.render(<Toggle />, document.getElementById('app'));
+```
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var Mood = React.createClass({
+  getInitialState: function () {
+    return {mood: 'good'};
+  },
+  toggleMood: function () {
+    var newMood = this.state.mood == 'good' ? 'bad' : 'good';
+    this.setState({ mood: newMood });
+  },
+  render: function () {
+    return (
+      <div>
+        <h1>I'm feeling {this.state.mood}!</h1>
+        <button onClick={this.toggleMood}>Click Me</button>
+      </div>
+    );
+  }
+});
+ReactDOM.render(<Mood />, document.getElementById('app'));
+```
+
+- 두 가지 예제다. 원리는 같다.
+- `getInitialState` : 초기 state 값을 지정하는 함수다.
+- 첫 번째 예의 `changeColor`와 `toggleMood` 함수는 clickHandler로 사용되는 함수
+- `this.setState`: state의 값을 변화시키는 함수
+- `this.state.myStateName`: 이런 형태로 state의 값을 활용할 수 있다.
+- `this.setState` 함수를 `render` 함수 안에 사용할 수는 없다. 그러면 무한 루프에 빠진다.
+
+#### 2.6.3 constructor 활용한 방법(udemy)
 
 ```js
 class SearchBar extends React.Component {
@@ -303,9 +402,18 @@ class SearchBar extends React.Component {
 - `constructor`: 모든 ES6 클래스가 가지는 함수다. instance가 만들어질 때 무조건 호출된다.
 - instance들은 고유의 state를 가지고, 내부의 property-value 쌍은 개발자 마음대로 지정할 수 있다.
 - state를 변경할 때는 `this.setState({ term: value })` 함수를 사용한다. 자연스럽게 떠올릴만 한 this.state.term = something; 형태는 지양한다. 리액트는 뒤에서 많은 처리를 하는데 이런식으로 값만 딱 바꿔버리면 state가 변경되었는지 리액트가 모르기 때문이다.
+- `this.setState` 함수는 두 개의 매개변수를 받는데 첫 번째인 object만 기억하면 된다. 두번째로 받는 콜백 함수는 거의 쓸 일이 없다.
+- 만약 state에 property가 2개 이상이 있는 상황에서 `this.setState` 함수에 property가 하나인 object를 넣는다면 원래 state에서 딱 그 property만 바뀌고 다른 값은 변동되지 않는다.
+
+    ```js   
+    {mood:'great', hungry:false} // 이 상황에서
+    this.setState({ hungry: true }); // 이렇게 함수가 실행됐을 때
+    {mood:'great', hungry:true} // mood 값은 변하지 않는다.
+    ```
+
 - 위처럼 onChange의 콜백 함수를 arrow function으로 하면 알아서 this가 lexical로 된다. 즉 arrow function의 scope가 아니라 함수가 실행된 surrounding이 this로 지정되는 것. 그래서 this에서 setState 함수가 호출 가능하다. 하지만 arrow function 대신 일반 함수를 onInputChange로 만들어서 아래에다 선언해두고 함수명만 적어서 활용하는 경우엔 `this.onInputChange.bind(this)` 이런 형태로 surrounding을 함수에 bind시켜줘야한다.
 
-#### 2.6.3 Controlled element
+#### 2.6.4 Controlled element
 
 ```js
 render() {
@@ -325,46 +433,6 @@ render() {
     + input field에 키보드로 문자를 입력한다.
     + arrow function이 실행되고 state의 term 값이 바뀐다.
     + input의 value가 state의 term 값에 의해 바뀌게 된다.
-
-#### 2.6.4 그냥 props 쓰기
-
-```js
-var React = require('react');
-var ReactDOM = require('react-dom');
-
-var Greeting = React.createClass({
-  render: function () {
-    return <h1>Hi there, {this.props.firstName}!</h1>; /// JSX
-  }
-});
-ReactDOM.render(
-  <Greeting firstName='Gyubin' />, 
-  document.getElementById('app')
-);
-```
-
-- React Component 클래스를 인스턴스화할 때 property로 들어간 값을 `this.props`에서 접근할 수 있다.
-- property 값을 줄 때 문자열이라면 그냥 자연스럽게 쓰면 되지만 정수나 배열 같은 경우를 넣을 때는 `{}` 안에 넣어주면 된다.
-
-#### 2.6.5 props 기본값 설정하기
-
-```js
-var React = require('react');
-var ReactDOM = require('react-dom');
-
-var Button = React.createClass({
-  getDefaultProps: function() {
-    return {text:'I am a button'};
-  },
-  render: function () {
-    return <button>{this.props.text}</button>; /// JSX
-  }
-});
-ReactDOM.render(<Button />, document.getElementById('app'));
-```
-
-- `getDefaultProps` 이름으로 함수를 만들어서 object를 리턴해주면 된다.
-- props 값이 만약 전달되지 않아서 undefined라면 위 코드에서처럼 리턴되는 object의 값들이 디폴트 값이 된다.
 
 ### 2.7 Youtube 2
 
