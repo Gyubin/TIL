@@ -346,6 +346,26 @@ ReactDOM.render(
 - React Component 클래스를 인스턴스화할 때 property로 들어간 값을 `this.props`에서 접근할 수 있다.
 - property 값을 줄 때 문자열이라면 그냥 자연스럽게 쓰면 되지만 정수나 배열 같은 경우를 넣을 때는 `{}` 안에 넣어주면 된다.
 
+#### 2.6.5 props 기본값 설정하기
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var Button = React.createClass({
+  getDefaultProps: function() {
+    return {text:'I am a button'};
+  },
+  render: function () {
+    return <button>{this.props.text}</button>; /// JSX
+  }
+});
+ReactDOM.render(<Button />, document.getElementById('app'));
+```
+
+- `getDefaultProps` 이름으로 함수를 만들어서 object를 리턴해주면 된다.
+- props 값이 만약 전달되지 않아서 undefined라면 위 코드에서처럼 리턴되는 object의 값들이 디폴트 값이 된다.
+
 ### 2.7 Youtube 2
 
 ```js
@@ -774,3 +794,55 @@ ReactDOM.render(hello, document.getElementById('app')); // do nothing.
     ];
     <ul>{liArray}</ul> /// 이런 형태도 가능하다는 것.
     ```
+
+### 4.3 this.props.children
+
+-  `<MyComponentClass>Hello</MyComponentClass>` 이렇게 적을 수도 있다.
+-  `this.props.children` : JSX 태그 사이의 모든 것들을 리턴한다. 하나라면 그 객체를 리턴하고, 두 개 이상이라면 배열에 담겨서 리턴한다.
+-  아래 코드처럼 List component 사이에 값을 넣어서 전달해줄 수 있다.
+
+```js
+// App.js
+var React = require('react');
+var ReactDOM = require('react-dom');
+var List = require('./List');
+
+var App = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <List type='Living Musician'>
+          <li>Sachiko M</li>
+          <li>Harvey Sid Fisher</li>
+        </List>
+        <List type='Living Cat Musician'>
+          <li>Nora the Piano Cat</li>
+        </List>
+      </div>
+    );
+  }
+});
+ReactDOM.render(<App />, document.getElementById('app')
+);
+```
+
+```js
+// List.js
+var React = require('react');
+
+var List = React.createClass({
+  render: function () {
+    var titleText = 'Favorite ' + this.props.type;
+    if (this.props.children instanceof Array) {
+      titleText += 's';
+    }
+    return (
+      <div>
+        <h1>{titleText}</h1>
+        <ul>{this.props.children}</ul>
+      </div> /// JSX end
+    );
+  }
+});
+module.exports = List;
+```
