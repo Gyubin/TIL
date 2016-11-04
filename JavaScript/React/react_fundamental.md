@@ -914,3 +914,62 @@ var List = React.createClass({
 });
 module.exports = List;
 ```
+
+## 5. Automatic binding
+
+- 아래 코드는 자식 컴포넌트에서 부모의 state를 변환한다.
+- 부모 컴포넌트에서 `this.setState`를 하는 함수 `changeName`을 만든다.
+- `changeName` 함수를 prop으로 자식 컴포넌트로 전달한다.
+- 자식 컴포넌트에서 드롭다운 메뉴의 선택이 바뀔 때 바뀐 값을 `changeName` 함수로 전달되도록 한다.
+- 일반적으로 this는 함수가 호출될 때의 그 body로 정해진다. 하지만 React에선 automatic binding이란 것이 있고 props로 전달된 함수는 정의된 시점의 body를 가리키도록 되어있다.
+
+```js
+// Parent.js
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Child = require('./Child');
+
+var Parent = React.createClass({
+  getInitialState: function () {
+    return { name: 'Frarthur' };
+  },
+  changeName: function (newName) {
+    this.setState({
+      name: newName
+    });
+  },
+  render: function () {
+    return (
+      <Child 
+        name={this.state.name}
+        onChange={this.changeName} /> /// JSX
+    );
+  }
+});
+ReactDOM.render(<Parent />, document.getElementById('app')
+);
+```
+
+```js
+// Child.js
+var React = require('react');
+
+var Child = React.createClass({
+  handleChange: function (e) {
+    this.props.onChange(e.target.value);
+  },
+  render: function () {
+    return (
+      <div>
+        <h1>Hey my name is {this.props.name}!</h1>
+        <select id="great-names" onChange={this.handleChange} >
+          <option value="Frarthur">Frarthur</option>
+          <option value="Gromulus">Gromulus</option>
+          <option value="Thinkpiece">Thinkpiece</option>
+        </select>
+      </div>
+    );
+  }
+});
+module.exports = Child;
+```
