@@ -973,3 +973,70 @@ var Child = React.createClass({
 });
 module.exports = Child;
 ```
+
+## 6. React Style
+
+### 6.1 inline styles
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var styles = {
+  background: 'lightblue',
+  color:      'darkred',
+  marginTop: '100px',
+  fontSize: '50px'
+};
+var styleMe = <h1 style={styles}>Please style me!</h1>; /// JSX
+ReactDOM.render(styleMe, document.getElementById('app'));
+```
+
+- 바깥 괄호는 JSX에서 JavaScript 쓴다는 의미, 안쪽 괄호는 object를 나타낸다. 즉 JSX의 style 값에 object를 넣는다는 의미
+- 일반적으로 파일의 맨 위에서 스타일 속성의 object를 만들어 사용한다.
+- style 속성 명은 camelCase로 쓴다.
+- 일반적으로 JavaScript에서는 무조건 속성 값이 문자열이다. 하지만 리액트에선 속성의 값을 숫자로 넣으면(문자열로 바꿀 필요 없이) 자동으로 px 값이 된다. 만약 em 값으로 넣고싶다면 문자열 형태로 넣어주면 된다.
+
+    ```js
+    { fontSize: 30 } // 30px
+    { fontSize: '2em' } // 2em
+    ```
+
+### 6.2 module로 사용하기
+
+```js
+// styles.js
+var fontFamily = 'Comic Sans MS, Lucida Handwriting, cursive';
+var background = 'pink url("https://media.giphy.com/media/oyr89uTOBNVbG/giphy.gif") fixed';
+var fontSize   = '4em';
+var padding = '45px 0';
+var color  = 'green';
+
+module.exports = {
+  fontFamily: fontFamily,
+  background: background,
+  fontSize:   fontSize,
+  padding:    padding,
+  color:      color
+};
+```
+
+```js
+// home.js
+var React = require('react');
+var ReactDOM = require('react-dom');
+var styles = require('./styles.js');
+
+var divStyle = {
+  background: styles.background,
+  height: '100%'
+}
+var Home = React.createClass({
+  render: function () {
+    return (
+      <div style={divStyle}>THANK YOU</div> /// JSX
+    );
+  }
+});
+ReactDOM.render(<Home />, document.getElementById('app'));
+```
