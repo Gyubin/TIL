@@ -1040,3 +1040,68 @@ var Home = React.createClass({
 });
 ReactDOM.render(<Home />, document.getElementById('app'));
 ```
+
+## 7. View와 Logic 분리하기
+
+```js
+// GuineaPigsContainer.js as a presentational component
+var React = require('react');
+var ReactDOM = require('react-dom');
+var GuineaPigs = require('../components/GuineaPigs.js')
+
+var GUINEAPATHS = [
+  'https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-guineapig-1.jpg',
+  'https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-guineapig-2.jpg',
+  'https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-guineapig-3.jpg',
+  'https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-guineapig-4.jpg'
+];
+
+var GuineaPigsContainer = React.createClass({
+  getInitialState: function () {
+    return { currentGP: 0 };
+  },
+  nextGP: function () {
+    var current = this.state.currentGP;
+    var next = ++current % GUINEAPATHS.length;
+    this.setState({ currentGP: next });
+  },
+  interval: null,
+  componentDidMount: function () {
+    this.interval = setInterval(this.nextGP, 5000);
+  },
+  componentWillUnmount: function () {
+    clearInterval(this.interval);
+  },
+  render: function () {
+    var src = GUINEAPATHS[this.state.currentGP];
+    return <GuineaPigs src={src} />; /// JSX
+  }
+});
+
+ReactDOM.render(<GuineaPigsContainer />, document.getElementById('app'));
+```
+
+```js
+// GuineaPigs.js as a container components
+var React = require('react');
+
+var GuineaPigs = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <h1>Cute Guinea Pigs</h1>
+        <img src={this.props.src} />
+      </div> /// JSX end
+    );
+  }
+});
+
+module.exports = GuineaPigs;
+```
+
+- Container components와 Presentational components는 분리하는게 좋다. 하나의 컴포넌트에 너무 많은 기능이 들어가선 안된다.
+- 컴포넌트가 1. state를 가지거나, 2. props를 받아서 작업해야하거나, 3. 복잡한 로직을 갖고 있다면 그 컴포넌트는 render 하는 역할을 담당해선 안된다. 즉 ReactDOM으로 render하면 안된다.
+- 렌더링하는 대신 다른 컴포넌트를 import 받아서 그 컴포넌트가 렌더링을 담당하게 하면 된다.
+- 위 예에서는 Presentational component인 `GuineaPigs.js`가 container인 `GuineaPigsContainer.js`에 의해 랜더링되는 것을 볼 수 있다. 
+- 렌더링 되는 Presentational component는 `module.exports`로 항상 export해준다.
+- 즉 정리하면 Container는 복잡한 작업을 하고, 거기에 맞게 알맞은 Presentational component를 렌더링해주면 된다.
