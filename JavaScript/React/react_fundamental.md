@@ -1105,3 +1105,58 @@ module.exports = GuineaPigs;
 - 위 예에서는 Presentational component인 `GuineaPigs.js`가 container인 `GuineaPigsContainer.js`에 의해 랜더링되는 것을 볼 수 있다. 
 - 렌더링 되는 Presentational component는 `module.exports`로 항상 export해준다.
 - 즉 정리하면 Container는 복잡한 작업을 하고, 거기에 맞게 알맞은 Presentational component를 렌더링해주면 된다.
+
+### 7.1 Presentational components -> function
+
+- 렌더링만 하는 컴포넌트는 state가 없다. 이런 state가 없는 컴포넌트는 굳이 클래스로 만들 필요 없이 단순히 JSX 코드를 리턴하는 함수 형태로 만들면 된다.
+
+    ```js
+    function MyComponentClass () {
+      return <h1>Hello world</h1>; /// jSX
+    }
+    ```
+
+- container로부터 props를 전달받을 때는 그냥 함수의 매개변수를 통해 `props`를 받으면 된다. 다만 class에서와 달리 `this`를 쓰지 않아도 된다.
+
+    ```js
+    function MyComponentClass (props) {
+      return <h1>Hello world. {props.name}!</h1>; /// jSX
+    }
+    ```
+
+## 8. propTypes
+
+### 8.1 class 컴포넌트
+
+```js
+propTypes: {
+  message:   React.PropTypes.string.isRequired,
+  style:     React.PropTypes.object.isRequired,
+  isMetric:  React.PropTypes.bool.isRequired,
+  miles:     React.PropTypes.number.isRequired,
+  milesToKM: React.PropTypes.func.isRequired,
+  races:     React.PropTypes.array.isRequired
+}
+```
+
+- class 형태의 컴포넌트에서 props의 타입을 미리 지정해놓는 역할이다. message 라는 prop을 받을 때 message가 문자열이 아니라면 에러를 일으킨다.
+- render처럼 createClass 함수의 매개변수인 object의 한 property로 들어가면 된다.
+- 맨 뒤에 `isRequired`를 붙이면 다른 타입의 prop이 들어왔을 때 콘솔에 warning 메시지를 띄운다.
+
+### 8.2 functional 컴포넌트
+
+```js
+function GuineaPigs (props) {
+  return (
+    <div>
+      <h1>Cute Guinea Pigs</h1>
+      <img src={props.src} />
+    </div> ///JSX end
+  );
+}
+GuineaPigs.propTypes = {
+  src: React.PropTypes.string.isRequired
+};
+```
+
+함수를 만든 이후에 위처럼 property를 추가해주면 된다.
