@@ -1160,3 +1160,223 @@ GuineaPigs.propTypes = {
 ```
 
 함수를 만든 이후에 위처럼 property를 추가해주면 된다.
+
+## 9. React Form
+
+- 우선 컴포넌트는 두 가지로 나뉜다.
+    + Uncontrolled: state를 내부적으로 가지고 있는 component
+    + Controlled: state가 없다.
+- React Form은 Controlled component다.
+    + 일반적인 form은 internal 메모리를 가지고 있는 uncontrolled component다. JavaScript 코드로 input tag를 선택해서 value 값을 뽑아내보면(`document.querySelector('input[type="text"]').value;`) 현재 input tag에 들어있는 텍스트가 뽑혀나온다.
+    + 하지만 `<input type="text" value={this.state.text} />` 처럼 value 속성으로 특정 값을 넣어주게 되면 internal storage를 운영하지 않게 된다. 항상 value 속성의 값으로 고정되게 되며 우리가 타이핑을 해도 변하지 않는다.
+
+```js
+class Form extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+  handleSubmit(event) {
+    alert('Text field value is: ' + this.state.value);
+  }
+  render() {
+    return (
+      <div>
+        <input type="text"
+          placeholder="Hello!"
+          value={this.state.value}
+          onChange={this.handleChange} />
+        <button onClick={this.handleSubmit}>
+          Submit
+        </button>
+      </div> ///JSX
+    );
+  }
+}
+ReactDOM.render(<Form />, document.getElementById('root'));
+```
+
+## 10. LifeCycle method
+
+### 10.1 Mounting
+
+코드 상에서 `ReactDOM.render(<App />, ~~);` 형태로 컴포넌트가 init 되는 것으로 가정한다. 아래 세 함수가 차례대로 호출된다.
+
+- `componentWillMount` : 가장 먼저 실행된다. 오직 첫 렌더링될 때만 호출된다. 이후 변경됐을 때 다시 렌더링될 때는 호출되지 않는다. 예를 들어 state의 값을 설정할 때 쓸 수 있다.
+- `render` : JSX 코드를 리턴하는 함수다.
+- `componentDidMount` : 마지막으로 호출된다. 특히 이 함수가 많이 활용된다.
+    + 앱이 AJAX 통신을 활용한다면 이 함수 내부에서 하면 된다. 다시 말해 이 함수가 외부 web API나 다른 js 웹 프레임워크와 상호작용하기 가장 좋은 위치다.
+    + 또한 타이머 설정할 때도 좋다. `setTimeout`, `setInterval` 같은 함수.
+    + 역시 처음 렌더링 직후에만 호출된다. 변경됐을 때 다시 렌더링되는 상황에선 render 함수 직후에 호출되지 않는다.
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var Example = React.createClass({
+  getInitialState: function () {
+    return { text: '' };
+  },
+  componentWillMount: function () {
+    alert('component is about to mount!');
+    this.setState({ text: 'Hello world' });
+  },
+  render: function () {
+    return <h1>{this.state.text}</h1>; /// JSX
+  },
+  componentDidlMount: function () {
+    alert('component just finished mounting!');
+  }
+});
+ReactDOM.render(<Example />, document.getElementById('app'));
+setTimeout(function(){
+  ReactDOM.render(
+    <Example />,
+    document.getElementById('app')
+  );
+}, 2000);
+```
+
+### 10.2 Updating
+
+첫 렌더링이 아니라 이후 변경됐을 때 다시 렌더링 되는 상황, 즉 update 상황에서 다음 5가지 함수가 순서대로 호출된다.
+
+- `componentWillReceiveProps` : 가장 먼저 호출되는 함수지만 컴포넌트가 props를 받을 때만 호출된다. props를 받는 컴포넌트가 아니라면 호출되지 않는다.
+    + 가장 일반적인 사용은 전달 받는 prop을 받는 컴포넌트의 state나 현재 prop 값과 비교해서 어떻게 처리할지 결정하는 것이다.
+
+    ```js
+    var React = require('react');
+
+    var Example = React.createClass({
+      componentWillReceiveProps: function (nextProps) {
+        alert("I'm about to get:  " + nextProps.text);
+      },
+      render: function () {
+        return <h1>{this.props.text}</h1>; /// JSX
+      }
+    });
+
+    // mounting될 때는 componentWillReceiveProps가 호출되지 않는다.
+    ReactDOM.render(<Example text="Hi" />, document.getElementById('app'));
+
+    // updating 때는 호출된다.
+    setTimeout(function () {
+      ReactDOM.render(
+        <Example text="Hello world" />,
+        document.getElementById('app')
+      );
+    }, 1000);
+    ```
+
+- `shouldComponentUpdate`
+    + `nextProps`, `nextState` 두 개의 매개변수를 받아서 true, false를 리턴한다.
+    + true를 리턴하면 정상적으로 동작하고, false를 리턴하면 update를 실행하지 않는다. 즉 이후에 실행될 업데이트 라이프 사이클 메소드가 실행되지 않는다.
+    + 주로 `nextProps`, `nextState`를 `this.props`, `this.state`에 비교해서 false를 리턴할지 말지를 정한다.
+    + 조건이므로 그냥 비교 연산자로 비교한 값을 바로 리턴하면 편하다.
+- `componentWillUpdate`
+    + `nextProps`, `nextState` 두 개의 매개변수를 받는다.
+    + 이 안에서 `this.setState` 함수 못 쓴다.
+    + 함수의 주 목적은 React 아키텍쳐 바깥의 무언가들과 상호작용하기 위해서다. 컴포넌트가 렌더링되기 전 리액트가 아닌 라이브러리들과 협업해야한다면 이곳에서 한다.
+    + 예를 들어 창 크기를 재는 것이나 API 호출 같은 것들. `    document.body.style.background = 'rgb(255, 215, 18)'; // yellow` 처럼 리액트가 아닌 배경 색깔 변경하는 코드들.
+- `render` : JSX 코드 리턴. 렌더링된다.
+- `componentDidUpdate`
+    + 렌더링된 후 마지막에 실행된다.
+    + `prevProps`, `prevState` 두 매개변수를 받는다. 이름 그대로 이전의 값들이다.
+    + 역시 리액트가 아닌 외부의 API, 프레임워크와 상호작용하는 곳으로 사용된다.
+
+### 10.3 Unmounting
+
+unmounting은 컴포넌트가 DOM에서 완전히 제거될 때를 말한다. 즉 DOM이 다시 렌더링될 때 해당 컴포넌트가 없어졌거나, 다른 페이지로 넘어가는 경우다, 웹 브라우저를 껐을 경우이다.
+
+오직 `componentWillUnmount` 함수만 존재하고 컴포넌트가 사라진 직후에 호출된다.
+
+```js
+// Enthused.js
+var React = require('react');
+
+var Enthused = React.createClass({
+  interval: null,
+  componentDidMount: function () {
+    this.interval = setInterval(function(){
+      this.props.addText('!');
+    }.bind(this), 15);
+  },
+  componentWillUnmount: function (prevProps, prevState) {
+    clearInterval(this.interval);
+  },
+  render: function () {
+    return (
+      <button onClick={this.props.toggle}>Stop!</button> ///JSX
+    );
+  }
+});
+
+module.exports = Enthused;
+```
+
+```js
+// App.js
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Enthused = require('./Enthused');
+
+var App = React.createClass({
+  getInitialState: function () {
+    return {
+      enthused: false,
+      text: ''
+    };
+  },
+  toggleEnthusiasm: function () {
+    this.setState({
+      enthused: !this.state.enthused
+    });
+  },
+  setText: function (text) {
+    this.setState({ text: text });
+  },
+  addText: function (newText) {
+    var text = this.state.text + newText;
+    this.setState({ text: text });
+  },
+  handleChange: function (e) {
+    this.setText(e.target.value);
+  },
+  render: function () {
+    var button;
+    if (this.state.enthused) {
+      button = (
+        <Enthused 
+          toggle={this.toggleEnthusiasm}
+          addText={this.addText} /> ///JSX
+      );
+    } else {
+      button = (
+        <button 
+          onClick={this.toggleEnthusiasm}>
+          Add Enthusiasm!
+        </button> ///JSX
+      );
+    }
+    return (
+      <div>
+        <h1>Auto-Enthusiasm</h1>
+        <textarea 
+          rows="7"
+          cols="40"
+          value={this.state.text}
+          onChange={this.handleChange}>
+        </textarea>
+        {button}
+        <h2>{this.state.text}</h2>
+      </div>
+    );
+  }
+});
+ReactDOM.render(<App />, document.getElementById('app'));
+```
