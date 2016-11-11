@@ -4,6 +4,7 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
 
 ## 1. 기본
 
+- `gem install sass` : 터미널에서 설치
 - `sass main.scss main.css` : Sass는 브라우저가 모르는 문법이기 때문에 먼저 변환, 컴파일해서 CSS3 코드로 바꿔줘야한다.
 
 ## 2. Nesting
@@ -40,6 +41,25 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
   font-family: Roboto, sans-serif;
   font-size: 12px;
   font-decoration: none;
+}
+```
+
+### 2.3 `&` ampersand
+
+- 부모 element를 참조한다.
+- `:hover`같은 pseudo class같은 경우에 주로 사용
+
+```css
+/* scss */
+.notecard { 
+  &:hover {
+    @include transform (rotatey(-180deg));  
+  }
+}
+
+/* css */
+.notecard:hover {
+  transform: rotatey(-180deg);
 }
 ```
 
@@ -84,3 +104,41 @@ $translucent-white: rgba(255,255,255,0.3);
     ```
     (key1: value1, key2: value2);
     ```
+
+## 5. Mixin
+
+- 선언은 `@mixin`, 호출은 `@include`로 사용한다.
+- variable이 한 줄, 하나의 개체를 여러 번 사용할 수 있다면 mixin은 거대한 코드 뭉치를 재사용할 수 있게 해준다.
+
+```css
+/* Example 1 */
+@mixin backface-visibility {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+}
+.notecard {
+  .front, .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    @include backface_visibility;
+  }
+}
+```
+
+```css
+/* Example 2 */
+@mixin rounded-top {
+  $side: top;
+  $radius: 10px;
+ 
+  border-#{$side}-radius: $radius;
+  -moz-border-radius-#{$side}: $radius;
+  -webkit-border-#{$side}-radius: $radius;
+}
+#navbar li { @include rounded-top; }
+#footer { @include rounded-top; }
+```
