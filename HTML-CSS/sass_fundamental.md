@@ -6,9 +6,15 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
 
 ## 1. 기본
 
-- `gem install sass` : 터미널에서 설치
-- `sass main.scss main.css` : Sass는 브라우저가 모르는 문법이기 때문에 먼저 변환, 컴파일해서 CSS3 코드로 바꿔줘야한다.
-- `sass --watch app/sass:public/stylesheets` : watch 옵션을 써서 특정 디렉토리를 계속 보고 있다가 변경되면 다시 자동으로 전처리해준다.
+- 오리지널 sass
+    + ruby gem으로 설치: `gem install sass`
+    + `sass main.scss main.css` : Sass는 브라우저가 모르는 문법이기 때문에 먼저 변환, 컴파일해서 CSS3 코드로 바꿔줘야한다.
+    + `sass --watch app/sass:public/stylesheets` : watch 옵션을 써서 특정 디렉토리를 계속 보고 있다가 변경되면 다시 자동으로 전처리해준다.
+- libsass
+    + C언어로 작성되어 매우 빠른 sass 컴파일러다. 하지만 sass가 업데이트되었을 때 바로 적용되진 않는다.
+    + `sudo npm install -g node-sass` : node 환경에서 사용할 때 설치
+    + `node-sass style.scss -o .` : style.scss를 컴파일해서 현재 디렉토리에 저장
+    + `node-sass style.scss -w -o .` : watch 옵션 주기
 
 ## 2. Nesting
 
@@ -108,7 +114,34 @@ $translucent-white: rgba(255,255,255,0.3);
     (key1: value1, key2: value2);
     ```
 
-## 5. Mixin
+## 5. Interpolation
+
+- `#{}` 형태로 치환할 수 있다. 안에는 주로 변수가 들어간다.
+
+```
+/* style.scss */
+
+$side: top;
+$radius: 10px;
+
+.rounded-top {
+  border-#{$side}-radius: $radius;
+  -moz-border-radius-#{$side}: $radius;
+  -webkit-border-#{$side}-radius: $radius;
+}
+```
+
+```css
+/* result.css */
+
+.rounded-top {
+  -webkit-border-top-radius: 10px;
+     -moz-border-radius-top: 10px;
+          border-top-radius: 10px;
+}
+```
+
+## 6. Mixin
 
 - 선언은 `@mixin`, 호출은 `@include`로 사용한다.
 - variable이 한 줄, 하나의 개체를 여러 번 사용할 수 있다면 mixin은 거대한 코드 뭉치를 재사용할 수 있게 해준다.
@@ -147,7 +180,49 @@ $translucent-white: rgba(255,255,255,0.3);
 #footer { @include rounded-top; }
 ```
 
-## 6. Partials
+### 6.1 인자 활용하기
+
+- mixin은 함수처럼 인자를 가질 수 있다. 역시 mixin 내부에서만 작동하는 지역변수같은 의미다.
+- 기본값을 줄 수 있어서 값이 들어오지 않으면 기본값이 적용된다.
+
+```css
+/* style.scss */
+
+@mixin rounded($side, $radius: 10px) {
+  border-#{$side}-radius: $radius;
+  -moz-border-radius-#{$side}: $radius;
+  -webkit-border-#{$side}-radius: $radius;
+}
+
+#navbar li { @include rounded(top); }
+#footer { @include rounded(top, 5px); }
+#sidebar { @include rounded(left, 8px); }
+```
+
+```css
+/* style.css */
+
+#navbar li {
+  border-top-radius: 10px;
+  -moz-border-radius-top: 10px;
+  -webkit-border-top-radius: 10px;
+}
+
+#footer {
+  border-top-radius: 5px;
+  -moz-border-radius-top: 5px;
+  -webkit-border-top-radius: 5px;
+}
+
+#sidebar {
+  border-left-radius: 8px;
+  -moz-border-radius-left: 8px;
+  -webkit-border-left-radius: 8px;
+}
+```
+
+
+## 7. Partials
 
 - 파일 앞에 `_` 언더스코어를 붙여서 부분 파일을 만들 수 있다. 즉 모듈화할 수 있는 기능이다. `_partial.scss` 같은 파일을 만들면 된다.
 - 앞에 언더스코어를 붙이면 scss 전처리기가 해당 파일을 css로 변환하지 않는다.
@@ -185,7 +260,7 @@ body {
 }
 ```
 
-## 7. Extend/Inheritance
+## 8. Extend/Inheritance
 
 - `@extend` : 셀렉터 간의 CSS 속성들을 상속받을 수 있다.
 - 다른 셀렉터 내에서 `@extend {selector};` 형태로 써주면 된다.
@@ -236,7 +311,7 @@ body {
 }
 ```
 
-## 8. 연산자
+## 9. 연산자
 
 - `+`, `-`, `*`, `/`, `%` 연산자를 이용할 수 있다.
 
