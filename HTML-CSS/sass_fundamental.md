@@ -1,8 +1,18 @@
 # SASS 기초
 
-참고: [공식 가이드 문서](http://sass-lang.com/guide)
-
 Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested rules, variables, mixins, selector 상속 등의 기능들이 추가됐다. Sass에 두 신택스가 있는데 가장 메인이 SCSS(Sassy CSS)이다. CSS3의 슈퍼셋이어서 CSS3 문법을 써도 정상적으로 작동한다.
+
+- [공식 가이드 문서](http://sass-lang.com/guide)
+- [SassWay](http://www.thesassway.com/)
+    + [placeholder 설명](http://thesassway.com/intermediate/understanding-placeholder-selectors)
+    + [function 설명](http://thesassway.com/advanced/pure-sass-functions)
+- [sitepoint](https://www.sitepoint.com/sass-reference/)
+    + [sitepoint 예제](https://www.sitepoint.com/html-css/css/sass-css/)
+    + [mixin 예제](https://www.sitepoint.com/sass-basics-the-mixin-directive/)
+- [scotch tutorials](https://scotch.io/tutorials/getting-started-with-sass)
+- [css-tricks ampersand](https://css-tricks.com/the-sass-ampersand/)
+- [inception-rule](http://thesassway.com/beginner/the-inception-rule)
+- [color 함수들](http://jackiebalzer.com/color)
 
 ## 1. 기본
 
@@ -15,6 +25,7 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
     + `sudo npm install -g node-sass` : node 환경에서 사용할 때 설치
     + `node-sass style.scss -o .` : style.scss를 컴파일해서 현재 디렉토리에 저장
     + `node-sass style.scss -w -o .` : watch 옵션 주기
+- `//`: 한 줄 주석 가능 
 
 ## 2. Nesting
 
@@ -22,6 +33,7 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
 
 - 셀렉터 안에 또 셀렉터를 쓰는 것
 - `{ }`를 기점으로 부모, 자식 셀렉터로 나뉘어진다.
+- [the-sass-way](http://thesassway.com/beginner/the-inception-rule)에 따르면 최대 4중첩까지만 하는걸 추천한다.
 
 ```css
 .hello {
@@ -72,6 +84,22 @@ Sass(Syntactically Awesome StyleSheets)는 CSS3의 확장 버전이다. nested r
 }
 ```
 
+### 2.4 `@at-root`
+
+- 코드를 보다가 nesting 되어있는 선택자가 그 밖에서 사용된다는 걸 알았을 때 앞에다 붙여준다.
+- 그냥 잘라내서 바깥에 붙여주는게 가장 좋겠지만 Sass 코드를 처음부터 리팩토링할 때 유용하다.
+
+```css
+.container {
+  .child {
+    color: blue;
+  }
+  @at-root .sibling {
+    color: gray;
+  }
+}
+```
+
 ## 3. Variables
 
 ```css
@@ -84,6 +112,8 @@ $translucent-white: rgba(255,255,255,0.3);
 - 위와 같은 형태로 `$`를 써서 import문이 있다면 그 아래에 선언해준다.
 - 대입은 등호 기호가 아니라 `:`으로 한다.
 - 사용할 때도 역시 `$`를 함께 써줘야한다.
+- scope 개념이 있어서 셀렉터 내에서 사용하면 해당 셀렉터에서만 접근 가능함.
+    + 셀렉터 내에서 선언하는데 글로벌하게 설정하고 싶다면 `$my-color: #abc !global;` 처럼 뒤에 표시해주면 된다.
 
 ## 4. Data type
 
@@ -266,54 +296,74 @@ body {
 - 다른 셀렉터 내에서 `@extend {selector};` 형태로 써주면 된다.
 - 아래 코드 예제는 `.message` 셀렉터의 속성들을 `.success`, `.error`, `.warning` 셀렉터가 사용하는 형태다.
 
-```css
-/* scss */
-.message {
-  border: 1px solid #ccc;
-  padding: 10px;
-  color: #333;
-}
+    ```css
+    /* scss */
+    .message {
+      border: 1px solid #ccc;
+      padding: 10px;
+      color: #333;
+    }
 
-.success {
-  @extend .message;
-  border-color: green;
-}
+    .success {
+      @extend .message;
+      border-color: green;
+    }
 
-.error {
-  @extend .message;
-  border-color: red;
-}
+    .error {
+      @extend .message;
+      border-color: red;
+    }
 
-.warning {
-  @extend .message;
-  border-color: yellow;
-}
-```
+    .warning {
+      @extend .message;
+      border-color: yellow;
+    }
+    ```
 
-```css
-/* result.css */
-.message, .success, .error, .warning {
-  border: 1px solid #cccccc;
-  padding: 10px;
-  color: #333;
-}
+    ```css
+    /* result.css */
+    .message, .success, .error, .warning {
+      border: 1px solid #cccccc;
+      padding: 10px;
+      color: #333;
+    }
 
-.success {
-  border-color: green;
-}
+    .success {
+      border-color: green;
+    }
 
-.error {
-  border-color: red;
-}
+    .error {
+      border-color: red;
+    }
 
-.warning {
-  border-color: yellow;
-}
-```
+    .warning {
+      border-color: yellow;
+    }
+    ```
+
+- 추가로 `%` 선택자를 사용하면 "상속"은 가능하지만 해당 코드가 "컴파일"되지는 않는다. 선언도 사용도 모두 `%`를 붙여줘야함
+
+    ```css
+    %box {
+      padding: 0.5em;
+    }
+     
+    .success-box {
+      @extend %box;
+      color: green;
+    }
+
+    .error-box {
+      @extend %box;
+      color: red;
+    }
+    ```
 
 ## 9. 연산자
 
 - `+`, `-`, `*`, `/`, `%` 연산자를 이용할 수 있다.
+    + 단위를 통일시켜야함. `100% - 20px` 이건 오류 발생.
+- `==`, `!=` 비교연산자도 사용 가능
 
 ```css
 /* scss file */
@@ -344,5 +394,40 @@ article[role="main"] {
 aside[role="complementary"] {
   float: right;
   width: 31.25%;
+}
+```
+
+## 10. 함수
+
+### 10.1 내장 함수
+
+- `darken($color, 10%);` : color 값을 10% 더 어둡게 해서 컬러 값을 리턴
+
+    ```css
+    /* Sass, Compass library 활용*/
+    $buttonColor: #2ecc71;
+    $buttonDark: darken($buttonColor, 10%);
+    $buttonDarker: darken($buttonDark, 10%);
+    ```
+
+- 공식 문서: http://sass-lang.com/documentation/Sass/Script/Functions.html
+- color 관련: http://jackiebalzer.com/color
+
+### 10.2 내 함수 만들기
+
+- mixin은 모든 스타일 마크업을 통으로 반환하지만 function은 특정 값 하나를 리턴한다. 일반적인 함수와 같다.
+- `@function`으로 선언하고 `@return`으로 내부에서 반환한다.
+
+```css
+@function calc-percent($target, $container) {
+  @return ($target / $container) * 100%;
+}
+ 
+@function cp($target, $container) {
+  @return calc-percent($target, $container);
+}
+ 
+.my-module {
+  width: cp(650px, 1000px);
 }
 ```
