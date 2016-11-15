@@ -152,6 +152,21 @@ http.createServer((req, res) => {
     });
     ```
 
+- `console.dir(object)` : object의 속성 전체 출력
+- `time(id)`, `timeEnd(id)`: 실행시간 측정 시작과 끝을 측정하는 메소드
+- `__filename`, `__dirname` : 실행한 파일의 path와 이름, 실행한 파일의 path를 나타내는 전역 변수
+- `process.argv` : node가 파일을 실행하면서 받는 매개변수들이 array 형태로 담겨있다. C에서 argv 받는 것과 같다. 첫 번째 원소는 "node"이고 두 번째부터 매개변수가 담겨있다.
+- `os` 모듈
+    + `hostname()`: 호스트이름 리턴
+    + `totalmem()`: 전체 메모리 용량
+    + `freemem()`: 가용 메모리 용량
+    + `cpus()`: CPU의 정보 리턴
+    + `networkInterfaces()`: 네트워크 인터페이스 정보를 담은 배열 리턴
+- `path` 모듈: 파일 다루는 모듈이다.
+    + `join()`: 문자열들이 들어있는 배열을 받아서 지정해준 구분자로 합친다.
+    + `dirname()`: 파일의 path 리턴
+    + `basename()`: 파일명 리턴(확장자 제외)
+    + `extname()`: 확장자명을 리턴
 - Port에 대해서
     + 총 65536개의 포트가 있다.
     + 웹 서버를 80번 포트에 열어두고 listening하게 둔다.
