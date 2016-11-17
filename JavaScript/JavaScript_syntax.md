@@ -70,7 +70,7 @@
 
 ## 3. 함수
 
-### A. 기본
+### 3.1 기본
 
 ```js
 var divideByThree = function (number) {
@@ -93,7 +93,7 @@ function example() {
 }
 ```
 
-### B. The call stack
+### 3.2 The call stack
 
 ```js
 function greet(who) {
@@ -107,7 +107,7 @@ console.log("Bye");
 
 이렇게 컨트롤이 왔다갔다 하기 때문에 컴퓨터는 함수가 불려진 context를 기억해야하는데 stack 형태로 저장한다. 서로 call하는 함수가 있다면 메모리 많이 쓴다고 에러 난다.
 
-### C. Optional Arguments
+### 3.3 Optional Arguments
 
 - 함수에서 정해진 매개변수가 있는데 그거보다 더 많이 넣으면 에러 없이 알아서 무시하고, 더 적게 넣으면 알아서 `undefined`가 들어간다. 에러가 안난다. 그래서 원치 않는 결과가 나오더라도 에러메시지가 없기 때문에 디버깅이 어렵다. 하지만 이 특성을 이용해서 매개변수의 기본값을 설정할 수 있다. 함수 내부에서 특정 매개변수가 `undefined`라면 기본값을 대입해주는 방식이다.
 - 아래 코드처럼 매개변수로 받는 모든 객체들을 함수 안에서 `arguments` 형태로 사용할 수 있다. 타입은 `object`다. 키 값은 '0', '1', '2'처럼 0부터 순서대로 `문자열` 타입이다. 아래처럼 함수 자체가 인자를 하나만 받게 되어있더라도 실제 fun 함수를 호출할 때 그 이상의 인자를 넣는다면 arguments에도 그대로 들어간다. 3개 넣으면 arguments 원소도 3개다.
@@ -118,7 +118,7 @@ var fun = function(obj) {
 }
 ```
 
-### D. Closure
+### 3.4 Closure
 
 ```js
 function multiplier(factor) {
@@ -133,7 +133,7 @@ console.log(twice(5));
 
 함수가 종료되더라도 함수가 호출될 때의 local variable에 접근할 수 있는 방식을 클로저라고 한다. 함수 내에서 함수를 만들어 리턴하면 만들어진 함수는 그 scope을 기억하고 있다. 위의 예에서 `multiplier`의 매개변수로 들어가는 `factor` 변수는 함수가 호출되고 종료되는 순간 사라져야 하지만 게속 사용되는 것을 볼 수 있다.
 
-### E. Recursion
+### 3.5 Recursion
 
 ```js
 function findSolution(target) {
@@ -230,10 +230,19 @@ console.log(arr);
 
 - 다만 `length`같은 경우 `{ }`로 선언했을 땐 존재하지 않는다. `[ ]`로 선언했을 때만 자동으로 length 객체가 생긴다.
 - object든 array든 `[ ]`를 활용할 땐 대괄호 안의 내용이 자동으로 문자열화된다. 
+- 배열의 원소로 함수 할당할 수 있다.
+- `arr.forEach(function(item, index){});`: 배열 내장 함수로 for문 쉽게 쓸 수 있다. 콜백함수의 매개변수를 두 개 받으면 item, index다.
+- 배열 내장함수. `arr.pop()` 처럼 모두 배열에서 호출하는 형태로 사용
+    + `push(object)` : 배열 원소 추가하면서 전체 원소 개수 리턴
+    + `pop()` : 배열 끝 요소 리턴하면서 삭제
+    + `unshift()`: 배열 맨 앞에 추가하면서 전체 원소 개수 리턴
+    + `shift()`: 배열 맨 앞의 요소 리턴하면서 삭제
+    + `splice(index, removeCount [,object])` : index부터 removeCount 개수만큼 삭제. 추가하고 싶을 땐 removeCount를 0으로 두고 뒤에 삽입할 object 넣으면 된다.
+    + `slice(index, copyCount)`: index부터 copyCount까지 잘라내서 배열로 만든다. 끝은 포함하지 않음.
 
 ## 6. Object
 
-### A. hash로서의 Object
+### 6.1 hash로서의 Object
 
 Python의 dict, Ruby의 Hash처럼 쓰이는 것을 js에선 object라고 한다. 다음 예시처럼 사용하면 된다. 용법은 다들 비슷하다. 아래처럼 Dot notation으로 접근하는 것 말고도 `var myObj = {'a':'aaa', 'b':'bbb'}` 처럼 선언할 수도 있다. 이 때는 `;`을 쓰면 안된다.
 
@@ -250,11 +259,11 @@ phonebookEntry.phone = function() {
 phonebookEntry.phone();
 ```
 
-### B. this
+### 6.2 this
 
 메소드가 호출된 객체를 의미한다. 메소드를 객체 외부에서 선언하더라도 this를 활용하면 어떤 object에서도 property를 수정할 수 있다. 다만 `myObj.myMethod = outerMethod` 처럼 대입해줘야하고, 내부의 변수명도 일치해야한다.
 
-### C. 클래스로서의 Object
+### 6.3 클래스로서의 Object
 
 ```js
 function Person(name,age) {
@@ -270,7 +279,7 @@ var george = new Person("George Washington", 275);
 - 위 형태가 기본이다. function인데 매개변수 () 앞에 클래스명이 붙고 this를 활용한다.
 - 객체에서 호출되는 메소드로 쓰려면 앞에 this를 붙여준다. 즉 로컬 메소드다.
 
-### D. prototype
+### 6.4 prototype
 
 ```js
 function Dog (breed) {
@@ -291,7 +300,7 @@ mong.bark()
 
 위의 경우로 설명하면 Dog 클래스의 모든 객체에 동일하게 수정하고싶을 경우 prototype을 사용한다. 이미 생성된, 앞으로 생성할 모든 Dog의 객체에 적용된다.
 
-### E. inheritance
+### 6.5 inheritance
 
 ```js
 function Animal(name, numLegs) {
@@ -315,7 +324,7 @@ pg.hi();
 
 `ChildClass.prototype = new ParentClass();` 형태로 사용한다.
 
-## 6. Class에서 public, private 속성
+## 7. Class에서 public, private 속성
 
 - 개념
     + public : 클래스 밖에서도 속성에 접근할 수 있는 것. `this`를 쓴다.
@@ -343,7 +352,7 @@ function Person(first,last,age) {
 }
 ```
 
-## 자주 쓰이는 함수
+## 8. 자주 쓰이는 함수
 
 - `isNaN(object)` : Not a Number라는 뜻이다. 숫자가 아닌 것이 매개변수로 들어가면 true를 리턴한다. 다만 `'42'`의 경우 문자열이지만 자동 변환해서 42로 인식하기 때문에 false를 리턴한다.
 - `toUpperCase()`, `toLowerCase()`: 대, 소문자화 함수
