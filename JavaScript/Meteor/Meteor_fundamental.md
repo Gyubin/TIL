@@ -28,7 +28,7 @@
 
 - 프로젝트 생성 방식 종류. `.meteor` 숨김 폴더에 들어가있는 파일들이 매우 다르다.
     + `meteor create my-prj` : 기본 형태
-    + `meteor create --bare my-prj` : 빈 프로젝트 생성. 필요한거 하나하나 직접 추가.
+    + `meteor create --bare my-prj` : 빈 프로젝트 생성. 필요한거 하나하나 직접 추가. 이 옵션으로 했을 때 최소한 `npm install --save-dev babel-core`로 바벨은 설치해줘야 로컬서버가 돌아간다.
     + `meteor create --full my-prj` : 웬만한거 다 갖춰진 보일러플레이트로 생성
 - `meteor --help` : 자주 쓰게될 도움말.
 
@@ -73,6 +73,7 @@
 ### 3.1 html 파일
 
 - `/client` 디렉토리에 `main.html`과 `myList.html` 파일을 만든다.
+- `main.html`에 `<!DOCTYPE html>`, `<html>` 태그 있으면 에러난다. 미티어가 알아서 정의해주므로 head, body만 있으면 됨
 - `template` 태그를 만들고 `name` 속성을 지정해준다. name 속성 명으로 `main.html` 파일에서 불러와 쓸 수 있다.
 - `{{> templateName }}` 형태로 불러와 쓴다.
 
@@ -100,22 +101,14 @@
 
 - 역시 `/client` 디렉토리에 `myList.js` 파일을 만든다.
 - `helpers`, `events`, `onCreated`, `onRendered`, `onDestroyed` 함수를 구현해서 사용한다.
+- `Template`은 Blaze 프레임워크의 하위 object다.
 
 ```js
-Template.myList.helpers({
-});
-
-Template.myList.events({
-});
-
-Template.myList.onCreated(function() {
-});
-
-Template.myList.onRendered(function() {
-});
-
-Template.myList.onDestroyed(function() {
-});
+Template.myList.helpers({});
+Template.myList.events({});
+Template.myList.onCreated(function() {});
+Template.myList.onRendered(function() {});
+Template.myList.onDestroyed(function() {});
 ```
 
 #### 3.2.1 helpers
@@ -126,6 +119,7 @@ Template.myList.onDestroyed(function() {
 - 반복을 돌릴 때는 `{{#each iterable}} ... {{/each}}` 로 열고 닫고 내부에 코드를 작성한다. 배열의 원소가 object이고 key로 접근할 수 있다.
 
 ```js
+// myList.js
 Template.myList.helpers({
   listName: function() {
     return "To-do List";
@@ -159,3 +153,102 @@ Template.myList.helpers({
   </table>
 </template>
 ```
+
+#### 3.2.2 events
+
+- `Template.myListItem.events({})` 매개변수로 들어가는 object에 설정한다.
+    + key: 문자열로 "이벤트 셀렉터" 형태로 한 칸 공백으로 구분해서 적는다.
+    + value: 콜백 함수. 이벤트와 해당 템플릿을 매개변수로 받을 수 있다. 이벤트 매개변수는 JQuery `$(evt.target)` 코드로 실제 object를 제어할 수 있고, 템플릿 매개변수는 `tmpl.find("selector code")` 코드로 다른 html object를 찾아낼 수 있다.
+- 위 helpers 예제에서 list item을 따로 빼서 파일을 만든다.
+- `{{#each list}` 블록에서 자동으로 `myListItem`의 컨텍스트로 객체가 주입된다. 전달을 신경쓰지 않아도 된다.
+- 
+
+```html
+<!-- myList.html -->
+<template name="myList">
+  <p>{{ listName }}</p>
+  <table>
+    {{#each list}} 
+      {{> myListItem }}
+    {{/each}} 
+  </table>
+</template>
+```
+
+```html
+<!-- myListItem.html -->
+<template name="myListItem">
+  <tr>
+    <td>{{ no }}</td>
+    <td>{{ name }}</td>
+    <td>{{ email }}</td>
+    <td><button name="remove">삭제</button></td>
+  </tr>
+</template>
+```
+
+```js
+// myListItem.js
+Template.myListItem.events({
+  "click button[name=remove]": function(evt, tmpl){
+    console.log(this);
+  }
+});
+```
+
+## 4. Collection
+
+MongoDB를 다루기 위해 필요하다. `/lib/collections.js` 파일을 만든다.
+
+### 4.1 Insert
+
+```js
+// /lib/collections.js
+Units = new Mongo.Collection("units");
+if (Meteor.isServer) {
+  Meteor.startup(function(){
+    if( Units.find().count() == 0 ) {
+      Units.insert({no: 1, name: "Golem", prop: "Super tank"});
+      Units.insert({no: 2, name: "Mega Minion", prop: "Dealer"});
+      Units.insert({no: 3, name: "Archer", prop: "Dealing small unit"});
+      Units.insert({no: 4, name: "Lightning", prop: "Magic spell"});
+    }
+  });
+}
+```
+
+- collection을 만드는 코드부터 시작. 테이블과 비슷한 개념일 것 같다.
+- `meteor mongo` 명령어를 이용하면 콘솔에서 DB 작업을 할 수 있다. 예를 들어 `db.friends.find()` 같은 명령어 사용 가능.
+- db에는 우리가 insert하지 않은 `_id` key가 있을텐데 이것은 unique identifier이다.
+- 서버에서만 동작하도록 `Meteor.isServer` 조건 구문 안에서작업한다.
+- `Meteor.startup(function(){})` : 미티어가 구동할 때, 시작할 때 처음 한 번만 작동한다.
+
+### 4.2 Find
+
+```js
+Template.myList.helpers({
+  listName: function() {
+    return "To-do List";
+  },
+  list: function() {
+    return Units.find({} , { sort : {no:-1} });
+  }
+});
+
+```
+
+- helpers의 list 부분을 바꿔보자. 원래는 MongoDB에서 불러오는게 아니라 코드에서 배열을 선언했었다. 함수가 DB의 값을 리턴하도록 바꿔본다.
+- `no` 속성을 기준으로 역순 정렬하는 코드다.
+
+### 4.3 Remove
+
+```js
+Template.myListItem.events({
+  "click button[name=remove]" : function(evt , tmpl){
+    console.log(this);
+    Units.remove({_id:this._id});
+  }
+});
+```
+
+- unique id 값 기준으로 DB에서 삭제하는 코드
