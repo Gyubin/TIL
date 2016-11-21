@@ -252,3 +252,44 @@ Template.myListItem.events({
 ```
 
 - unique id 값 기준으로 DB에서 삭제하는 코드
+
+## 5. Publish, Subscribe
+
+![db](http://s3.amazonaws.com/info-mongodb-com/_com_assets/blog/meteor/image05.png)
+
+- 미티어는 서버측 데이터베이스 MongoDB를 주 데이터베이스로 쓰지만 클라이언트측에도 Mini Mongo라는 데이터베이스가 존재한다.
+- 메테오를 통해 서버측 데이터의 "일부분"을 받아와서 미니몽고에 싱크해두고, 그 데이터를 질의해서 사용하는 개념이다.
+- 지금까지는 디폴트 깔려있는 `autopublish`라는 패키지를 통해 DB 전체를 싱크해두고 사용해왔다. 이건 전체 DB를 가져오는거라서 실제 서비스에서는 사용하면 안되고 개발용으로만 쓴다.
+
+### 5.1 autopublish 패키지 삭제
+
+```sh
+meteor remove autopulish
+```
+
+프로젝트 디렉토리에서 해당 패키지를 삭제하면 아무것도 기존 투두 리스트에서 아무것도 보이지 않을 것이다. 미니몽고에 싱크해놓은 데이터가 없기 때문에 그렇다.
+
+### 5.2 publish, subscribe
+
+- publish는 미니몽고에서 데이터를 받아오고 반환해서 사용하게 하는 함수, subscribe는 서버로부터 미니몽고로 데이터를 받아오는 함수다.
+- `server/publish.js` 파일을 만든다.
+
+    ```js
+    // publish.js
+    Meteor.publish("myList",function(obj){
+      var condition = obj || {};
+      console.log(condition);
+      return Units.find(condition);
+    });
+    ```
+
+- `client/myList.js` 파일에 다음 코드 추가한다. onCreated 함수는 템플릿 인스턴스가 생성되는 시점에 한 번 호출된다. 템플릿이 사라질 때까지 변경사항을 계속 주고받는다.
+    + `subscribe` 메소드의 두 번째 매개변수를 활용해 변수를 전달할 수 있다. 이 때 전달되는 객체는 `publish` 메소드의 콜백함수의 매개변수로 들어가며 쿼리의 조건으로 활용할 수 있다.
+
+    ```js
+    Template.myList.onCreated(function () {
+      this.subscribe("myList", {});
+    });
+    ```
+
+- `Meteor.subscribe` 함수와 템플릿 내부의 `this.subscribe`는 동일하다. 하지만 전자는 `onCreated`에서 호출했으면 `onDestroyed`에서 `stop` 메소드로 중지해줘야한다. 하지만 템플릿 내부의 것을 사용하면 중지할 필요 없다.
