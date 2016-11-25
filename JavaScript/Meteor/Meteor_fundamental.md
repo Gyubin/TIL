@@ -256,6 +256,7 @@ Template.myListItem.events({
 ## 5. Publish, Subscribe
 
 ![db](http://s3.amazonaws.com/info-mongodb-com/_com_assets/blog/meteor/image05.png)
+![Imgur](http://i.imgur.com/fdvzffv.jpg)
 
 - 미티어는 서버측 데이터베이스 MongoDB를 주 데이터베이스로 쓰지만 클라이언트측에도 Mini Mongo라는 데이터베이스가 존재한다.
 - 메테오를 통해 서버측 데이터의 "일부분"을 받아와서 미니몽고에 싱크해두고, 그 데이터를 질의해서 사용하는 개념이다.
@@ -293,3 +294,32 @@ meteor remove autopulish
     ```
 
 - `Meteor.subscribe` 함수와 템플릿 내부의 `this.subscribe`는 동일하다. 하지만 전자는 `onCreated`에서 호출했으면 `onDestroyed`에서 `stop` 메소드로 중지해줘야한다. 하지만 템플릿 내부의 것을 사용하면 중지할 필요 없다.
+
+## 6. Mobile
+
+가장 먼저 [링크](https://guide.meteor.com/mobile.html#installing-prerequisites)에서 미리 설치해야할 것들을 먼저 설치한다.
+
+### 6.1 iOS
+
+아래 코드 순서대로 실행하면 된다. 맥에 Xcode 미리 설치되어있어야 함
+
+```sh
+meteor install-sdk ios
+meteor add-platform ios
+meteor run ios
+```
+
+아이폰에서 돌려보려면 애플 개발자 계정이 있어야하고 `meteor run ios-device` 명령어를 실행한다.
+
+### 6.2 Android
+
+역시 아래 코드 실행하면 된다.
+
+```sh
+# Android
+meteor install-sdk android
+meteor add-platform android
+meteor run android
+```
+
+실제 폰에서 실행해보려면 개발자 세팅에서 USB 디버깅모드를 설정해두고 컴퓨터와 연결한 다음, `meteor run android-device` 명령어를 실행한다. 
