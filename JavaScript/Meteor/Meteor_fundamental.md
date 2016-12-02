@@ -323,3 +323,46 @@ meteor run android
 ```
 
 실제 폰에서 실행해보려면 개발자 세팅에서 USB 디버깅모드를 설정해두고 컴퓨터와 연결한 다음, `meteor run android-device` 명령어를 실행한다. 
+
+## 7. Test
+
+- Mocha 설치: `meteor add practicalmeteor:mocha`
+- 설치 후 테스트 모드로 서버를 구동할 수 있다. `meteor test --driver-package practicalmeteor:mocha`
+- Mocha에선 arrow functions 사용이 권장되지 않는다.(그런데 아래 샘플 코드에선 썼다)
+- `imports/api/tasks.tests.js` 파일을 만들고 task에 대해서 테스트한다.
+
+```js
+/* eslint-env mocha */
+
+import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
+import { assert } from 'meteor/practicalmeteor:chai';
+
+import { Tasks } from './tasks.js';
+
+if (Meteor.isServer) {
+  describe('Tasks', () => {
+    describe('methods', () => {
+      const userId = Random.id();
+      let taskId;
+
+      beforeEach(() => {
+        Tasks.remove({});
+        taskId = Tasks.insert({
+          text: 'test task',
+          createdAt: new Date(),
+          owner: userId,
+          username: 'tmeasday',
+        });
+      });
+
+      it('can delete owned task', () => {
+        const deleteTask = Meteor.server.method_handlers['tasks.remove'];
+        const invocation = { userId };
+        deleteTask.apply(invocation, [taskId]);
+        assert.equal(Tasks.find().count(), 0); // 원하는대로 동작했는지 검사
+      });
+    });
+  });
+}
+```
