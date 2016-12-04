@@ -183,3 +183,30 @@ http.createServer((req, res) => {
     };
     module.exports = faveManifestos;
     ```
+
+## 4. URL 처리
+
+### 4.1 url 모듈
+
+- `var url = require('url');` : 모듈 불러오는 코드. URL을 쉽게 처리하는 모듈이다.
+- `parse("URL")` : 주소 문자열을 파싱해서 URL 객체를 리턴
+- `format(obj)` : URL 객체를 받아서 주소 문자열 만든다.
+- 속성 종류. 주소가 `'https://m.search.naver.com/search.naver/query=steve+jobs'`일 때
+    + `protocol` : 맨 처음 나오는 http, https, ftp 같은 것들. 콜론까지 리턴한다.
+    + `slashes` : 프로토콜 뒤에 슬래쉬가 있는지 없는지 boolean으로 리턴
+    + `auth` : 인증
+    + `host` : 호스트는 도메인 앞에 붙는 www, dev 같은 것들을 말하는데 여기선 `m.search.naver.com` 전체를 리턴한다.
+    + `port` : 포트
+    + `hostname` : host와 같은것을 리턴.
+    + `hash`
+    + `search`
+    + `query` : `?` 뒤의 쿼리 부분을 전체 리턴.
+    + `pathname` : 도메인 뒤에 슬래시(`/`)와 함께 붙는 경로
+    + `path` : pathname 뒤에 쿼리까지 전체 리턴
+    + `href` : 전체
+
+### 4.2 querystring 모듈
+
+- `var querystring = require('querystring');` 쿼리를 처리할 수 있는 모듈이다.
+- url 모듈에서 query만 뽑아낸 다음 그 쿠리 문자열을 `querystring.parse('..')` 메소드의 매개변수로 넣는다. 그러면 키 밸류 쌍을 모아서 object로 만들어 리턴한다.
+- `querystring.stringify(param)` : 객체를 다시 쿼리 문자열로 변환
