@@ -28,17 +28,19 @@
 
 - 프로젝트 생성 방식 종류. `.meteor` 숨김 폴더에 들어가있는 파일들이 매우 다르다.
     + `meteor create my-prj` : 기본 형태
-    + `meteor create --bare my-prj` : 빈 프로젝트 생성. 필요한거 하나하나 직접 추가. 이 옵션으로 했을 때 최소한 `npm install --save-dev babel-core`로 바벨은 설치해줘야 로컬서버가 돌아간다.
+    + `meteor create --bare my-prj` : 빈 프로젝트 생성. 필요한거 하나하나 직접 추가. 이 옵션으로 했을 때 최소한 `npm install --save-dev babel-core` 또는 `meteor npm install --save babel-runtime`으로 바벨은 설치해줘야 로컬서버가 돌아간다.
     + `meteor create --full my-prj` : 웬만한거 다 갖춰진 보일러플레이트로 생성
 - `meteor --help` : 자주 쓰게될 도움말.
+- Meteor에 Deploy하기(하지만 유료다.)
+    + `myapp.meteor.com`에 호스트할 수 있다.
+    + `meteor deploy myapp.meteor.com` 명령어로 가능.
 
 ## 2. 빌드 규칙
 
-- 미티어는 프로젝트의 파일들을 컴파일해서 실제 프로그램을 `.meteor` 디렉토리에 담는다. 이 폴더를 직접 만질 일은 거의 없다.
+- 미티어는 프로젝트의 파일들을 컴파일해서 실제 프로그램을 `.meteor` 디렉토리에 담는다. 이 폴더는 직접 수정하지 않는 것을 권장한다. 하지만 `.meteor/packages`와 `.meteor/release` 파일들은 괜찮다.
 - 디렉토리 정보
-    + `/lib` : js 유틸, collection, 프론트와 백엔드 공통 메소드들 등이 위치한다. `if(Meteor.isClient){ … }` 구문으로 시작하면 클라이언트, `if(Meteor.isServer){ … }` 구문으로 시작하면 서버 관련 코드들이다.
-    + `/client` : 프론트엔드 관련 코드 위치.
-    + `/server` : 서버 관련 코드 위치
+    + `/client`, `/server` : 각각 클라이언트, 서버 관련 코드 위치한다. 해당 디렉토리들은 맞는 위치에서만 실행된다. 즉 클라이언트 폴더에 있는 파일들이 서버에서 실행되지는 않는다는 의미.
+    + `/lib` : js 유틸, collection, 프론트와 백엔드 공통 메소드들 등이 위치한다. 프론트, 백 어디서든 실행할 수 있기 때문에 분기문을 써줘야 한다. `if(Meteor.isClient){ … }` 또는 `if(Meteor.isServer){ … }` 으로.
     + `/private` : 서버에서만 접근할 수 있는 리소스
     + `/public` : 웹서버로서 정적 리소스를 서비스하는 폴더. favicon.ico나 robots.txt 파일을 위치시키면 좋음.
 - 로딩 순서
@@ -67,15 +69,15 @@
     /server/customer
     /server/posts
     ```
-    
+
 ## 3. Template - `Blaze`
 
 ### 3.1 html 파일
 
-- `/client` 디렉토리에 `main.html`과 `myList.html` 파일을 만든다.
-- `main.html`에 `<!DOCTYPE html>`, `<html>` 태그 있으면 에러난다. 미티어가 알아서 정의해주므로 head, body만 있으면 됨
+- `/client` 디렉토리에는 `main.html` 파일이 있을 것이다.
+- 하위 디렉토리로 `client/templates`를 만들고 그 하위에 종류별로 디렉토리를 다시 생성해서 파일들을 관리한다.
 - `template` 태그를 만들고 `name` 속성을 지정해준다. name 속성 명으로 `main.html` 파일에서 불러와 쓸 수 있다.
-- `{{> templateName }}` 형태로 불러와 쓴다.
+- `{{> templateName }}` 형태로 불러와 쓴다. 이를 Inclusions라고 한다.
 
 ```html
 <!-- myList.html -->
@@ -97,6 +99,8 @@
 </html>
 ```
 
+참고: `main.html`에 `<!DOCTYPE html>`, `<html>` 태그 있으면 에러난다. 미티어가 알아서 정의해주므로 `head`, `body만` 있으면 됨
+
 ### 3.2 js 파일
 
 - 역시 `/client` 디렉토리에 `myList.js` 파일을 만든다.
@@ -115,8 +119,8 @@ Template.myList.onDestroyed(function() {});
 
 - 템플릿에서 변수활용할 때 사용한다.
 - 메소드에 object를 매개변수로 넣고 property의 key를 변수명으로 활용한다. value는 해당 값을 리턴하는 function으로 할당한다.
-- `{{ propertyName }}` 처럼 활용.
-- 반복을 돌릴 때는 `{{#each iterable}} ... {{/each}}` 로 열고 닫고 내부에 코드를 작성한다. 배열의 원소가 object이고 key로 접근할 수 있다.
+- `{{ propertyName }}` 처럼 활용. 이를 Expressions 라고 한다.
+- 반복을 돌릴 때는 `{{#each iterable}} ... {{/each}}` 로 열고 닫고 내부에 코드를 작성한다. 배열의 원소가 object이고 key로 접근할 수 있다. 이를 block helpers 라고 한다.
 
 ```js
 // myList.js
@@ -161,7 +165,6 @@ Template.myList.helpers({
     + value: 콜백 함수. 이벤트와 해당 템플릿을 매개변수로 받을 수 있다. 이벤트 매개변수는 JQuery `$(evt.target)` 코드로 실제 object를 제어할 수 있고, 템플릿 매개변수는 `tmpl.find("selector code")` 코드로 다른 html object를 찾아낼 수 있다.
 - 위 helpers 예제에서 list item을 따로 빼서 파일을 만든다.
 - `{{#each list}` 블록에서 자동으로 `myListItem`의 컨텍스트로 객체가 주입된다. 전달을 신경쓰지 않아도 된다.
-- 
 
 ```html
 <!-- myList.html -->
@@ -218,10 +221,11 @@ if (Meteor.isServer) {
 ```
 
 - collection을 만드는 코드부터 시작. 테이블과 비슷한 개념일 것 같다.
-- `meteor mongo` 명령어를 이용하면 콘솔에서 DB 작업을 할 수 있다. 예를 들어 `db.friends.find()` 같은 명령어 사용 가능.
+- `meteor mongo` 명령어를 이용하면 콘솔에서 DB 작업을 할 수 있다. 예를 들어 `db.units.find()` 같은 명령어 사용 가능.
 - db에는 우리가 insert하지 않은 `_id` key가 있을텐데 이것은 unique identifier이다.
-- 서버에서만 동작하도록 `Meteor.isServer` 조건 구문 안에서작업한다.
+- 서버에서만 동작하도록 `Meteor.isServer` 조건 구문 안에서작업한다. 즉 그 밖에 있는 Collectioin 생성 첫 코드는 클라이언트에서도 실행된다. 클라이언트에서 실행될 땐 미니몽고에서 매칭되는 콜렉션을 만든다고 볼 수 있다.
 - `Meteor.startup(function(){})` : 미티어가 구동할 때, 시작할 때 처음 한 번만 작동한다.
+- `meteor reset` : 데이터베이스 초기화. 개발 때 유용.
 
 ### 4.2 Find
 
@@ -260,7 +264,6 @@ Template.myListItem.events({
 
 - 미티어는 서버측 데이터베이스 MongoDB를 주 데이터베이스로 쓰지만 클라이언트측에도 Mini Mongo라는 데이터베이스가 존재한다.
 - 메테오를 통해 서버측 데이터의 "일부분"을 받아와서 미니몽고에 싱크해두고, 그 데이터를 질의해서 사용하는 개념이다.
-- 지금까지는 디폴트 깔려있는 `autopublish`라는 패키지를 통해 DB 전체를 싱크해두고 사용해왔다. 이건 전체 DB를 가져오는거라서 실제 서비스에서는 사용하면 안되고 개발용으로만 쓴다.
 
 ### 5.1 autopublish 패키지 삭제
 
@@ -268,19 +271,27 @@ Template.myListItem.events({
 meteor remove autopulish
 ```
 
-프로젝트 디렉토리에서 해당 패키지를 삭제하면 아무것도 기존 투두 리스트에서 아무것도 보이지 않을 것이다. 미니몽고에 싱크해놓은 데이터가 없기 때문에 그렇다.
+- 지금까지는 디폴트 깔려있는 `autopublish`라는 패키지를 통해 DB 전체를 싱크해두고 사용해왔다. 이건 전체 DB를 가져오는거라서 실제 서비스에서는 사용하면 안되고 개발용으로만 쓴다.
+-   프로젝트 디렉토리에서 해당 패키지를 삭제하면 아무것도 기존 투두 리스트에서 아무것도 보이지 않을 것이다. 미니몽고에 싱크해놓은 데이터가 없기 때문에 그렇다.
 
 ### 5.2 publish, subscribe
 
 - publish는 미니몽고에서 데이터를 받아오고 반환해서 사용하게 하는 함수, subscribe는 서버로부터 미니몽고로 데이터를 받아오는 함수다.
 - `server/publish.js` 파일을 만든다.
+    + 아래 condition1은 이 조건에 맞는 데이터만 불러오라는 필터이고
+    + condition2는 condition1으로 걸러낸 데이터 중 date 속성은 빼고 받아온다.
 
     ```js
     // publish.js
     Meteor.publish("myList",function(obj){
-      var condition = obj || {};
-      console.log(condition);
-      return Units.find(condition);
+      var condition1 = obj || {};
+      if (!condition) {
+        condition = {'author':'Tom'};
+      }
+      var condition2 = {fields: {
+        date: false
+      }};
+      return Units.find(condition1, condition2);
     });
     ```
 

@@ -21,7 +21,7 @@ python3는 기본으로 `pyvenv`라는 이름으로 가상 환경을 제공한�
 $ pyvenv ./test_env
 ```
 
-> 가상환경에서 사용할 수 있는 명령얻르은 `pyvenv -h`를 터미널에 입력해보면 알 수 있다. upgrade, clear 등등이 있다.
+> 가상환경에서 사용할 수 있는 명령어들은 `pyvenv -h`를 터미널에 입력해보면 알 수 있다. upgrade, clear 등등이 있다.
 
 이후 터미널에서 활성화 코드를 입력하면 왼쪽에 (test_env)가 붙어서 나오는데 가상환경에서 실행중이란 의미다.
 
@@ -77,7 +77,7 @@ $ sudo pip install virtualenvwrapper --ignore-installed six
 $ mkdir ~/.virtualenvs
 ```
 
-위 코드를 터미널에 입력해서 숨김 폴더를 만든다.  그 후 `.bashrc` 혹은 `.bash_profile` 파일에 다음 경로를 지정해준다. 이 두 파일은 `cd ~` 했을 때의 경로에 있다.
+위 코드를 터미널에 입력해서 숨김 폴더를 만든다. 그 후 각자가 쓰는 쉘의 rc 파일에 다음 코드를 추가해준다.(bash라면 `.bashrc` 혹은 `.bash_profile`이고 zsh라면 `.zshrc` 파일이다) 이 파일은 홈 디렉토리에 있다.
 
 ```bash
 export WORKON_HOME=$HOME/.virtualenvs
