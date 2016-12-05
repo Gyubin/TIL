@@ -366,3 +366,40 @@ if (Meteor.isServer) {
   });
 }
 ```
+
+## 8. Session
+
+- 현재 사용자에게만 적용되는 일시적인 상태 정보(UI 상태같은)를 저장하기에 편리하다.
+- Global singleton object: 하나만 존재하고 어디서든 접근 가능
+- 같은 이용자라도 브라우저의 탭 간에서 공유되진 않는다.
+
+```js
+Session.set('pageTitle', 'A different title');
+Session.get('pageTitle');
+```
+
+## 9. 라우팅
+
+- 용어
+    + Routes: URL에 따라 무엇을 할지 정하는 정의들의 집합
+    + Paths: 경로(동적, 정적 모두)와 쿼리를 모두 포함
+    + Segments: `'/'`로 구분되는 path의 일부
+    + Hooks: 라우팅 전, 후, 중간에서 실행될 수 있는 것들. 사용자가 페이지를 열기 전 권한이 있는지 확인 가능
+    + Filters: Routes에서 정의하는 전역 hook이다.
+    + Route Templates: Routes와 매핑되는 템플릿
+    + Layouts: 템플릿을 감싸는 모든 HTML 코드. 레이아웃 html 파일 안에 템플릿들이 포함된다. 템플릿이 바뀌어도 변경되지 않는다.
+    + Controllers: 로직이 담긴 파일
+- `meteor add iron:router` : 패키지 설치
+- `/lib/router.js` 파일을 만든다.
+
+    ```js
+    // layout.html을 레이아웃으로 사용하겠다고 설정
+    Router.configure({
+      layoutTemplate: 'layout'
+    });
+
+    // 루트(/) 패스로 들어왔을 때 postsLsit와 매핑
+    Router.map(function() {
+      this.route('postsList', {path: '/'});
+    });
+    ```
