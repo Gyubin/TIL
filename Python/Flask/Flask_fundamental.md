@@ -121,3 +121,64 @@ export FLASK_DEBUG=1
 flask initdb
 flask run
 ```
+
+## 6. View function
+
+### 6.1 라우팅
+
+```py
+@app.route('/')
+def show_entries():
+    db = get_db()
+    cur = db.execute('select title, text from entries order by id desc')
+    entries = cur.fetchall()
+    return render_template('show_entries.html', entries=entries)
+
+@app.route('/add', methods=['POST'])
+def add_entry():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    db.execute('insert into entries (title, text) values (?, ?)',
+                 [request.form['title'], request.form['text']])
+    db.commit()
+    flash('New entry was successfully posted')
+    return redirect(url_for('show_entries'))
+```
+
+- `@app.route(url, methods)` : 이 데코레이터는 매칭되는 url과 POST인지 GET인지를 나타내는 methods를 포함.
+- 크게 두 가지 패턴인 것 같다.
+    + db를 가져오고 -> 쿼리를 날려서 cursor를 얻고 -> 데이터를 변수에 넣고 -> 템플릿에 전달하는 것
+    + db를 가져오고 -> 쿼리를 실행하고 -> commit해서 최종 저장하는 단계
+- db를 사용할 땐 SQL injection에 대비해서 곡 `?`를 이용해서 쿼리를 날리도록 한다.
+- `flash("Hello world")` : 잠깐 화면에 메시지를 띄움
+
+### 6.2 로그인
+
+```py
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME']:
+            error = 'Invalid username'
+        elif request.form['password'] != app.config['PASSWORD']:
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            flash('You were logged in')
+            return redirect(url_for('show_entries'))
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('show_entries'))
+```
+
+- 역시 라우팅과 관련해서 데코레이터가 붙는다.
+- 로그인: `app.config[key]`에 회원 정보가 저장되어있다. 아이디, 비밀번호를 차례로 확인하고, 세션에 로그인되어있음을 저장한 다음 리다이렉트한다.
+- 로그아웃: dict에서 pop 메소드를 써서 쉽게 해결한다.
+    + 첫 번째 매개변수로 들어간 key가 딕트에 존재하면 아예 그 키-밸류 쌍을 삭제한다.
+    + 만약 딕트에 존재하지 않는다면 두 번째 매개변수대로 행동하는데 None을 넣어서 아무것도 하지 않게 한다. 두 번째 매개변수로 아무것도 안넣어주면 키가 없을 때 에러가 난다.
