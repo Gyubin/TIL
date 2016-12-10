@@ -182,3 +182,72 @@ def logout():
 - 로그아웃: dict에서 pop 메소드를 써서 쉽게 해결한다.
     + 첫 번째 매개변수로 들어간 key가 딕트에 존재하면 아예 그 키-밸류 쌍을 삭제한다.
     + 만약 딕트에 존재하지 않는다면 두 번째 매개변수대로 행동하는데 None을 넣어서 아무것도 하지 않게 한다. 두 번째 매개변수로 아무것도 안넣어주면 키가 없을 때 에러가 난다.
+
+## 7. Template
+
+```html
+<!-- layout.html -->
+<!doctype html>
+<title>Flaskr</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1>Flaskr</h1>
+  <div class=metanav>
+  {% if not session.logged_in %}
+    <a href="{{ url_for('login') }}">log in</a>
+  {% else %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+  </div>
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</div>
+```
+
+```html
+<!-- add_entries.html -->
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <dl>
+        <dt>Title:
+        <dd><input type=text size=30 name=title>
+        <dt>Text:
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+  {% endif %}
+  <ul class=entries>
+  {% for entry in entries %}
+    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  </ul>
+{% endblock %}
+```
+
+```html
+<!-- login.html -->
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Login</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('login') }}" method=post>
+    <dl>
+      <dt>Username:
+      <dd><input type=text name=username>
+      <dt>Password:
+      <dd><input type=password name=password>
+      <dd><input type=submit value=Login>
+    </dl>
+  </form>
+{% endblock %}
+```
+
+- 위 구조는 layout이 재사용되는 구조다. view function이 layout을 렌더링하는 것이 아니라 `extends`가 들어있는 코드를 렌더링한다.
+- layout 파일에서 `{% block body %} {% endblock %}` 이부분이 대치되는데 동일한 이름의 블락이 대치된다.
