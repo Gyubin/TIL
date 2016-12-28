@@ -1,10 +1,20 @@
 # WebRTC - Web Real Time Communication
 
-참고링크: [tutorials point](https://www.tutorialspoint.com/webrtc/webrtc_media_stream_apis.htm)
+참고링크: [tutorials point](https://www.tutorialspoint.com/webrtc/webrtc_media_stream_apis.htm), [coiiee blog](https://coiiee.com/blog.php?idx=2), [html5rocks](https://www.html5rocks.com/ko/tutorials/webrtc/basics/#toc-mediastream)
 
-웹에서 플러그인 없는 실시간 통신을 말한다. 특히 웹에서 영상, 음성 대화를 가능하게 해준다.
+## 0. 정의
 
-## 1. MediaStream APIs
+- 어떤 플랫폼에서든 플러그인 없이 실시간 통신을 할 수 있는 기술. 특히 웹에서 영상, 음성 통화를 할 수 있는 것이 대표적이다.
+
+## 1. Signaling
+
+- P2P 통신이지만 서버가 필요하다. Signaling을 위해.
+- 시그널링은 통신 조정하는 과정이다. call을 만들기 위해 Signaling은 3가지 정보를 교환한다.
+    + Session control messages: 통신의 초기화, 종료 그리고 에러 리포트
+    + Network configuration: 내 컴퓨터의 IP 주소와 Port 정보, 보안 연결을 수립하기 위해 사용되는 키 데이터 등
+    + Media capabilities: 내 브라우저와 상대브라우저가 사용 가능한 코덱들과 해상도들은 어떻게 되는지에 대해. 예로 코덱이나 코덱 설정, 대역폭, 미디어 타입 같은 미디어 메타데이터 등.
+
+## 2. MediaStream APIs
 
 - 속성
     + `MediaStream.active` (read only) − 활성화 상태인지 아닌지 true, false 리턴
