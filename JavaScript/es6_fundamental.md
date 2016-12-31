@@ -164,6 +164,7 @@ BSIDESOFT 스터디에서 ES6를 주로 사용한다. 이전 버전과 많은 �
     ```
 
 - arrow function은 new 연산자를 못 쓴다. function을 썼을 때는 function의 인스턴스를 new로 찍어낼 수 있는데 `=>`는 불가능하다.
+- ES5에 비해서 call, apply, bind 함수를 쓸 필요가 많이 줄었다.
 
 ### 1.8 객체 리터럴
 
