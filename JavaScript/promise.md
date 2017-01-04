@@ -4,22 +4,45 @@
 
 ## 1. API
 
-### 1.1 Constructor
+- Constructor: 프로미스를 지원하는 함수를 만드는 방법이다.
+
+    ```js
+    var promise = new Promise(function(resolve, reject) {
+      // 작업 코드. 작업이 끝나면 resolve 또는 reject를 호출
+    });
+    ```
+
+- Instance Method: 성공 또는 실패했을 때 호출되는 `then` 메소드
+    + 매개변수는 optional이다.
+    + 오류 처리만 하려면 아래 코드의 2, 3번째처럼 하면 된다. 같은 의미다.
+
+    ```js
+    promise.then(onFulfilled, onRejected)
+
+    promise.then(undefined, onRejected)
+    promise.catch(onRejected)
+    ```
+
+- Static Method: `Promise.all()`, `Promise.resolve()` 등 존재
+
+## 2. 예제
 
 ```js
-var promise = new Promise(function(resolve, reject) {
-  // 작업 코드. 작업이 끝나면 resolve 또는 reject를 호출
+function asyncFunction() {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      resolve('Async Hello world');
+    }, 2000);
+  });
+}
+
+asyncFunction().then(function (value) {
+  console.log(value); // 'Async Hello world'
+}).catch(function (error) {
+  console.log(error);
 });
 ```
 
-### 1.2 Instance Method
-
-```js
-promise.then(onFulfilled, onRejected)
-```
-
-성공했을 때는 `onFulfilled`, 실패하면 `onRejected`가 호출된다.
-
-### 1.3 Static Method
-
-`Promise.all()`, `Promise.resolve()` 처럼 호출할 수 있는 정적 메소드가 존재.
+- `asyncFunction`: Promise 객체를 생성해서 리턴하는 함수.
+- 2000ms 이후 성공했을 때의 함수를 호출하게된다. 문자열 매개변수를 넣어서.
+- `then`으로 성공했을 때의 함수를 정의하고, `catch`로 에러가 났을 때의 작업을 정의한다.
