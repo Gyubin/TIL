@@ -361,3 +361,4 @@ function Person(first,last,age) {
 - `'string'.substring(i, j)` : 문자열 슬라이싱
 - `myArray.push(something)` : array 원소 추가
 - `typeof thing` : thing의 타입을 리턴한다.
+- `debugger` : break point를 설정해서 debug를 하고싶을 때 JavaScript 파일에서 원하는 위치에다 한 줄 삽입해주면 된다. 그리고 브라우저의 개발자 도구에서 앱을 실행하다 보면 그 부분에서 멈출 것이다.
