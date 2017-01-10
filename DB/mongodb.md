@@ -8,7 +8,7 @@
     + `brew install mongodb` 로 설치 끝
     + `sudo mkdir -p /data/db` 로 MongoDB가 사용할 디렉토리를 만들고
     + `sudo mongod`로 실행하면 몽고DB가 구동된다.
-    + `sudo mongo` 명령어로 몽고DB 서버 접속할 수 있다.
+    + `mongo` 명령어로 몽고DB 서버 접속할 수 있다.
 - Document: RDBMS의 record에 해당한다. key, value 쌍으로 이루어져있고 JSON 객체와 똑같이 생겼다.
 - Collection: Document의 그룹. RDBMS의 테이블과 비슷하지만 스키마를 따로 갖고있진 않다. 즉 정해진 것이 없고, 같은 Collection 내에서 서로 다른 키를 가진 Document가 존재할 수 있다.
 - Join, 스키마가 없고 빠르다.
@@ -55,7 +55,27 @@
     }
     ```
 
-## 3. filter
+## 3. 사용법
+
+- 몽고DB shell에서 JavaScript의 모든 작업 가능. 함수 정의도 라이브러리 사용도 가능하다. 
+- `db` : 명령어 입력하면 현재 사용 중인 데이터베이스 확인 가능하다.
+- `use db_name` : 사용할 데이터베이스 선택하고 사용
+- `db.collection_name` : db 변수를 통해 콜렉션에 접근 가능
+- Collection 접근
+    + Collection을 따로 생성하는 것이 아니라 `db.something` 형태로 접근해서 바로 사용하면 된다.
+    + `db.wow.find()` 명령어로 db의 wow 콜렉션의 document들을 볼 수 있는데 없으면 안 뜨고 있으면 보인다.
+
+### 3.1 CRUD
+
+- `db.blog.insert(post)`: blog라는 Collection에 obj라는 document를 insert
+- `db.blog.find()`: blog Collection의 모든 document를 read
+- `db.blog.findOne()`: 하나만 읽어온다. 매개변수로 filter를 넣을 수 있음
+- `db.blog.update(query, newDoc)`: update 함수. query로 여러 document가 선택되면 첫 번째 것만 newDoc으로 변경된다.
+    + 첫 번째 매개변수: 수정할 문서를 가리키는 filter 역할. 쿼리다.
+    + 두 번째 매개변수: 바꿀 문서
+- `db.blog.remove(query)`: 삭제
+
+### 3.2 filter(query)
 
 ```js
 db.users.find(obj)
@@ -68,4 +88,5 @@ find의 기본 형태. obj에 조건을 넣어주면 된다.
 { status: "A", age: { $lt: 30 } } // status가 "A"이고, age가 30보다 작은 것
 { $or: [ { status: "A" }, { age: { $lt: 30 } } ] } // status가 A이거나 age가 30보다 작거나
 { status: "A", $or: [ { age: { $lt: 30 } }, { type: 1 } ] } // status가 A인데 age가 30보다 작거나 type이 1이거나.
+{"x" : /foobar/} // 정규표현식 사용 가능
 ```
