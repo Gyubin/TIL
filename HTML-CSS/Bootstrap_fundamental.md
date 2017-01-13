@@ -106,3 +106,75 @@
     + 그냥 쓰면 Extra small 사이즈로 작동한다. 뒤에 `col-sm`, `col-lg` 형태로 붙여서 반응형 크기를 선택해주면 된다.
     + 숫자를 안 쓰면 자동으로 계산해서 Equal-width로 만들어준다.
     + 뒤에 `col-5`, `col-sm-4` 등으로 숫자를 명시하면 12칸으로 나뉜 것 중에 해당 숫자 칸만큼 폭을 차지함
+- `col-{breakpoint}-auto` : auto를 붙이면 내부 content의 길이에 적합하게 보여진다.
+- `.col` 사이에 `div.w-100` 을 넣으면 컬럼이 아래로 내려간다. 즉 여러 개의 row를 만들 수 있다.
+- 일종의 팁인데 `col-sm-*` 태그만 쓰면 sm 이상일 때는 지정한 크기대로 보이지만 extra small일 때는 자동으로 한 줄로 쌓이게 된다. 반응형 쉽다.
+
+### 1.3 Flexbox alignment
+
+#### 1.3.1 Vertical align
+
+- `align-items-{place}` : `start`, `center`, `end` 값으로 세로 위치 정할 수 있다. 아래의 예는 container 안에서 row의 배치를 나타낸다.
+
+    ```html
+    <div class="container">
+      <div class="row align-items-start">
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+      </div>
+      <div class="row align-items-end">
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+        <div class="col">One of three columns</div>
+      </div>
+    </div>
+    ```
+
+- `align-self-{place}` : 역시 `start`, `center`, `end` 값으로 설정. column의 세로 위치를 조절할 수 있고 위의 items와 이번 self의 차이는 자식들에게 적용이냐, 스스로에게 적용이냐가 다른 것 같다.
+
+    ```html
+    <div class="container">
+      <div class="row">
+        <div class="col align-self-start">One of three columns</div>
+        <div class="col align-self-center">One of three columns</div>
+        <div class="col align-self-end">One of three columns</div>
+      </div>
+    </div>
+    ```
+
+#### 1.3.2 Horizontal align
+
+```html
+<div class="container">
+  <div class="row justify-content-start">
+    <div class="col-4">One of two columns</div>
+    <div class="col-4">One of two columns</div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-4">One of two columns</div>
+    <div class="col-4">One of two columns</div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-4">One of two columns</div>
+    <div class="col-4">One of two columns</div>
+  </div>
+  <div class="row justify-content-around">
+    <div class="col-4">One of two columns</div>
+    <div class="col-4">One of two columns</div>
+  </div>
+  <div class="row justify-content-between">
+    <div class="col-4">One of two columns</div>
+    <div class="col-4">One of two columns</div>
+  </div>
+</div>
+```
+
+- row에 있는 column들을 수평으로 정렬하는 방법이다.
+- `justify-content-{place}` 가 기본형이고 place에 `start`, `end`, `center`, `around`, `between`이 들어가면 된다.
+- 앞의 세 개는 이름과 의미가 같고, around는 적절하게 벌려놓는 느낌, between은 양 끝에 최대한 몰아넣는 느낌이다.
