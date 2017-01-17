@@ -31,7 +31,33 @@
 
 설치가 되었다면 콘솔에 문자열을 찍는 js 파일을 만들어보고 `node file_name.js` 명령어로 실행해본다.
 
-### 1.2 Hello world 찍어보기
+### 1.2 Version manager
+
+#### 1.2.1 nvm: node version manager
+
+- 설치: `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash`
+- 설치한 후 쉘 설정 파일(내 경우엔 `~/.zshrc`)에 다음 코드 추가해준다.
+
+    ```sh
+    export NVM_DIR=$HOME/.nvm
+    . "/usr/local/opt/nvm/nvm.sh"
+    ```
+
+- `nvm install node`: 최신 노드 버전 설치
+- `nvm ls`: nvm이 관리하고 있는 노드 리스트 알려줌
+- `nvm install v4`: 4 버전 중에 최신 설치. v6도 가능. 더 세세하게 지정해줘도 된다.
+- `nvm use v6.9.4`: 사용할 노드 버전 바꾸기
+
+#### 1.2.2 n
+
+- `npm install -g n` : 설치
+- `n 6.9.4` : 버전 변경하기
+- `n` : n이 관리하고 있는 노드 리스트 보기
+- `n latest` : 최신 노드 버전 설치 or 사용하기
+- `n stable`, `n lts` : stable, lts 버전 사용
+- `n rm 0.9.4 v0.10.0` : 버전 삭제하기
+
+### 1.3 Hello world 찍어보기
 
 아래 코드가 들어있는 js 파일을 만들고 node로 실행시켜본다.
 
