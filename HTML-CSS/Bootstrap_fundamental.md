@@ -178,3 +178,69 @@
 - row에 있는 column들을 수평으로 정렬하는 방법이다.
 - `justify-content-{place}` 가 기본형이고 place에 `start`, `end`, `center`, `around`, `between`이 들어가면 된다.
 - 앞의 세 개는 이름과 의미가 같고, around는 적절하게 벌려놓는 느낌, between은 양 끝에 최대한 몰아넣는 느낌이다.
+
+## 2. Component
+
+### 2.1 Carousel
+
+```html
+<section id="carousel">
+  <div id="carousel-home" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-home" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel-home" data-slide-to="1"></li>
+      <li data-target="#carousel-home" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+      <div class="carousel-item active">
+        <img src="img/woman-camera.jpg" alt="Woman taking picture with a camera">
+        <div class="carousel-caption">
+          <h3>A woman with a camera</h3>
+          <p>She is probably taking a picture.</p>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="img/spiderweb.jpg" alt="A wet spiderweb">
+        <div class="carousel-caption">
+          <h3>Down came the rain</h3>
+          <p>And washed the spider out</p>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="img/hearthand.jpg" alt="Two hands making a heart">
+        <div class="carousel-caption">
+          <h3>Making love</h3>
+          <p>With their hands... </p>
+        </div>
+      </div>
+    </div>
+    <a class="left carousel-control" href="#carousel-home" role="button" data-slide="prev">
+      <span class="icon-prev" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-home" role="button" data-slide="next">
+      <span class="icon-next" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</section>
+```
+
+- 구조
+
+    ```sh
+    section # id="carousel"
+      div # id="carousel-home" class="carousel slide" data-ride="carousel"
+        ol # class="carousel-indicators"
+        div # class="carousel-inner" role="listbox"
+          div # class="carousel-item active"
+          div # class="carousel-item"
+          div # class="carousel-item"
+        a # class="left carousel-control" href="#carousel-home" role="button" data-slide="prev"
+        a # class="right carousel-control" href="#carousel-home" role="button" data-slide="next"
+    ```
+
+- section이 가장 상단에서 감싼다.(html 권장)
+- carousel 기능이 들어가는 부트스트랩 div가 아래로 들어간다.
+- 부트스트랩 div 아래 4가지가 들어간다. indicator, listbox, left-arrow, right-arrow
+- listbox 안에 여러 아이템들이 들어가면 된다.
