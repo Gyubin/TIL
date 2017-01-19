@@ -2,8 +2,42 @@
 
 참고 링크: [Codecademy](https://www.codecademy.com/learn/ruby)
 
+## 0. 설치
+
+### 0.1 기본 설치
+
+- RVM(Ruby Version Manager) 설치
+    + `brew install gpg`
+    + `command curl -sSL https://rvm.io/mpapis.asc | gpg --import -`
+    + `\curl -L https://get.rvm.io | bash -s stable`
+    + 만약 나중에 RVM을 업데이트할 일이 있다면: `rvm get stable --autolibs=enable`
+- Ruby 설치: `rvm install ruby-2.4.0`
+    + 설치가 완료되면 `ruby -v`로 버전을 확인해본다.
+- Gem Manager 업데이트: `gem update --system`
+
+### 0.2 rvm gemset
+
+- 마치 파이썬의 virtualenv같은 것이다.
+- `rvm gemset list` : gemset 모든 종류 리스트를 보여준다.
+- `rvm gemset create aaa bbb` : aaa, bbb gemset 두 개를 동시에 생성
+- gemset 선택
+    + `rvm gemset use gemset_name`
+    + `rvm 2.4.0@gemset_name` : 버전 뒤에 @을 쓰고 gemset 명시해주면 된다.
+- 각 gemset에서 서로 다른 gem을 설치할 수 있다.
+    + `gem install rails -v 4.1.0` 처럼 버전을 다르게 설치 가능
+
+### 0.3 gem
+
+- `gem install package_name` : gem 설치
+- `gem outdated` : 구 버전의 gem 리스트로 보여줌
+- `gem update` : 구버전의 gem 모두 업데이트
+- 유용한 gem
+    + bundler gem은 필수다. 꼭 설치해주자. `gem install bundler`
+    + nokogiri도 자주 쓰인다. `gem install nokogiri`
+
 ## 1. 기본
 
+- `irb` : REPL 진입 명령어
 - `puts`, `print`: 둘 다 괄호 쓸 필요 없고, puts만 자동 개행된다.
 - 여러줄 주석: `=begin` , `=end` 사이에 두면 된다.
 - 지역변수: 시작은 무조건 소문자, 단어와 단어를 구분하는 것을 언더스코어 _. $로 시작해도 문법 상 문제는 없지만 코드 컨벤션을 지키자.
