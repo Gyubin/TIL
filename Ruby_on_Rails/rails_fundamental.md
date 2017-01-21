@@ -1,11 +1,21 @@
 # 레일즈 사용법 기초 정리
 
-멋쟁이 사자처럼 3기 과정 + Codecademy.org
+참고
+
+- 멋쟁이 사자처럼 3기 과정 + Codecademy.org
+- [railsapps.github.io/](http://railsapps.github.io/installrubyonrails-mac.html)
+
+## 0. 설치
+
+- `mkdir myapp && cd myapp` : 프로젝트 디렉토리를 만들고 그 안에서
+- `rvm use ruby 2.4.0@myapp --ruby-version --create` : gemset 만들기
+- `gem install rails` : 레일즈 최신버전 설치
+- `rails new .` : 현재 디렉토리에 레일즈 프로젝트 생성
 
 ## 1. 프로젝트 만들기
 
 ```sh
-rails new MySite    # 레일즈 프로젝트 생성
+rails new MySite    # 레일즈 프로젝트 생성. 프로젝트 디렉토리 만드는거까지 자동
 bundle install      # 패키지 설치. 설치된 패키지는 Gemfile에 기록된다.
 rails server        # 서버 스타트. localhost:8000 에서 동작 가능하다. WEBrick. 뒤에 -p 1234 이런식으로 포트를 정해줄 수도 있다.
 ```
