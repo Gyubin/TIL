@@ -147,3 +147,30 @@ babel, sass 등을 사용할 때 loader 형태로 사용한다.
       },
     };
     ```
+
+### 7.2 CSS
+
+- js파일에서 `import styles from './assets/stylesheets/application.css'` 이 있다고 가정
+- 로더 설치: `yarn add --dev css-loader style-loader`
+- `use`: 로더를 여러개 특정지을 때. 역순으로 호출된다. 아래 예제에선 css-loader가 먼저 로드됨.
+
+    ```js
+    module.exports = {
+      module: {
+        rules: [
+          { babel rules },
+          {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader'],
+          },
+        ],
+      },
+    };
+    ```
+
+- 파일이 번들되면서 `style-loader`가 html의 head에다가 해당 내용을 쓴다. header request를 하지 않기 때문에 속도도 빠르고, js 파일과 markup 파일이 매칭되기 때문에 component-oriented, 즉 모듈화를 해서 사용할 수 있다. 또 중복도 줄인다.
+
+### 7.3 CSS Node modules
+
+- npm이나 yarn으로 라이브러리를 받았다고 할 때: `yarn add normalize.css`
+- `@import "~normalize.css";` 이런 형태로 가져다 쓸 수 있다.
