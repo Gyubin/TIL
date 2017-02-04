@@ -174,3 +174,27 @@ babel, sass 등을 사용할 때 loader 형태로 사용한다.
 
 - npm이나 yarn으로 라이브러리를 받았다고 할 때: `yarn add normalize.css`
 - `@import "~normalize.css";` 이런 형태로 가져다 쓸 수 있다.
+
+### 7.4 SASS
+
+- 설치: `yarn add --dev sass-loader node-sass`
+- rule
+
+    ```js
+    module.exports = {
+      // …
+      module: {
+        rules: [
+          {
+            test: /\.(sass|scss)$/,
+            use: [
+              'style-loader',
+              'css-loader',
+              'sass-loader',
+            ]
+          } 
+          // …
+        ],
+      },
+    };
+    ```
