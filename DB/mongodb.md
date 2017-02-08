@@ -75,12 +75,39 @@
 
 ### 3.1 CRUD
 
+#### 3.1.1 Create
+
 - `db.blog.insert(post)`: blog라는 Collection에 obj라는 document를 insert
+
+#### 3.1.2 Read
+
 - `db.blog.find()`: blog Collection의 모든 document를 read
 - `db.blog.findOne()`: 하나만 읽어온다. 매개변수로 filter를 넣을 수 있음
+
+#### 3.1.3 Update
+
 - `db.blog.update(query, newDoc)`: update 함수. query로 여러 document가 선택되면 첫 번째 것만 newDoc으로 변경된다.
     + 첫 번째 매개변수: 수정할 문서를 가리키는 filter 역할. 쿼리다.
     + 두 번째 매개변수: 바꿀 문서
+- `update`에서 `$set`을 쓰면 특정 부분만 변경할 수 있다.
+    + 첫 예: query로 선택된 blog Collection의 document를 통으로 바꾸는게 아니라 title만 바꾼다.
+    + 둘째 예: query로 선택된 blog Collection의 document에서 address 속성의 street 값을 바꾸겠다. address가 object 형태인 경우 저런식으로 해준다.
+
+    ```js
+    db.blog.update(query, {
+      $set: {
+        title: title,
+      }
+    })
+    db.blog.update(query, {
+      $set: {
+        "address.street": "Main Street",
+      }
+    })
+    ```
+
+#### 3.1.4 Delete
+
 - `db.blog.remove(query)`: 삭제
 
 ### 3.2 filter(query)
