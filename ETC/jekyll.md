@@ -15,14 +15,13 @@
 
 ## 1. 세팅 (OS X)
 
-- jekyll, github-pages 설치: 맥에는 루비가 기본으로 설치되어있기 때문에 gem으로 바로 설치한다. github pages는 github이 호스팅해주는 서비스다.
+- jekyll 설치: 맥에는 루비가 기본으로 설치되어있기 때문에 gem으로 바로 설치한다.
 
     ```sh
     sudo gem install jekyll
-    gem install github-pages
     ```
 
-- 원하는 디렉토리에 jekyll 프로젝트를 생성한다. GitHub 호스팅을 활용하려면 remote, local repository 이름을 모두 `username.github.io`로 해야한다. 나 같은 경우는 GitHub username이 'gyubin'이라서 [gyubin.github.io](http://gyubin.github.io/)로 했다.
+- 원하는 디렉토리에 jekyll 프로젝트를 생성한다. GitHub 호스팅을 활용하려면 remote repository 이름을 `username.github.io`로 해야한다. 나 같은 경우는 GitHub username이 'gyubin'이라서 [gyubin.github.io](http://gyubin.github.io/)로 했다.
 
     ```sh
     jekyll new username.github.io
@@ -87,8 +86,11 @@
 ## 3. 디렉토리 살펴보기
 
 - `_config.yml`: configuration file. 수정 사항이 jekyll serve 중일 때는 변하지 않는다. 재시작해야 적용됨.
-- `_includes/`: 코드 재사용을 위한 `template partials`가 위치하는 곳.
-- `_layouts/`: post(글)을 위한 템플릿이 위치.
+- `_includes/`: 코드 재사용을 위한 `template partials`가 위치하는 곳. 예를 들어 반복 사용되는 footer, header 같은 것들이다.
+- `_layouts/`
+    + 템플릿이 위치한다. main 페이지에 해당하는 html 파일, about, post list 등에 해당하는 html 파일들이 위치한다.
+    + `.md` 파일을 만들어서 `layout` 속성에 해당 템플릿 명을 입력하고 permalink를 지정해주면 해당 URL로 파일이 연결된다. 다만 여기서 지정하는 permalink가 path가 되기 때문에 html 파일에서 이미지나 css, js 파일 path를 지정할 떄는 `/`를 맨 앞에 써서 절대 경로로 해주는게 좋다.
+    + theme을 적용할 때 각각의 html 파일들이 존재할 것이다. 이를 `_layouts` 폴더에 넣으면 된다.
 - `_posts/`: 마크다운 파일. 글 원본이 위치하는 폴더. jekyll의 naming convention을 따라서 파일명이 지정되어야 함.
 - `_sass/`: css 전처리기인 SASS가 위치. 지킬에서 기본적으로 지원하지만 꼭 쓸 필요는 없다. pure css도 가능하고, SASS 안 쓸거면 지워도 된다.
 - `css/`: main.scss 파일이 존재. 확장자가 scss지만 pure css로 작성해도 되고 특별한 경로 없이 바로 `_sass` 폴더의 파일을 불러올 수 있다. ex) `@import "base";` `@import "layout"`
