@@ -41,6 +41,26 @@ CSS의 레이아웃 속성이다. 수직, 수평 정렬 등을 매우 쉽게 해
     + `align-content: space-around;` : 요소별로 위 아래에 균등한 공백 부여.
     + `align-content: stretch;` : 전체 요소 크기 차지. **default**
 
+### 1.2 flex items
+
+grow, shrink, basis 부분이 이해가 잘 안됐는데 [hangwoo님 블로그](https://hangwoo.github.io/posts/css3_flex_box/)를 참고했다. 감사합니다.
+
+- `order: <integer>;` : 숫자로 순서를 매기면 그 순서로 정렬된다. 음수도 가능
+- `flex-grow: <number>;` : 컨테이너에 아이템을 채우고 남은 공간들을 어떤 비율로 배분할 것인가에 대한 비율이다. 500 컨테이너에 100 아이템 3개가 있다면 남은 200을 비율에 따라 배분받게 된다. 0 이상인 수만 넣을 수 있고 default는 0. 
+- `flex-shrink: <number>;` : grow와 반대 개념이다. row에 공간이 충분하지 않을 때 부족한 공간을 어떻게 배분받아서 줄일 것인가에 대한 비율이다. 500 컨테이너에 300 아이템 3개가 있다면 부족한 공간은 400이고, 이 400을 비율에 따라서 배분받아 기존 크기 300에서 뺀 후 적용된다. default는 1
+- `flex-basis: ;` : flex-grow를 통해 남은 너비를 배분 받을 때 얼마만큼을 각 아이템에 고정 수치로 줄 것인지를 정한다. flex-grow의 비율과 관계없이 고정 수치를 주는 것. default는 auto로 콘텐츠 크기를 말하고, 0을 주면 고정크기 없이 모든 공간을 flex-grow 값으로 배분한다는 의미다. 아래 이미지 참고
+
+![image](https://www.w3.org/TR/css-flexbox-1/images/rel-vs-abs-flex.svg)
+
+- `flex: <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]` : default는 `0 1 auto`. shrink와 basis는 optional이다. 이런 shorthand를 쓰는 것을 추천한다고 한다.
+- align-self : container의 `align-items` 속성을 개별 아이템에서 오버라이드할 수 있다.
+    + `align-self: auto;`
+    + `align-self: flex-start;`
+    + `align-self: flex-end;`
+    + `align-self: center;`
+    + `align-self: baseline;`
+    + `align-self: stretch;`
+
 ## 2. 양 끝에 붙이기
 
 참고링크: http://stackoverflow.com/questions/10272605/align-two-inline-blocks-left-and-right-on-same-line
