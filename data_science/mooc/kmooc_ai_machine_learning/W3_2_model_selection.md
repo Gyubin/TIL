@@ -23,11 +23,11 @@
 ![Imgur](http://i.imgur.com/tX22v7L.png)
 
 - x축은 차수, y축은 오차 값이다.
-- 위의 주황색 그래프가 k-fold, 아래 파란 그래프가 그냥 전체를 대상으로 error 값을 구한 것.
+- 위의 주황색 그래프가 k-fold, 아래 파이 그래프가 그냥 전체를 대상으로 error 값을 구한 것.
 - 아래 그래프는 차수가 높아질 수록 점점 데이터에 대한 추정이 강화되므로 오차값이 줄어든다.
 - 하지만 위 k-fold는 과적합(overfitting) 문제 때문에 validation dataset에 대한 오차값이 차수가 늘어나면서 점점 커지게 된다.
 - 최종적으로 k-fold의 오차값이 가장 적은 2차 함수를 쓰는 회귀모델이 가장 좋은 것으로 결론.
-- `LOOCV`(Leave One Out Cross Validation): k-fold에서 k를 데이터의 개수로 맞춰주는 것. 학습하고자하는 모델에 비해 데이터가 너무 없을 경우에 주로 사용된다.
+- `LOOCV`(Leave One Out Cross Validation): k-fold에서 k를 데이터의 개수로 맞춰주는 것. 즉 N-1개를 트레이닝 데이터셋으로 삼고, 총 N번 테스트를 하는 것이다. 학습하고자하는 모델에 비해 데이터가 너무 없을 경우에 주로 사용된다.
 
 ### 2.2 Curse of Dimensionality
 
