@@ -65,8 +65,16 @@ df = DataFrame(data,
 ```
 
 - 가장 많이 쓰이는 자료구조. Series가 여러개 모여있는 형태이고 2차원 배열과 구조가 비슷하다.
+- 생성: dict 형태의 data를 생성자에 넣어주면 된다. 컬럼명을 key, 값을 리스트에 담아서 넣는다.
 - 위의 예처럼 `columns` 매개변수를 따로 지정해주지 않아도 데이터프레임이 만들어지지만 컬럼 순서가 뒤죽박죽이 될 수 있기 때문에 순서를 지키고싶으면 정해주면 된다.
 - `index` 역시 안넣어줘도 자동으로 0부터 시작하는 인덱스가 가장 좌측에 표시되는데, 지정해주고싶으면 위처럼 하면 된다.
 - `df['foreigner']` 형태로 컬럼 단위로 접근 가능.
 - `df.ix['02.06']` 형태로 행 단위로도 접근할 수 있다.
 - `df.T` : Transpose
+- `df.index`, `df.columns` : 전체 인덱스와 컬럼값을 확인할 수 있다.
+
+## 2.1 DataReader
+
+- `pip install pandas-datareader` : 설치
+- `import pandas_datareader.data as web`
+- `gs = web.DataReader("078930.KS", "yahoo", start, end)`
