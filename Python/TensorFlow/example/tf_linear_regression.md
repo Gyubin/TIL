@@ -82,3 +82,37 @@ print(sess.run(hypothesis, feed_dict={X: 2.5}))
 
 - 1의 예제와 거의 대부분 같다.
 - 다만 처음 hypothesis와 cost 오퍼레이션을 쓸 때 placeholer를 사용하고, 세션에서 run할 때 `feed_dict`로 필요한 데이터를 넣어주면 된다.
+
+## 3. Gradient Descent 직접 구현
+
+```py
+import tensorflow as tf
+
+x_data = [1., 2., 3.]
+y_data = [1., 2., 3.]
+
+W = tf.Variable(tf.random_uniform([1], -10.0, 10.0))
+
+X = tf.placeholder(tf.float32)
+Y = tf.placeholder(tf.float32)
+
+hypothesis = W * X
+cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+# 이 부분
+learning_rate = 0.1
+descent = W - tf.multiply(learning_rate, tf.reduce_mean(tf.multiply((tf.multiply(W, X) - Y), X)))
+update = W.assign(descent)
+
+init = tf.global_variables_initializer()
+
+sess = tf.Session()
+sess.run(init)
+
+for step in range(50):
+    sess.run(update, feed_dict = {X:x_data, Y:y_data})
+    print(step, sess.run(cost, feed_dict={X:x_data, Y:y_data}), sess.run(W))
+```
+
+- descent 부분이 실제 공식을 구현한 것이다.
+- 새로 구해진 W, 즉 기울기를 계속 갱신해가면서 여러번 실행하면 원하는 값이 나온다.
