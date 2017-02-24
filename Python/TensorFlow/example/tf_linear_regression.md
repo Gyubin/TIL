@@ -2,7 +2,9 @@
 
 모두의 딥러닝 lab 따라하기
 
-## 1. 일반
+## 1. Single variable regression
+
+### 1.1 기본 형태
 
 ```py
 import tensorflow as tf
@@ -45,7 +47,7 @@ for step in range(2001):
 - `init = tf.global_variables_initializer()`, `session.run(init)` : 이건 세션으로 다른 오퍼레이션을 실행하기 전에 먼저 실행해줘야한다.
 - 마지막 반복문: 2000번 최적화를 한다. minimize 할 때마다 cost, W, b의 변화값을 살펴보는 것.
 
-## 2. Placeholder 사용
+### 1.2 Placeholder 사용
 
 ```py
 import tensorflow as tf
@@ -83,7 +85,7 @@ print(sess.run(hypothesis, feed_dict={X: 2.5}))
 - 1의 예제와 거의 대부분 같다.
 - 다만 처음 hypothesis와 cost 오퍼레이션을 쓸 때 placeholer를 사용하고, 세션에서 run할 때 `feed_dict`로 필요한 데이터를 넣어주면 된다.
 
-## 3. Gradient Descent 직접 구현
+### 1.3 Gradient Descent 직접 구현
 
 ```py
 import tensorflow as tf
@@ -114,5 +116,42 @@ for step in range(50):
     print(step, sess.run(cost, feed_dict={X:x_data, Y:y_data}), sess.run(W))
 ```
 
+- `1.1`, `1.2`에서 tensorflow의 함수를 썼던 것을 직접 구현해봄
 - descent 부분이 실제 공식을 구현한 것이다.
 - 새로 구해진 W, 즉 기울기를 계속 갱신해가면서 여러번 실행하면 원하는 값이 나온다.
+
+## 2. Multi variable regression
+
+Matrix를 사용한다. 1차원 배열 형태의 여러 데이터들을 활용하는 것은 딱히 의미가 없어서 기록하지 않는다.
+
+```py
+import tensorflow as tf
+
+x_data = [[1., 1., 1., 1., 1.],
+          [1., 0., 3., 0., 5.],
+          [0., 2., 0., 4., 0.]]
+y_data = [1, 2, 3, 4, 5]
+
+W = tf.Variable(tf.random_uniform([1, 3], -1.0, 1.0))
+
+hypothesis = tf.matmul(W, x_data)
+cost = tf.reduce_mean(tf.square(hypothesis - y_data))
+
+a = tf.Variable(0.1)
+optimizer = tf.train.GradientDescentOptimizer(a)
+train = optimizer.minimize(cost)
+
+init = tf.global_variables_initializer()
+
+sess = tf.Session()
+sess.run(init)
+
+for step in range(701):
+    sess.run(train)
+    if step % 100 == 0:
+        print(step, sess.run(cost), sess.run(W))
+```
+
+- `x_data`의 첫 번쨰 행, 즉 첫 번째 벡터는 모두 1의 값을 가진다. 즉 `b`를 의미한다. 그래서 `W`의 형태도 원소가 3개임을 알 수 있다. 첫 번째 b, 그리고 x1, x2 해서 세 개이다.
+- `tf.matmul(a, b)` : 매트릭스의 곱셈을 할 때 쓰는 함수
+- 나머지는 single variable regression과 같다.
