@@ -77,12 +77,38 @@
 
 #### 3.1.1 Create
 
-- `db.blog.insert(post)`: blog라는 Collection에 obj라는 document를 insert
+```js
+db.blog.save({title: 'title', content: 'content'})
+db.blog.insert({title: 'title', content: 'content'})
+```
+
+- blog라는 Collection에 obj라는 document를 추가하는 것
+- `save`, `insert`의 차이: 만약 저장하는 객체에 `_id` 필드가 있다면 `save`는 `upsert`와 동일하게 행동한다. 없다면 insert와 save는 똑같이 데이터를 추가하는 역할
+- `insertOne`, `insertMany`가 `insert`를 대체하기 위해 새로 나왔다고 한다. one은 똑같고 many는 매개변수를 배열 형태로 여러 객체를 집어넣어서 한 번에 여러 데이터를 insert할 수 있다.
 
 #### 3.1.2 Read
 
 - `db.blog.find()`: blog Collection의 모든 document를 read
-- `db.blog.findOne()`: 하나만 읽어온다. 매개변수로 filter를 넣을 수 있음
+- `db.blog.findOne(query)`: query에 맞는 데이터를 하나만 읽어온다.
+- `$or` : 배열 형태로 들어간 각 원소들 중 하나만 맞으면 읽어온다.
+
+    ```js
+    db.blog.find({
+      $or: [{title: 'wow'}, {content: 'hey?'}]
+    })
+    ```
+
+- `$lt`, `$gt`, `lte`, `gte` : 수치에 대해서 대소를 비교해서 가져올 수 있음
+
+    ```js
+    db.blog.find({
+      likes: { $lt: 100 }
+    })
+    ```
+
+- document 내의 객체의 속성을 잡아올 때 dot notation과 문자열 표시로 가능하다: `db.blog.find({'property.author': 'GB'})`
+- 배열의 경우. 예를 들어 like를 누른 사람들의 배열이 `peopleLiked : ['a', 'b', 'c']`로 데이터가 존재한다면 `db.blog.find({peopleLiked: 'a'})` 처럼 단순하게 하면 된다.
+- projection: find 관련 함수 두 번째 매개변수로 객체를 넣어주어서 찾은 객체에서 가져올 속성을 지정하는 것이다. 갖고오고싶은 필드 키에 `true` 값을 주면 된다.
 
 #### 3.1.3 Update
 
@@ -105,6 +131,23 @@
       }
     })
     ```
+
+- `update`에서 `$inc`를 쓰면 숫자를 올리거나 내릴 수 있다. 간단하게 +를 하거나 -를 할 때 유용
+- 옵션
+    + `upsert`: 수정할 대상이 없을 때 `update`는 아무 것도 하지 않고 종료된다. 없으면 생성하는 것까지 하고싶을 때 `upsert`를 사용한다.
+    + `multi`: 선택된 여러 문서들을 모두 업데이트하고싶을 때 true로. false면 하나만 업데이트된다.
+
+    ```js
+    db.blog.update(query, update,
+      {
+        upsert: boolean,
+        multi: boolean,
+      }
+    })
+    ```
+
+- `updateOne`은 multi가 false인 상황, `updateMany`는 multi가 true, `replaaceOne`은 set을 안 썼을 때의 update와 같은 함수다.
+- `findAndModify(query, update, new:boolean)`: 수정한 다음에 결과까지 리턴하는 함수. new가 true면 수정한것을 가져오고, false면 수정 이전의 것을 가져온다.
 
 #### 3.1.4 Delete
 
