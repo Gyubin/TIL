@@ -15,3 +15,41 @@
     + regression: x(hours), y(score) 데이터셋이 있다. 10시간 투자하니 90점, 9시간 투자하니 80점, 3-50, 2-30이다. 이 때 7시간 투자했을 때 나올 점수를 예측하는 것이 regression이다.
     + binary: 10시간, 9시간은 통과, 3시간, 2시간은 탈락이라는 데이터가 있을 때 점수를 가지고 통과, 탈락을 추정하는 것
     + multi-label: 9-10시간은 A, 5-8은 B, 3-4는 C, 0-2는 D라는 데이터셋이 있을 때 시간을 가지고 추정하는 것.
+
+## 2. 학습 오차 줄이기
+
+### 2.1 Learning rate
+
+- 너무 클 때: overshooting 문제 발생. learning rate이 너무 커서 최저점을 못 찾는 문제. 반복하다가 그래프의 범위를 넘어갈 수도 있음
+- 너무 작을 때: 시간이 오래 걸리고 local minimum에서 멈춤. cost를 살펴보고 너무 작은 값으로 변화하면 learning rate을 올려보자.
+- rate 설정에 답은 없다. 0.01부터 많이 시작하고 cost를 기반으로 계속해서 바꿔보는게 답
+
+### 2.2 데이터 전처리
+
+- x1, x2 데이터가 있을 때 크기 차이가 심한 경우가 있다. x1은 0~1 사이고, x2는 -5000~10000 사이의 값. 이럴 때 w1, w2, cost 그래프는 한 쪽으로 과하게 찌그러진 원이 된다.
+- Gradient descent를 사용할 때 learning rate을 잘 설정해도 쉽게 그래프 밖으로 튀어나가는 문제가 발생
+- 그래서 데이터 전처리가 필요하다.
+
+![Imgur](http://i.imgur.com/oKfn7xu.png)
+
+- zero-centered data: 0을 중심으로 재패치
+- normalized data: 어떤 범위 안에 항상 들어가도록 아래 수식은 normalization 중에서도 가장 많이 사용되는 방식이다.
+    + ![Imgur](http://i.imgur.com/hb7Q5pX.png)
+    + 데이터에 평균을 빼고 분산으로 나오면 된다.
+    + 파이썬 코드: `x_std[:, 0] = (x[:, 0] - x[:, 0].mean()) / x[:, 0].std()`
+
+### 2.3 Overfitting
+
+- 모델이 학습 데이터에 너무 딱 잘 맞아서 다른 테스트 데이터와는 안 맞는 문제 
+- 피하는 방법
+    + 데이터가 많으면 됨
+    + feature의 개수를 줄이기(중복된거 없애는 등)
+    + Regularization(일반화) 시키기
+
+![Imgur](http://i.imgur.com/eJAPwWc.png)
+
+- overfitting이란 것은 특정한 데이터에 맞게 그래프를 구부리는 것을 의미
+- 구부리지 말고 펴는 것이 Regularization이고 weight의 값을 낮추면 된다.
+- cost 함수 뒤에 `모든 w의 값의 합에 특정 상수를 곱한 값`을 추가해준다. 즉 전체적으로 w 값을 낮게 유지하겠다라는 의미한다.
+- 뒤에 붙는 상수를 regularization strength라고 하고 일반화를 얼마나 중요하게 여기느냐에 따라 수치를 변경한다.
+- `l2reg = 0.001 * tf.reduce_sum(tf.square(W))`
