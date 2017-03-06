@@ -51,5 +51,11 @@
 - overfitting이란 것은 특정한 데이터에 맞게 그래프를 구부리는 것을 의미
 - 구부리지 말고 펴는 것이 Regularization이고 weight의 값을 낮추면 된다.
 - cost 함수 뒤에 `모든 w의 값의 합에 특정 상수를 곱한 값`을 추가해준다. 즉 전체적으로 w 값을 낮게 유지하겠다라는 의미한다.
-- 뒤에 붙는 상수를 regularization strength라고 하고 일반화를 얼마나 중요하게 여기느냐에 따라 수치를 변경한다.
+- 뒤에 붙는 상수를 `λ`, regularization strength라고 하고 일반화를 얼마나 중요하게 여기느냐에 따라 수치를 변경한다.
 - `l2reg = 0.001 * tf.reduce_sum(tf.square(W))`
+
+### 2.4 Test, Training set
+
+- test, train으로 분할: 학습을 할 때 전체 데이터로 학습을 하지 않는다. 데이터 셋에서 30% 정도를 Test dataset으로 만들고 나머지 70%를 Training dataset으로 학습을 한다. 학습에 test 데이터셋은 쓰지 않고, 학습이 잘 되었는지 확인할 때 사용한다.
+- Training dataset을 train, validation으로 분할: training의 training 데이터셋은 완벽하게 학습할 때만 쓰고, training의 validation 셋은 learning rate이나 lambda(regularization strength)의 값을 정할 때 사용한다. 즉 train할 때 알파와 람다를 바꿔가면서 validation으로 테스트해보고 최종 결정한 다음 test data로 모델을 검증하는 것
+- Online learning: 트레이닝 셋이 엄청 대용량일 때 한 번에 모든 데이터를 학습하는게 아니라 10개로 나눠서 순차적으로 학습하는 것. 이게 가능하려면 이전 부분의 데이터를 학습한 결과가 계속 모델에 남아있어야한다.
