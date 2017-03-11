@@ -42,3 +42,26 @@
 
 - Hinton, Bengio 교수의 논문으로 다시 주목. Deep한 레이어도 초기값만 잘 주면 학습이 가능하다.
 - 이미지 분류, 인식 대회에서 압도적으로 높은 성적을 냄
+
+## 2. Neural Nets for XOR
+
+### 2.1 예제
+
+![Imgur](http://i.imgur.com/awpVUDH.png)
+
+- logistic regression unit 하나로는 XOR을 풀 수 없고 최소 3개가 필요하다.
+- 위 이미지에서처럼 w, b값이 각 유닛에 주어졌을 때 마지막 유닛의 결과가 XOR의 결과와 같이 나올 수 있다.
+- 이미지의 한 객체는 unit, gate, perceptron 등으로 다양하게 불린다.
+
+### 2.2 Forward propagation
+
+![Imgur](http://i.imgur.com/WpI9COI.png)
+
+위처럼 3개 이상의 유닛으로 데이터를 앞으로 넘겨가면서 최종 결과를 내는 것을 Forward propagation이라고 한다.
+
+### 2.3 NN, Neural Network
+
+![Imgur](http://i.imgur.com/DOI5Qlu.png)
+
+- 기본적인 Forward propagation의 꼴은 x가 스칼라값이다. 더 많은 데이터를 쉽게 계산하기 위해 벡터 꼴로 바꾸면 Neural Network가 된다.
+- 수식으로 정리하면 위 이미지에서처럼 최종 Y값은 `Y = H(X) = sigmoid(K(x)*W2 + b2)`가 된다.
