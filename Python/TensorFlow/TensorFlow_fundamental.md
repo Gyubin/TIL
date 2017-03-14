@@ -127,3 +127,20 @@ sudo mv -v cuda/include/cudnn.h /usr/local/cuda/include
         print("Addition: %i" % sess.run(add, feed_dict={a:2, b:3}))
         print("Multiplication: %i" % sess.run(mul, feed_dict={a:2, b:3}))
     ```
+
+## 2. 문법
+
+- Rank: TensorFlow의 차원 개념
+
+| Rank |           Math entity           |                        Python example                        |
+|------|---------------------------------|--------------------------------------------------------------|
+| 0    | Scalar(magnitude only)          | s = 483                                                      |
+| 1    | Vector(magnitude and direction) | v = [1.1, 2.2, 3.3]                                          |
+| 2    | Matrix(table of numbers)        | m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]                        |
+| 3    | 3-Tensor(cube of numbers)       | t = [[[2], [4], [6]], [[8], [10], [12]], [[14], [16], [18]]] |
+| n    | n-Tensor                        |                                                              |
+
+- 행렬 계산
+    + `hypothesis = W * x_data + b` 에서 `x_data`는 Python array
+    + TensorFlow의 매트릭스인 W와 곱해지면 자동으로 행렬간 곱셈이 된다.
+    + `b`를 더할 때도 일반 Python에서는 문법 오류지만 `b`가 `tf.Variable`이므로 역시 array 각 원소에 `b` 값이 더해진다.
