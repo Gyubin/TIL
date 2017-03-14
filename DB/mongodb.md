@@ -148,6 +148,39 @@ db.blog.insert({title: 'title', content: 'content'})
 
 - `updateOne`은 multi가 false인 상황, `updateMany`는 multi가 true, `replaaceOne`은 set을 안 썼을 때의 update와 같은 함수다.
 - `findAndModify(query, update, new:boolean)`: 수정한 다음에 결과까지 리턴하는 함수. new가 true면 수정한것을 가져오고, false면 수정 이전의 것을 가져온다.
+- document의 속성 중 array가 있고, 그 원소의 특정 부분만 업데이트하고싶을 때
+    + `user` collection이 있고,  Object 타입의 `profiles` 속성이 있다. 또 거기서 내가 읽은, 읽고싶은 책을 기록하는 array 타입의 `readBooks` 속성이 존재한다. 각각의 원소는 Object 타입이며 책의 title, rate, status(읽었는지 안 읽었는지) 속성이 존재한다.
+    + 현재 user의 `_id` 값과 읽은 책의 `title`을 알고 있다. 검색해서 그 유저의, 그 책의 status를 "읽음" 상태로 바꾸고 평점을 기록하고싶다.
+    + query에는 array 타입의 `readBooks`에 dot notation을 사용해서 조건을 입력하고, set할 때는 검색된 객체를 가리키는 `$` 기호를 써서 원하는대로 변경한다.
+
+    ```js
+    // db structure
+    {
+      _id: 'String',
+      ...,
+      profiles: {
+        ...,
+        readBooks: [
+          {title: 'AAA', rate: 7, status: 'complete'},
+          {title: 'BBB', rate: 8, status: 'complete'},
+          {title: 'How Google Works', status: 'yet'},
+          ...,
+        ],
+        ...,
+      }
+    }
+
+    // update query
+    db.getCollection('user').update({
+      _id: '937',
+      'profiles.readBooks.title': 'How Google Works',
+    }, {
+      $set: {
+        'profiles.readBooks.$.status':'complete',
+        'profiles.readBooks.$.rate':10,
+      }
+    })
+    ```
 
 #### 3.1.4 Delete
 
