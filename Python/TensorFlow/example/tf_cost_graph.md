@@ -3,35 +3,27 @@
 hypothesis 식에서 "W 값에 따른 Cost 값의 변화"를 그래프로 나타내본다.
 
 ```py
-import tensorflow as tf
-from matplotlib import pyplot as plt
-
 X = [1., 2., 3.]
 Y = [1., 2., 3.]
-m = n_samples = len(X)
 
 W = tf.placeholder(tf.float32)
 
-hypothesis = tf.multiply(X, W)
+hypothesis = X * W
 
-cost = tf.reduce_sum(tf.pow(hypothesis - Y, 2)) / m
+cost = tf.reduce_mean(tf.square(hypothesis - Y))
 
-init = tf.global_variables_initializer()
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
 
 W_val = []
 cost_val = []
-
-sess = tf.Session()
-sess.run(init)
-
 for i in range(-30, 50):
-    print(i * 0.1, sess.run(cost, feed_dict={W : i * 0.1}))
-    W_val.append(i * 0.1)
-    cost_val.append(sess.run(cost, feed_dict={W : i * 0.1}))
-    
-plt.plot(W_val, cost_val, 'ro')
-plt.ylabel('Cost')
-plt.xlabel('W')
+    feed_W = i * 0.1
+    curr_cost, curr_W = sess.run([cost, W], feed_dict={W: feed_W})
+    W_val.append(curr_W)
+    cost_val.append(curr_cost)
+
+plt.plot(W_val, cost_val)
 plt.show()
 ```
 
