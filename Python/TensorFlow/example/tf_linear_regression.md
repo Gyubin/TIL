@@ -9,17 +9,16 @@
 ```py
 import tensorflow as tf
 
-x_data = [1, 2, 3]
-y_data = [1, 2, 3]
+x_train = [1, 2, 3]
+y_train = [1, 2, 3]
 
-W = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
-b = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
+W = tf.Variable(tf.random_normal([1]), name='weight')
+b = tf.Variable(tf.random_normal([1]), name='bias')
 
-hypothesis = W * x_data + b
-cost = tf.reduce_mean(tf.square(hypothesis - y_data))
+hypothesis = W * x_train + b
+cost = tf.reduce_mean(tf.square(hypothesis - y_train))
 
-a = tf.Variable(0.1)
-optimizer = tf.train.GradientDescentOptimizer(a)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(cost)
 
 init = tf.global_variables_initializer()
@@ -38,6 +37,8 @@ for step in range(2001):
     + `minVal`, `maxVal`: 최소값, 최대값으로 범위를 나타냄
     + `dtype`: 타입을 지정하는데 기본값은 float다.
     + `seed`: 파이썬 정수형태로 넣어주면 랜덤 수를 만들 때 seed로 사용한다.
+- `tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32, seed=None, name=None)`
+    + 정규분포에서 랜덤값 뽑는 것. `mean`, `stddev`를 정할 수 있고 기본은 0, 1이다.
 - `tf.reduce_mean(value)` : 평균 구하기
 - `tf.train.GradientDescentOptimizer(learning_rate, use_locking=False, name='GradientDescent')`
     + 클래스다. 클래스를 만들어서 메소드를 호출해서 사용한다.
@@ -52,37 +53,33 @@ for step in range(2001):
 ```py
 import tensorflow as tf
 
-x_data = [1, 2, 3]
-y_data = [1, 2, 3]
+W = tf.Variable(tf.random_normal([1]), name='weight')
+b = tf.Variable(tf.random_normal([1]), name='bias')
 
-W = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
-b = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
-
-X = tf.placeholder(tf.float32)
-Y = tf.placeholder(tf.float32)
+X = tf.placeholder(tf.float32, shape=[None])
+Y = tf.placeholder(tf.float32, shape=[None])
 
 hypothesis = W * X + b
 cost = tf.reduce_mean(tf.square(hypothesis - Y))
 
-a = tf.Variable(0.1)
-optimizer = tf.train.GradientDescentOptimizer(a)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(cost)
 
-init = tf.global_variables_initializer()
-
 sess = tf.Session()
-sess.run(init)
+sess.run(tf.global_variables_initializer())
 
 for step in range(2001):
-    sess.run(train, feed_dict={X: x_data, Y: y_data})
+    cost_val, W_val, b_val, _ = sess.run([cost, W, b, train], feed_dict={X:[1, 2, 3], Y:[1.1, 2.1, 3.1]})
     if step % 20 == 0:
-        print(step, sess.run(cost, feed_dict={X: x_data, Y: y_data}), sess.run(W), sess.run(b))
+        print(step, cost_val, W_val, b_val)
 
-print(sess.run(hypothesis, feed_dict={X: 5}))
-print(sess.run(hypothesis, feed_dict={X: 2.5}))
+print(sess.run(hypothesis, feed_dict={X: [5]}))
+print(sess.run(hypothesis, feed_dict={X: [2.5]}))
+print(sess.run(hypothesis, feed_dict={X: [1.5, 3.5]}))
 ```
 
 - 1의 예제와 거의 대부분 같다.
+- placeholder를 선언할 때 `shape=[None]` 부분은 어떤 shape이든 올 수 있다는 의미다. 1차원, 2차원 등등
 - 다만 처음 hypothesis와 cost 오퍼레이션을 쓸 때 placeholer를 사용하고, 세션에서 run할 때 `feed_dict`로 필요한 데이터를 넣어주면 된다.
 
 ### 1.3 Gradient Descent 직접 구현
@@ -93,23 +90,21 @@ import tensorflow as tf
 x_data = [1., 2., 3.]
 y_data = [1., 2., 3.]
 
-W = tf.Variable(tf.random_uniform([1], -10.0, 10.0))
+W = tf.Variable(tf.random_normal([1]), name='weight')
 
 X = tf.placeholder(tf.float32)
 Y = tf.placeholder(tf.float32)
 
 hypothesis = W * X
-cost = tf.reduce_mean(tf.square(hypothesis - Y))
+cost = tf.reduce_sum(tf.square(hypothesis - Y))
 
-# 이 부분
 learning_rate = 0.1
-descent = W - tf.multiply(learning_rate, tf.reduce_mean(tf.multiply((tf.multiply(W, X) - Y), X)))
+gradient = tf.reduce_mean((W * X - Y) * X)
+descent = W - learning_rate * gradient
 update = W.assign(descent)
 
-init = tf.global_variables_initializer()
-
 sess = tf.Session()
-sess.run(init)
+sess.run(tf.global_variables_initializer())
 
 for step in range(50):
     sess.run(update, feed_dict = {X:x_data, Y:y_data})
@@ -119,6 +114,41 @@ for step in range(50):
 - `1.1`, `1.2`에서 tensorflow의 함수를 썼던 것을 직접 구현해봄
 - descent 부분이 실제 공식을 구현한 것이다.
 - 새로 구해진 W, 즉 기울기를 계속 갱신해가면서 여러번 실행하면 원하는 값이 나온다.
+
+### 1.4 라이브러리의 gradient 값 커스텀하기
+
+```py
+import tensorflow as tf
+tf.set_random_seed(777)  # 랜덤 함수에 seed 넣기
+
+X = [1, 2, 3]
+Y = [1, 2, 3]
+
+W = tf.Variable(5.)
+
+hypothesis = X * W
+gradient = tf.reduce_mean((W * X - Y) * X) * 2
+
+cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+train = optimizer.minimize(cost)
+
+gvs = optimizer.compute_gradients(cost)
+# gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
+apply_gradients = optimizer.apply_gradients(gvs)
+
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+for step in range(100):
+    print(step, sess.run([gradient, W, gvs]))
+    sess.run(apply_gradients)
+```
+
+- 1.2의 코드는 알고리즘을 적용한 것을 바로 사용했다. 라이브러리를 통해 계산된 값을 우리가 임의로 수정해서 사용할 수 있다.
+- `gvs = optimizer.compute_gradients(cost)` 이렇게 optimizer로부터 gvs를 계산하고, 우리 입맛에 맞게 수정하면 된다.
+- `apply_gradients = optimizer.apply_gradients(gvs)` 수정된 값을 적용한다.
 
 ## 2. Multi variable regression
 
