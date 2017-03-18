@@ -152,7 +152,7 @@ for step in range(100):
 
 ## 2. Multi variable regression
 
-Matrix를 사용한다. 1차원 배열 형태의 여러 데이터들을 활용하는 것은 딱히 의미가 없어서 기록하지 않는다.
+### 2.1 Matrix 사용
 
 ```py
 import tensorflow as tf
@@ -162,19 +162,16 @@ x_data = [[1., 1., 1., 1., 1.],
           [0., 2., 0., 4., 0.]]
 y_data = [1, 2, 3, 4, 5]
 
-W = tf.Variable(tf.random_uniform([1, 3], -1.0, 1.0))
+W = tf.Variable(tf.random_normal([1, 3], name="weight"))
 
-hypothesis = tf.matmul(W, x_data)
+hypothesis = W * x_data
 cost = tf.reduce_mean(tf.square(hypothesis - y_data))
 
-a = tf.Variable(0.1)
-optimizer = tf.train.GradientDescentOptimizer(a)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
 train = optimizer.minimize(cost)
 
-init = tf.global_variables_initializer()
-
 sess = tf.Session()
-sess.run(init)
+sess.run(tf.global_variables_initializer())
 
 for step in range(701):
     sess.run(train)
@@ -183,38 +180,30 @@ for step in range(701):
 ```
 
 - `x_data`의 첫 번쨰 행, 즉 첫 번째 벡터는 모두 1의 값을 가진다. 즉 `b`를 의미한다. 그래서 `W`의 형태도 원소가 3개임을 알 수 있다. 첫 번째 b, 그리고 x1, x2 해서 세 개이다.
-- `tf.matmul(a, b)` : 매트릭스의 곱셈을 할 때 쓰는 함수
 - 나머지는 single variable regression과 같다.
+
+### 2.2 Matrix 사용예 2
 
 ```py
 import tensorflow as tf
-tf.set_random_seed(777)  # for reproducibility
 
 x_data = [[73., 80., 75.], [93., 88., 93.],
           [89., 91., 90.], [96., 98., 100.], [73., 66., 70.]]
 y_data = [[152.], [185.], [180.], [196.], [142.]]
 
-
-# placeholders for a tensor that will be always fed.
 X = tf.placeholder(tf.float32, shape=[None, 3])
 Y = tf.placeholder(tf.float32, shape=[None, 1])
 
 W = tf.Variable(tf.random_normal([3, 1]), name='weight')
 b = tf.Variable(tf.random_normal([1]), name='bias')
 
-# Hypothesis
 hypothesis = tf.matmul(X, W) + b
-
-# Simplified cost/loss function
 cost = tf.reduce_mean(tf.square(hypothesis - Y))
 
-# Minimize
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
 train = optimizer.minimize(cost)
 
-# Launch the graph in a session.
 sess = tf.Session()
-# Initializes global variables in the graph.
 sess.run(tf.global_variables_initializer())
 
 for step in range(2001):
@@ -222,4 +211,55 @@ for step in range(2001):
         [cost, hypothesis, train], feed_dict={X: x_data, Y: y_data})
     if step % 10 == 0:
         print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+```
+
+### 2.3 Queue runners
+
+```py
+import tensorflow as tf
+
+filename_queue = tf.train.string_input_producer(
+    ['data-01-test-score.csv'], shuffle=False, name='filename_queue')
+
+reader = tf.TextLineReader()
+key, value = reader.read(filename_queue)
+
+record_defaults = [[0.], [0.], [0.], [0.]]
+xy = tf.decode_csv(value, record_defaults=record_defaults)
+
+train_x_batch, train_y_batch = \
+    tf.train.batch([xy[0:-1], xy[-1:]], batch_size=10)
+
+X = tf.placeholder(tf.float32, shape=[None, 3])
+Y = tf.placeholder(tf.float32, shape=[None, 1])
+
+W = tf.Variable(tf.random_normal([3, 1]), name='weight')
+b = tf.Variable(tf.random_normal([1]), name='bias')
+
+hypothesis = tf.matmul(X, W) + b
+cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+train = optimizer.minimize(cost)
+
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+coord = tf.train.Coordinator()
+threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+for step in range(2001):
+    x_batch, y_batch = sess.run([train_x_batch, train_y_batch])
+    cost_val, hy_val, _ = sess.run(
+        [cost, hypothesis, train], feed_dict={X: x_batch, Y: y_batch})
+    if step % 10 == 0:
+        print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+
+coord.request_stop()
+coord.join(threads)
+
+print("Your score will be ",
+      sess.run(hypothesis, feed_dict={X: [[100, 70, 101]]}))
+print("Other scores will be ",
+      sess.run(hypothesis, feed_dict={X: [[60, 70, 110], [90, 100, 80]]}))
 ```
