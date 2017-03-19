@@ -213,7 +213,45 @@ for step in range(2001):
         print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
 ```
 
-### 2.3 Queue runners
+### 2.3 Queue runner
+
+![queue-runner](https://www.tensorflow.org/images/AnimatedFileQueues.gif)
+
+> 사진 출처: [TensorFlow 공식문서](https://www.tensorflow.org/programmers_guide/reading_data#creating_threads_to_prefetch_using_queuerunner_objects)
+
+대용량의 파일을 처리할 때 메모리 부족으로 실행이 안되는 경우가 있다. 그래서 TensorFlow의 Queue runner는 파일을 큐에 쌓고, 작업한 다음, 결과물을 다시 큐에 담아서 쓰도록 해준다.
+
+#### 2.3.1 데이터
+
+```
+73,80,75,152
+93,88,93,185
+89,91,90,180
+96,98,100,196
+73,66,70,142
+53,46,55,101
+69,74,77,149
+47,56,60,115
+87,79,90,175
+79,70,88,164
+69,70,73,141
+70,65,74,141
+93,95,91,184
+79,80,73,152
+70,73,78,148
+93,89,96,192
+78,75,68,147
+81,90,93,183
+88,92,86,177
+78,83,77,159
+82,86,90,177
+86,82,89,175
+78,83,85,175
+76,83,71,149
+96,93,95,192
+```
+
+#### 2.3.2 코드
 
 ```py
 import tensorflow as tf
@@ -227,8 +265,7 @@ key, value = reader.read(filename_queue)
 record_defaults = [[0.], [0.], [0.], [0.]]
 xy = tf.decode_csv(value, record_defaults=record_defaults)
 
-train_x_batch, train_y_batch = \
-    tf.train.batch([xy[0:-1], xy[-1:]], batch_size=10)
+tr_x_batch, tr_y_batch = tf.train.batch([xy[0:-1], xy[-1:]], batch_size=10)
 
 X = tf.placeholder(tf.float32, shape=[None, 3])
 Y = tf.placeholder(tf.float32, shape=[None, 1])
@@ -249,7 +286,7 @@ coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
 for step in range(2001):
-    x_batch, y_batch = sess.run([train_x_batch, train_y_batch])
+    x_batch, y_batch = sess.run([tr_x_batch, tr_y_batch])
     cost_val, hy_val, _ = sess.run(
         [cost, hypothesis, train], feed_dict={X: x_batch, Y: y_batch})
     if step % 10 == 0:
@@ -263,3 +300,8 @@ print("Your score will be ",
 print("Other scores will be ",
       sess.run(hypothesis, feed_dict={X: [[60, 70, 110], [90, 100, 80]]}))
 ```
+
+- 다른 것은 다 비슷하고, 데이터를 읽어오는 부분과 사용하는 부분만 달라진다.
+- `tr_x_batch, tr_y_batch = tf.train.batch([xy[0:-1], xy[-1:]], batch_size=10)` : 10 사이즈만큼 읽어오는 것
+- `coord = tf.train.Coordinator()`, `threads = tf.train.start_queue_runners(sess=sess, coord=coord)` : coordinator, thread 사용
+- `x_batch, y_batch = sess.run([tr_x_batch, tr_y_batch])` : batch를 run
