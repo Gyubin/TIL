@@ -133,6 +133,27 @@ db.blog.insert({title: 'title', content: 'content'})
     ```
 
 - `update`에서 `$inc`를 쓰면 숫자를 올리거나 내릴 수 있다. 간단하게 +를 하거나 -를 할 때 유용
+- `$push`: array에 원소 추가하기
+    + 원하는 document를 골라서 `$push`를 쓴다.
+    + value로 Object를 넣는데 키 값이 array를 가리킨다.
+    + array 키의 값으로 처음 넣으려했던 원소를 넣으면 된다.
+    + 만약 `$each`를 사용해서 배열을 넣으면 여러 원소를 한 번에 추가할 수 있다.
+    + `$sort`는 DB에 넣을 때 알아서 정렬까지 추가로 하겠다는 거고, slice는 처음부터 개수만큼 끊고 나머지는 버린다.
+
+    ```js
+    // append one
+    db.blog.update(query, {
+      $push: {authors: 'addElementOfArray'}
+    })
+
+    // append multiple values, another operation
+    db.blog.update(query, {
+      $push: {authors: { $each: [ 'a', 'b', 'c' ] }},
+      $sort: { score: -1 },
+      $slice: 3
+    })
+    ```
+
 - 옵션
     + `upsert`: 수정할 대상이 없을 때 `update`는 아무 것도 하지 않고 종료된다. 없으면 생성하는 것까지 하고싶을 때 `upsert`를 사용한다.
     + `multi`: 선택된 여러 문서들을 모두 업데이트하고싶을 때 true로. false면 하나만 업데이트된다.
