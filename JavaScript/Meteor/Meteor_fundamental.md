@@ -210,6 +210,11 @@ Template.myList.onDestroyed(function() {});
 - `onCreated` : Template.instance가 만들어질 때 최초로 한 번 호출된다. 즉 여기서 추가된 callback 함수들은 template의 로직이 적용되기 전, 그리고 렌더링되기 전에 호출되므로 `Template.instance()`에 데이터를 추가하기 좋다. 이후에 다른 helper에서 추가된 데이터를 활용할 수 있다. 페이지를 새로고침하면 새로 호출된다.
 - `onRendered` : 내부의 callback 함수들은 Template의 instance가 DOM에 render된 직후에 최초로 한 번 호출된다. 같은 페이지가 다시 DOM에 렌더링되어도 호출되지 않는다. 페이지 새로고침하면 새로 호출된다. 렌더링된 후에 호출되는 것이므로 `this.finidAll`같은 것으로 DOM nodes를 조작할 수 있다.
 
+#### 3.3.4 템플릿 간 데이터 전달
+
+- `{{> childTemplate money=100}}` : 부모 템플릿(or Caller 템플릿)에서 자식 템플릿으로 데이터를 전달할 수 있다.
+- `Template.currentData()` : 자식 템플릿의 js 파일에서 전달받은 데이터가 Object의 key-value 쌍으로 currentData에 들어있게 된다.
+
 ## 4. Collection
 
 MongoDB를 다루기 위해 필요하다. `/lib/collections.js` 파일을 만든다.
