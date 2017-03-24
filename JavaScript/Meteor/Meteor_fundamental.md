@@ -430,3 +430,9 @@ Session.get('pageTitle');
       this.route('postsList', {path: '/'});
     });
     ```
+
+## 10. 비밀번호 암호화
+
+- `meteor add sha` : 미티어 패키지 설치
+- `SHA256("String to encrypt")` : 클라이언트에서 암호화해서 서버로 전송
+- 암호화된 문자열을 저장하고, 나중에 맞는지 비교할 때는 서로 암호화된 문자열이 같은지 비교하면 된다.
