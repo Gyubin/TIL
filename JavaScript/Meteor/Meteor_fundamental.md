@@ -212,7 +212,9 @@ Template.myList.onDestroyed(function() {});
 
 #### 3.3.4 템플릿 간 데이터 전달
 
-- `{{> childTemplate money=100}}` : 부모 템플릿(or Caller 템플릿)에서 자식 템플릿으로 데이터를 전달할 수 있다.
+- 부모 템플릿(or Caller 템플릿)에서 자식 템플릿으로 데이터를 전달
+    + `{{> childTemplate money=100}}` : 한 개 쌍만 추가된다.
+    + `{{> childTemplate myHelper}}` : `myHelper` helper 메소드가 다량의 데이터가 들어있는 Object를 리턴하면 그 모두가 추가된다.
 - `Template.currentData()` : 자식 템플릿의 js 파일에서 전달받은 데이터가 Object의 key-value 쌍으로 currentData에 들어있게 된다.
 
 ## 4. Collection
