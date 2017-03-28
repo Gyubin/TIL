@@ -73,9 +73,7 @@
     + Collection을 따로 생성하는 것이 아니라 `db.something` 형태로 접근해서 바로 사용하면 된다.
     + `db.wow.find()` 명령어로 db의 wow 콜렉션의 document들을 볼 수 있는데 없으면 안 뜨고 있으면 보인다.
 
-### 3.1 CRUD
-
-#### 3.1.1 Create
+### 3.1 Create
 
 ```js
 db.blog.save({title: 'title', content: 'content'})
@@ -86,7 +84,7 @@ db.blog.insert({title: 'title', content: 'content'})
 - `save`, `insert`의 차이: 만약 저장하는 객체에 `_id` 필드가 있다면 `save`는 `upsert`와 동일하게 행동한다. 없다면 insert와 save는 똑같이 데이터를 추가하는 역할
 - `insertOne`, `insertMany`가 `insert`를 대체하기 위해 새로 나왔다고 한다. one은 똑같고 many는 매개변수를 배열 형태로 여러 객체를 집어넣어서 한 번에 여러 데이터를 insert할 수 있다.
 
-#### 3.1.2 Read
+### 3.2 Read
 
 - `db.blog.find()`: blog Collection의 모든 document를 read
 - `db.blog.findOne(query)`: query에 맞는 데이터를 하나만 읽어온다.
@@ -109,8 +107,31 @@ db.blog.insert({title: 'title', content: 'content'})
 - document 내의 객체의 속성을 잡아올 때 dot notation과 문자열 표시로 가능하다: `db.blog.find({'property.author': 'GB'})`
 - 배열의 경우. 예를 들어 like를 누른 사람들의 배열이 `peopleLiked : ['a', 'b', 'c']`로 데이터가 존재한다면 `db.blog.find({peopleLiked: 'a'})` 처럼 단순하게 하면 된다.
 - projection: find 관련 함수 두 번째 매개변수로 객체를 넣어주어서 찾은 객체에서 가져올 속성을 지정하는 것이다. 갖고오고싶은 필드 키에 `true` 값을 주면 된다.
+- `$in`: 해당 값이 배열의 원소 중 하나일 때
+    + `$or`과 비슷한 메커니즘이다. 아래같은 데이터가 있을 때 `vals`라는 배열에 bb, c가 들어있는 document를 찾고싶다고하자.
+    + 만약 a만 들어있는 문서를 찾는다면 위에서 설명한대로 오퍼레이터를 쓸 필요도 없이 바로 쿼리에 적어주면 된다.(위위 목록)
+    + 근데 bb, c가 적어도 하나 들어있는거를 한 번에 찾으려면 아래 쿼리처럼 `$in` 오퍼레이터를 사용하면 된다.
 
-#### 3.1.3 Update
+    ```js
+    // documents
+    { "_id" : 1, "vals" : [ "a", "b", "c", "d" ] }
+    { "_id" : 2, "vals" : [ "aa", "bb", "cc", "d" ] }
+    { "_id" : 3, "vals" : [ "aa", "bb", "c", "dd" ] }
+
+    // query
+    db.blog.find({ vals : { $in: [ 'bb', 'c' ] } } )
+    ```
+
+- 정규표현식 사용 가능: `{"x" : /foobar/}`
+- 종합 응용
+
+    ```js
+    { status: "A", age: { $lt: 30 } } // status가 "A"이고, age가 30보다 작은 것
+    { $or: [ { status: "A" }, { age: { $lt: 30 } } ] } // status가 A이거나 age가 30보다 작거나
+    { status: "A", $or: [ { age: { $lt: 30 } }, { type: 1 } ] } // status가 A인데 age가 30보다 작거나 type이 1이거나.
+    ```
+
+### 3.3 Update
 
 - `db.blog.update(query, newDoc)`: update 함수. query로 여러 document가 선택되면 첫 번째 것만 newDoc으로 변경된다.
     + 첫 번째 매개변수: 수정할 문서를 가리키는 filter 역할. 쿼리다.
@@ -203,22 +224,6 @@ db.blog.insert({title: 'title', content: 'content'})
     })
     ```
 
-#### 3.1.4 Delete
+### 3.4 Delete
 
-- `db.blog.remove(query)`: 삭제
-
-### 3.2 filter(query)
-
-```js
-db.users.find(obj)
-```
-
-find의 기본 형태. obj에 조건을 넣어주면 된다.
-
-```js
-{ status: { $in: [ "P", "D" ] } } // status가 P, D 중 하나인 것
-{ status: "A", age: { $lt: 30 } } // status가 "A"이고, age가 30보다 작은 것
-{ $or: [ { status: "A" }, { age: { $lt: 30 } } ] } // status가 A이거나 age가 30보다 작거나
-{ status: "A", $or: [ { age: { $lt: 30 } }, { type: 1 } ] } // status가 A인데 age가 30보다 작거나 type이 1이거나.
-{"x" : /foobar/} // 정규표현식 사용 가능
-```
+`db.blog.remove(query)`: 삭제
