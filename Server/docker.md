@@ -26,15 +26,15 @@
 
 ## 1. 이미지
 
-### 1.1 기본
-
 - 우리가 이용할 수 있는 이미지는 [Docker Hub](https://hub.docker.com/)에 등록되어있다.
 - `docker search <image-name>` : 원하는 이미지를 검색할 수 있는 명령어
 - `docker pull <image-name>:<tag>` : search 명령어로 검색한 이미지 이름에 버전을 지정해서 이미지를 다운받는 명령어. `latest`는 최신 버전을 의미한다.
 - `docker images`: 이미지 목록
 - `docker rmi <image-name>:<tag>` : 이미지 삭제
 
-### 1.2 Dockerfile 구성
+## 2 Dockerfile 구성
+
+### 2.1 구조
 
 ```sh
 # kaldi를 설치할 때의 Dockerfile이다. 메모리 꼭 4기가로 설정할것
@@ -63,7 +63,21 @@ CMD ["/bin/bash"]
 - `WORKDIR <dir>`: CMD에서 설정한 실행 파일이 실행될 디렉터리입니다.
 - `EXPOSE <port-num>`: 호스트와 연결할 포트 번호입니다. 여러개 지정 가능. 예를 들어 80포트와 443 포트. 여러번 써주면 된다.
 
-### 1.3 Build
+### 2.2 .dockerignore
+
+- Dockerfile과 같은 디렉토리의 파일들을 context라고 한다.
+- 필요없는 파일이 전송되지 않도록 .dockerignore 파일에 제외할 것들을 명시. `.git` 같은 것들 제외해주면 된다.
+- 파일 매칭은 [Go 언어의 규칙](https://golang.org/pkg/path/filepath/#Match)을 따름
+
+```
+example/hello.txt
+example/*.cpp
+wo*
+*.cpp
+.git
+```
+
+### 2.3 Build
 
 - `docker build --tag <image-name>:<version> <dockerfile-dir>` : Dockerfile을 이용해 이미지를 만든다. `--tag` 옵션으로 이미지명과 버전을 설정해줄 수 있고, 마지막에 꼭 도커파일 경로를 명시해줘야한다.
 - `docker run --name <container-name> -d -p 80:80 -v /root/data:/data <image-name>:<tag>`
