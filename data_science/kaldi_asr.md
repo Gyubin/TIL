@@ -56,3 +56,19 @@ Kaldi asr(automatic speech recognition) 음성인식 오픈소스 라이브러�
 - `./configure` : 설정 스크립트 실행
 - `make depend -j 4` : 의존성 설치
 - `make -j 4` : 마지막 설치하면 끝인데 역시 미리 `free -m` 해준다.
+
+### 0.5 (최종) 셸 스크립트 모음
+
+도커 실행 후 아래 명령어들 복붙하면 오랜 시간 후 kaldi 설치가 완료될 것이다.
+
+```sh
+apt-get update && apt-get upgrade -y
+apt-get install -y vim git zlib1g-dev make gcc automake autoconf bzip2 wget libtool subversion python libatlas3-base g++
+ln -s -f bash /bin/sh
+cd ~ && git clone https://github.com/kaldi-asr/kaldi.git
+cd ~/kaldi/tools && make -j "$(nproc)"
+free -m && ~/kaldi/tools/extras/install_irstlm.sh
+free -m && cd ~/kaldi/src && ./configure
+free -m && cd ~/kaldi/src &&  make clean && make depend -j "$(nproc)"
+free -m && cd ~/kaldi/src &&  make -j "$(nproc)"
+```
