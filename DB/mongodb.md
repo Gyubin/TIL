@@ -153,7 +153,7 @@ db.blog.insert({title: 'title', content: 'content'})
     })
     ```
 
-- `update`에서 `$inc`를 쓰면 숫자를 올리거나 내릴 수 있다. 간단하게 +를 하거나 -를 할 때 유용
+- `update`에서 `$inc`를 쓰면 숫자를 올리거나 내릴 수 있다. 간단하게 +를 하거나 -를 할 때 유용. 다만 해당 오퍼레이터를 단 한 번만 사용해야한다. 두 가지 속성을 변경해야할 때 `$inc{prop:value, prop2:value2}` 형태로 사용해야지 $inc를 두 번 작성하면 마지막 오퍼레이터만 적용된다.
 - `$push`: array에 원소 추가하기
     + 원하는 document를 골라서 `$push`를 쓴다.
     + value로 Object를 넣는데 키 값이 array를 가리킨다.
