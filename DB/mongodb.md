@@ -175,6 +175,19 @@ db.blog.insert({title: 'title', content: 'content'})
     })
     ```
 
+- `$pull`: array에서 원소 빼기
+    + `blog`라는 document 안에 `author` 속성이 있고, `info` 속성 안에 `comments`라는 array가 있다. 원소는 Object이고 `_id` 속성을 보유한다.
+    + 특정 `_id` 값을 받아서 그 원소인 Object를 삭제하는 쿼리다.
+
+    ```js
+    db.blog.update({
+      author: "gyubin",
+      'info.comments._id': commentId,
+    }, {
+      $pull: { 'info.comments': { "_id": commentId } }
+    })
+    ```
+
 - 옵션
     + `upsert`: 수정할 대상이 없을 때 `update`는 아무 것도 하지 않고 종료된다. 없으면 생성하는 것까지 하고싶을 때 `upsert`를 사용한다.
     + `multi`: 선택된 여러 문서들을 모두 업데이트하고싶을 때 true로. false면 하나만 업데이트된다.
