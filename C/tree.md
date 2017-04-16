@@ -63,6 +63,31 @@ typedef struct      s_btree
 - `getData( )`: 트리를 받아서 루트 노드 데이터 반환하든지, 특정 노드를 받아서 그 노드의 데이터를 반환
 - `deleteBinTree( )`: 이진트리 삭제. 메모리 해제해야함.
 
+### 1.3 Complete Binary Tree
+
+- 2개 이하의 자식을 가진 이진트리에서 마지막 레벨 빼고는 꽉 차있다. 마지막 레벨도 왼쪽부터 순서대로 차 있는 트리를 완전이진트리라고 한다.
+- Traverse
+    + 아래 예제는 후위 순회의 예제다. 순서만 바꾸면 전위, 중위도 가능
+    + 완전 이진트리에서 왼쪽 자식의 인덱스는 무조건 `2*r`이고 오른쪽 자식은 `2*r+1`이다.
+
+    ```py
+    def completeBinTraverse(n, r):
+        if r > n:
+            return []
+        # 후위 순회
+        result = postOrderBin(n, 2*r)
+        result += postOrderBin(n, 2*r + 1)
+        result.append(r)
+        return result
+
+    def main():
+        n = int(input())
+        print(*completeBinTraverse(n, 1))
+
+    if __name__ == "__main__":
+        main()
+    ```
+
 ## 2. Red-black tree
 
 이진 트리의 특수한 형태로 일정한 실행 시간을 보장하고, 새로운 데이터가 삽입, 삭제되더라도 쉽게 트리 구조를 유지할 수 있다.
