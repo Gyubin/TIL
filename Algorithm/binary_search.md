@@ -16,6 +16,8 @@
 
 ## 2. 코드
 
+### 2.1 C
+
 ```c
 int binary_search(int arr[], int size, int target)
 {
@@ -49,3 +51,21 @@ int binary_search(int arr[], int size, int target)
 - `mid`는 중앙값을 의미한다.
 - 중앙값이 찾으려는 값 `target`보다 크면 `end`를 중앙 바로 전 값으로 당긴다. 반대라면 `start` 값을 중앙 바로 다음 값으로 민다. 찾으려는 영역을 재설정.
 - 값을 찾으면 해당 원소 값이 속한 인덱스인 `mid`를 바로 리턴하고 아니면 계속 반복문을 돈다.
+
+### 2.2 Python
+
+```py
+def binarySearch(array, value):
+    start = 0
+    end = len(array)
+    
+    while start+1 < end:
+        mid = (start + end) // 2
+        if array[mid] < value:
+            start = mid
+        elif array[mid] > value:
+            end = mid
+        else:
+            return True
+    return False
+```
