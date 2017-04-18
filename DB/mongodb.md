@@ -131,6 +131,18 @@ db.blog.insert({title: 'title', content: 'content'})
     { status: "A", $or: [ { age: { $lt: 30 } }, { type: 1 } ] } // status가 A인데 age가 30보다 작거나 type이 1이거나.
     ```
 
+- `$exists` : true 값이면 해당 필드를 가지고 있는 document를 찾아주는데 필드의 값이 `null`이라도 상관없다. false면 필드 자체가 없는 것과 매칭
+
+    ```js
+    // author 필드는 존재하는데 값이 Tom, Alfred가 아닌 것
+    db.blog.find({
+      author: {
+        $exists: true,
+        $nin: ['Tom', "Alfred"],
+      }
+    })
+    ```
+
 ### 3.3 Update
 
 - `db.blog.update(query, newDoc)`: update 함수. query로 여러 document가 선택되면 첫 번째 것만 newDoc으로 변경된다.
