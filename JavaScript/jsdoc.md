@@ -63,3 +63,10 @@
     ```
 
 - `@type {typeName}` : 해당 변수의 타입을 적어준다. 내용이 굉장히 많으니 [공식문서](http://usejsdoc.org/tags-type.html)를 참고한다. 여러 타입을 적을 수도 있고, Object나 Array의 원소의 타입을 설정할 수도 있다.
+
+## 2. jsdoc-to-markdown
+
+아예 다른 라이브러리다. 기존 jsdoc의 형식대로 주석을 달고 다음처럼 설치하고 실행하면 된다.
+
+- 설치: `npm install -g jsdoc-to-markdown`
+- 사용: `jsdoc2md file-name.js > markdown-file-name.md`
