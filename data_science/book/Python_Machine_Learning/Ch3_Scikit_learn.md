@@ -241,7 +241,7 @@ plt.show()
     + feature를 너무 적게 하면 발생할 수 있다.
 - 위 코드로 그려지는 도표는 C 값에 따라 coefficient(계수) 값이 어떻게 달라지는지 보여준다.
 
-### 3.4 Support Vector Machine
+### 4. Support Vector Machine
 
 ```py
 from sklearn.svm import SVC
@@ -274,3 +274,109 @@ plt.show()
     + perceptron : `ppn = SGDClassifier(loss='perceptron')`
     + logistic regression : `lr = SGDClassifier(loss='log')`
     + svm : `svm = SGDClassifier(loss='hinge')`
+
+## 5. Non-linear with kernel SVM
+
+### 5.1 kernel에 대해서
+
+[다크 프로그래머 블로그](http://darkpgmr.tistory.com/147)에 가면 kernel에 대해 매우 자세하게 설명되어있다. 감사합니다.
+
+![kernel](https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Kernels.svg/1180px-Kernels.svg.png)
+
+> kernel function의 종류. 출처: 위키피디아
+
+- kernel function: 수학적으로 원점을 중심으로 대칭이면서 적분값이 1인 non-negative 함수. 가우시안, Epanechnikov, uniform 함수가 대표적
+- KDE(Kernel Density Estimation): 밀도 추정 방식 중 non-parametric 방식의 하나다. 기존 non-parametric 방식 중 하나인 히스토그램이 경계에서 불연속적이기 때문에 kernel function을 이용하여 smoothening 한 것.
+- 어떻게 smoothening 할 것인가
+
+    ![Imgur](http://i.imgur.com/6yLXt2e.png)
+
+    + 위 PDF(Probability Density Function)에서 x는 random variable, xi는 관측된 샘플 데이터, K는 커널이다. h는 커널이 뾰족한 형태(작은 값)인지 완만한(큰 값) 형태인지를 나타낸다.
+    + 관측된 데이터 각각을 중심으로 하는 커널 함수를 생성한다. `K(x-xi)`
+    + 만들어진 모든 함수를 더해서 전체 데이터 개수로 나눈다.
+
+![kernel-func](https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Comparison_of_1D_histogram_and_KDE.png/1000px-Comparison_of_1D_histogram_and_KDE.png)
+
+- h 값에 따라 smoothing 정도가 달라진다. 회색(true density: standard normal), 빨강, 검정, 녹색 순으로 h 값은 0.05, 0.337, 2다. 높아질수록 완만해짐.
+
+![kde-h](https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Comparison_of_1D_bandwidth_selectors.png/440px-Comparison_of_1D_bandwidth_selectors.png)
+
+- KDE를 활용할 때 가장 중요한 것은 어떤 커널 함수를 사용할지와 h값을 어떻게 설정할지라고 한다.
+    + 최적은 Epanechnikov 커널 함수
+    + 가우시안도 많이 사용하는데 이 때 h 값은 `h = ((4 * 𝛔^5) / 3n)^(1/5) = (1.06 * 𝛔n)^(-1/5)`
+
+    ![h value](https://wikimedia.org/api/rest_v1/media/math/render/svg/9ec402653306a6af7383bc50062be20d557508b2)
+
+### 5.2 XOR 데이터 만들기
+
+```py
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(0)
+X_xor = np.random.randn(200, 2)
+y_xor = np.logical_xor(X_xor[:, 0] > 0, X_xor[:, 1] > 0)
+y_xor = np.where(y_xor, 1, -1)
+
+plt.scatter(X_xor[y_xor == 1, 0], X_xor[y_xor == 1, 1],
+            c='b', marker='x', label='1')
+plt.scatter(X_xor[y_xor == -1, 0], X_xor[y_xor == -1, 1],
+            c='r', marker='s', label='-1')
+
+plt.xlim([-3, 3])
+plt.ylim([-3, 3])
+plt.legend(loc='best')
+plt.tight_layout()
+# plt.savefig('./figures/xor.png', dpi=300)
+plt.show()
+```
+
+- `X_xor = np.random.randn(200, 2)` : 200 by 2 매트릭스를 만드는데 값을 0과 1 사이의 난수로 한다.
+- `X_xor[:, 0] > 0`, `X_xor[:, 1] > 0` : 각각 X_xor의 0번 컬럼, 1번 컬럼이 0보다 이상이면 True, 아니면 False로 값을 설정해서 새로운 np.array를 리턴한다.
+- `y_xor = np.logical_xor(data1, data2)` : xor 연산을 행한 결과를 리턴한다. data1, 2는 같은 크기여야함. 즉 y_xor의 값은 X_xor 데이터의 각 행(x,y 좌표)이 True인지 False인지 값을 가지고 있다.
+- `plt.scatter(X_xor[y_xor == 1, 0], X_xor[y_xor == 1, 1])` : y_xor의 값이 1인 지점, 즉 xor연산이 True인 좌표를 골라서 점을 찍는다.
+
+### 5.3 고차원 공간에서 hyperplane 찾기
+
+- train 데이터로 학습하기
+    + 선형으로 분리할 수 없는 데이터는 기존에 가지고 있던 feature들을 조합해서 새로운 비선형 feature를 만들어낸다.
+    + `mapping function ϕ(x1, x2) = (z1, z2, z3) = (x1, x2, x1^2 + x2^2)` : 이렇게 고차원으로 바꾸면 신기하게도 3차원에서 hyperplane이 정확하게 중간 좌표들만 '높이'값을 활용해서 선형으로 구분할 수 있다.
+    + 고차원에서의 선형 SVM 모델을 학습시켜둔다.
+- test 데이터 검증하기
+    + test 데이터를 train 데이터처럼 같은 방식으로 고차원으로 투영한 후 기존 모델을 활용해 분류한다.
+    + 해당 데이터를 다시 2차원으로 되돌려서 활용
+
+### 5.4 kernel trick
+
+```py
+# Using xor dataset
+svm = SVC(kernel='rbf', random_state=0, gamma=0.10, C=10.0)
+svm.fit(X_xor, y_xor)
+
+plot_decision_regions(X_xor, y_xor, classifier=svm)
+plt.legend(loc="upper left")
+plt.show()
+```
+
+- 위 5.3의 고차원 투영 방식은 계산량이 매우 크게 늘어난다는 문제가 있다.
+- 그래서 기존 `(xi)T * xj`가 고차원으로 투영돼 `ϕ((xi)T) * ϕ(xj)`로 대체되는 과정 대신 kernel function K를 활용한다.
+- 이를 kernel trick이라 하고 가장 자주 사용하는 것이 RBF kernel(Radial Basis Function kernel)과 Gaussian kernel이다.
+    + ![rbf-kernel](https://wikimedia.org/api/rest_v1/media/math/render/svg/c16fd6c515412f96a57506103896178d0e8af77d)
+    + 위 공식은 RBF kernel이고 분모를 gamma로 치환해서 간소화하기도 한다. 이 gamma 값을 조정해가면서 최적화해야한다.
+- RBF를 활용하는 위 코드는 XOR을 정확하게 분리해낸다.
+
+### 5.5 iris에 kernel trick 적용
+
+```py
+svm = SVC(kernel='rbf', random_state=0, gamma=0.2, C=1.0)
+# svm = SVC(kernel='rbf', random_state=0, gamma=100.0, C=1.0)
+svm.fit(X_train_std, y_train)
+plot_decision_regions(X_combined_std, y_combined, classifier=svm, test_idx=range(105,150))
+plt.xlabel('petal length [standardized]')
+plt.ylabel('petal width [stanardized]')
+plt.legend(loc='upper left')
+plt.show()
+```
+
+- gamma 값이 크면 경계가 부드러워지고, 작으면 경계가 타이트해진다.
+- 너무 값을 작게해서 경계를 타이트하게 하면 overfitting 문제가 발생할 수 있다.
