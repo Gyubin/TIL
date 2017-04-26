@@ -380,3 +380,29 @@ plt.show()
 
 - gamma 값이 크면 경계가 부드러워지고, 작으면 경계가 타이트해진다.
 - 너무 값을 작게해서 경계를 타이트하게 하면 overfitting 문제가 발생할 수 있다.
+
+## 6. Decision tree
+
+- 일련의 "질문"들을 거쳐서 데이터를 쪼개가는 과정이다.
+- 가장 큰 IG(Information Gain) 값을 도출하는 feature를 찾아야.
+- 트리가 너무 깊어지면 overfitting 문제가 발생하므로 최대 깊이 제한을 둔다.
+- 가장 정보력이 있는 feature를 통해 노드를 분리.
+
+## 7. KNN(K-nearest neighbor)
+
+### 7.1 기본
+
+- lazy leraner: KNN은 lazy learner 류의 방식이다. train 데이터를 활용해서 함수를 학습하는게 아니라 데이터를 기억하기 때문
+- parametric model
+    + 새로운 데이터를 분류하는 우리의 모델, 즉 함수를 학습하기 위해 train 데이터셋에서 parameter를 추정한다. 학습이 끝난 후 train 데이터셋은 더이상 필요없다.
+    + 사례: Perceptron, Logistic regression, linear SVM
+- nonparametric model
+    + parameter가 딱 정해진 것이 아니라 train 데이터셋과 함께 개수가 증가한다.
+    + 사례: decision tree classifier, random forest, kernel SVM, KNN
+- KNN은 instance-based learning이며 훈련 데이터셋을 "기억"하는 것이 특징이다.
+
+### 7.2 분류 방식
+
+- k에 해당하는 숫자와 거리 메트릭 선택
+- 분류하고자 하는 샘플에 대한 k개의 근접한 이웃 찾기
+- 다수결 투표 방식으로 분류 레이블 할당한다. 예를 들어 k가 5라면 근접 이웃을 5개 뽑아서 그 중 가장 많은 형태의 레이블을 할당하는 것.
