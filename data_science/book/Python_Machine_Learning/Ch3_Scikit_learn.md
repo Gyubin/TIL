@@ -239,7 +239,8 @@ plt.show()
     + train 데이터 뿐만 아니라 다른 경험하지 않은 데이터에 대해서도 성능 자체가 떨어지는 문제
     + bias가 심하다 라고 표현
     + feature를 너무 적게 하면 발생할 수 있다.
-- 위 코드로 그려지는 도표는 C 값에 따라 coefficient(계수) 값이 어떻게 달라지는지 보여준다.
+- 정규화: parameter가 너무 작거나 큰 값을 가지면 잘못 학습이 될 수 있다. 그래서 원래의 목표함수에 모든 weight의 제곱의 합을 더하거나(ridge regression), 그냥 절대값을 더하거나(lasso) 해서 정규화한다.
+- 위 도표는 C 값에 따라 coefficient(계수) 값이 어떻게 달라지는지 보여준다. C의 값을 늘리면 정규화 강도 증가를 의미한다.
 
 ### 4. Support Vector Machine
 
@@ -383,26 +384,94 @@ plt.show()
 
 ## 6. Decision tree
 
-- 일련의 "질문"들을 거쳐서 데이터를 쪼개가는 과정이다.
-- 가장 큰 IG(Information Gain) 값을 도출하는 feature를 찾아야.
-- 트리가 너무 깊어지면 overfitting 문제가 발생하므로 최대 깊이 제한을 둔다.
-- 가장 정보력이 있는 feature를 통해 노드를 분리.
+### 6.1 기본
 
-## 7. KNN(K-nearest neighbor)
+![decision-tree](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/CART_tree_titanic_survivors_KOR.png/700px-CART_tree_titanic_survivors_KOR.png)
+
+- 위 이미지처럼 일련의 "질문"들을 거쳐서 데이터를 쪼개가는 과정이다. 다른 분석들에 비해 직관적이고 이해하기 쉽다. 뉴럴넷은 hidden layer가 있는 분석가가 알기 어려운 블랙박스 모델이지만 decision tree는 화이트박스 모델이다.
+- 계산 비용이 낮아서 대량의 데이터에서도 빠르게 연산 가능
+- 가장 큰 IG(Information Gain) 값을 도출하는 feature를 찾고 이를 통해 노드를 분류한다.
+- 트리가 너무 깊어지면 overfitting 문제가 발생하므로 최대 깊이 제한을 둔다.
+- 종류
+    + regression tree : 출력이 연속형(숫자)
+    + classification tree : 출력이 범주형
+
+### 6.2 구현
+
+```py
+from sklearn.tree import DecisionTreeClassifier
+tree = DecisionTreeClassifier(criterion="entropy", max_depth=3, random_state=0)
+tree.fit(X_train, y_train)
+
+X_combined = np.vstack((X_train, X_test))
+y_combined = np.hstack((y_train, y_test))
+plot_decision_regions(X_combined, y_combined, classifier=tree, test_idx=range(105, 150))
+plt.xlabel('petal length [cm]')
+plt.ylabel('petal width [cm]')
+plt.legend(loc='upper left')
+plt.show()
+```
+
+## 7. Random forests
 
 ### 7.1 기본
+
+- decision tree의 앙상블 버전이다.(tree가 여러개 모여서 forests)
+- 앙상블(Ensemble): 앙상블은 약한 학습기를 여럿 결합해서 강한 모델을 만드는 개념. 그래서 일반화하기 쉽고 overfitting이 잘 안될 수 있어서 좋다.
+- 방식
+    + n개의 샘플 
+
+### 7.2 구현
+
+```py
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier(criterion='entropy', n_estimators=10, random_state=1, n_jobs=2)
+forest.fit(X_train, y_train)
+
+plot_decision_regions(X_combined, y_combined, classifier=forest, test_idx=range(105, 150))
+plt.xlabel('petal length')
+plt.ylabel('petal width')
+plt.legend(loc='upper left')
+plt.show()
+```
+
+- `criterion="entropy"` : 불순도 측정 기준으로 엔트로피 사용
+- `n_estimators` : 결합할 decision tree의 개수
+- `n_jobs` : 코어 몇 개를 쓸건지
+
+## 8. KNN(K-nearest neighbor)
+
+### 8.1 기본
 
 - lazy leraner: KNN은 lazy learner 류의 방식이다. train 데이터를 활용해서 함수를 학습하는게 아니라 데이터를 기억하기 때문
 - parametric model
     + 새로운 데이터를 분류하는 우리의 모델, 즉 함수를 학습하기 위해 train 데이터셋에서 parameter를 추정한다. 학습이 끝난 후 train 데이터셋은 더이상 필요없다.
     + 사례: Perceptron, Logistic regression, linear SVM
 - nonparametric model
-    + parameter가 딱 정해진 것이 아니라 train 데이터셋과 함께 개수가 증가한다.
+    + parameter가 딱 정해진 것이 아니라 train 데이터셋과 함께 개수가 증가한다. parametric model에 비해 계산 비용이 높다.
     + 사례: decision tree classifier, random forest, kernel SVM, KNN
-- KNN은 instance-based learning이며 훈련 데이터셋을 "기억"하는 것이 특징이다.
+- KNN은 nonparametric model의 하나이고, instance-based learning이다. instance-based learning은 훈련 데이터셋을 "기억"하는 것이 특징이다.
+- lazy learning은 instance-based learning 중에서도 학습 과정에서 cost가 없는 특별한 케이스다. "학습"할 필요가 없어서 학습에 대한 cost는 없는거지만 막상 분류할 때는 다른 방식에 비해 cost가 높다. 샘플 숫자가 커지면 더더욱 분류 cost가 커진다.
 
-### 7.2 분류 방식
+### 8.2 분류 방식
 
-- k에 해당하는 숫자와 거리 메트릭 선택
+- k에 해당하는 숫자와 거리 메트릭 선택. k값에 따라 overfitting, underfitting이 달라진다.
 - 분류하고자 하는 샘플에 대한 k개의 근접한 이웃 찾기
 - 다수결 투표 방식으로 분류 레이블 할당한다. 예를 들어 k가 5라면 근접 이웃을 5개 뽑아서 그 중 가장 많은 형태의 레이블을 할당하는 것.
+
+### 8.3 구현
+
+```py
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=5, p=2, metric="minkowski")
+knn.fit(X_train_std, y_train)
+plot_decision_regions(X_combined_std, y_combined, classifier=knn, test_idx=range(105, 150))
+plt.xlabel('petal length [standardized]')
+plt.ylabel('petal width [standardized]')
+plt.show()
+```
+
+- `knn = KNeighborsClassifier(n_neighbors=5, p=2, metric="minkowski")`
+    + `n_neighbors` : 몇 개의 이웃을 선택할건지. k에 해당
+    + `p` : 1이면 맨해튼 거리, 2면 유클리디안 거리
+    + `metric` : 거리 메트릭 선택
