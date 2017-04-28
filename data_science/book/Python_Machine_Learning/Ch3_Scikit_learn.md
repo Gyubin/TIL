@@ -412,6 +412,16 @@ plt.legend(loc='upper left')
 plt.show()
 ```
 
+### 6.3 도표 export
+
+```py
+from sklearn.tree import export_graphviz
+export_graphviz(tree, out_file="tree.dot", feature_names=['petal length', 'petal width'])
+```
+
+- [graphviz](http://graphviz.org/)에서 다운받고 설치
+- `dot -Tpng tree.dot -o tree.png` : 왼쪽 명령으로 위 코드에서 만든 dot 파일을 이미지로 변환
+
 ## 7. Random forests
 
 ### 7.1 기본
