@@ -252,3 +252,34 @@ db.blog.insert({title: 'title', content: 'content'})
 ### 3.4 Delete
 
 `db.blog.remove(query)`: 삭제
+
+## 4. Aggregation
+
+파이프라인이다. 데이터를 고르고, 조작해서, 어떤 형태로 리턴하는 일련의 작업을 하나의 쿼리문으로 실행할 수 있다. 예를 들어 sum, average 등의 결과를 얻고싶을 때 사용할 수 있다.
+
+### 4.1 group, sum 사용해보기
+
+```js
+// documents
+{ status: 1, name: 'aaa', price: 100 }
+{ status: 2, name: 'bbb', price: 200 }
+{ status: 3, name: 'ccc', price: 300 }
+{ status: 1, name: 'ddd', price: 400 }
+...
+
+// query
+db.orders.aggregate([
+  { $match: { status: 1 } }, // stage1
+  { $match: { name: 'ddd' } }, // stage2
+  {
+    $group: { //stage3
+      _id: "$status",
+      sum: { $sum: 1 }
+    }
+  }
+])
+```
+
+- `aggregate` : 매개변수의 list 안에 순차적으로 실행될 operator들이 들어간다. 각 순서를 **stage**라고 칭한다.
+- `$match` : 어떤 document를 가져올지 조건을 지정
+- `$group` : status 컬럼을 기준으로, 즉 status가 1, 2, 3인 각각의 document의 수를 계산해서 1은 몇 개, 2는 몇 개, 3은 몇 개 이런식으로 결과를 낸다.
