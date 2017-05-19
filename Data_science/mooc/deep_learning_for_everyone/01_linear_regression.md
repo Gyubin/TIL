@@ -20,8 +20,10 @@
 ## 2. Gradient descent algoritm
 
 - cost function의 최소값을 찾는 알고리즘
-- minimizing 케이스에서 가장 자주 사용된다. 어느 임의의 점에서 시작해서 W와 b를 조금씩 바꿔서 변하는 값을 관찰하는 것. 이를 계속 반복한다.
-- **local minimum**: 더이상 cost가 줄어들지 않는 지점. local이 붙는 이유는 이 minimum이 단 하나 존재하는 최소 지점이 아닐 수 있기 때문이다. 어디서 시작하느냐에 따라 다른 local minimum에 도달할 수 있다.
+- minimizing 케이스에서 가장 자주 사용된다. 어느 임의의 점에서 시작해서 W와 b를 조금씩 바꿔서 변하는 값을 관찰하는 것. W와 b가 거의 변화가 없을 때(converge)까지 반복한다.
+- global minimum, local minimum
+    + 최소값을 찾는 대상이 convex 함수가 아닐 경우 기울기가 0이 되는 지점이 여럿 존재할 수 있다. 시작하는 지점에 따라 어떤 기울기 0 지점에 알고리즘이 멈출지 알 수 없다.
+    + 가장 작은 지점을 global minimum이라 하고 다른 움푹한 지점을 local minimum이라 한다.
 - 원리
     + ![Imgur](http://i.imgur.com/SdupTWu.png)
     + ![Imgur](http://i.imgur.com/bqM1oIL.png)
@@ -32,7 +34,7 @@
 - Convex function: 아래로 움푹한 것. 이 때는 minimum cost가 하나만 나온다. 그래서 linear regression을 적용하기 전에 Convex인지를 반드시 확인해야한다.
     + ![Imgur](http://i.imgur.com/LfQBx6l.png)
 
-## 3. Single, Multi variable regression
+## 3. Single, Multi variable, Polynomial regression
 
 | x1(hours) | x2(attendance) | score |
 |-----------|----------------|-------|
@@ -42,7 +44,10 @@
 |         2 |              4 |    60 |
 |        11 |              1 |    40 |
 
-- hypothesis가 `Wx + b` 형태로 x가 하나이면 single이고, `W1X1 + W2X2 + b` 등의 형태로 x의 종류가 늘어나게 되면 multi variable regression이 된다.
+- hypothesis가
+    + `Wx + b` 형태로 x가 하나이면 single
+    + `W1X1 + W2X2 + b` 등의 형태로 x의 종류(feature)가 늘어나게 되면 multi variable regression
+    + `W1X^2 + W2X + b` 형태로 같은 feature인데 차수가 다양하게 존재하는 경우를 polynomial regression이라고 한다.
 - variable은 feature라고도 하고, 실제 분석에선 수만개의 feature가 쓰이기 때문에 좋은 feature를 선택하는 것이 중요하다.
 - hypothesis는 w, x만 개수에 맞게 추가하면 되므로 거의 똑같고 cost function은 그대로 쓰면 된다. 다만 샘플의 수(n)가 너무 커지게 되면 작성에 어려움이 있으므로 Matrix를 사용한다.
 - 수식 고도화 과정
