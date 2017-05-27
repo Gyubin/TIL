@@ -85,20 +85,15 @@ def main():
 
 def create_BOW(sentence):
     bow_dict = {}
-    sentence = sentence.lower()
-    sentence = replace_non_alphabetic_chars_to_space(sentence)
-    array = sentence.split(' ')
+    bow = []
     
-    cnt = 0
-    for i in range(len(array)):
-        if (len(array[i]) >= 1) and (array[i] not in bow_dict):
-            bow_dict[array[i]] = cnt
-            cnt += 1
-    print("Bag of words 개수:", len(bow_dict.keys()))
-    
-    bow = [0 for i in range(len(bow_dict.keys()))]
-    for key in bow_dict.keys():
-        bow[bow_dict[key]] = array.count(key)
+    sentence = replace_non_alphabetic_chars_to_space(sentence.lower())
+    for word in sentence.split():
+        if word in bow_dict:
+            bow[bow_dict[word]] += 1
+        else:
+            bow_dict[word] = len(bow)
+            bow.append(1)
 
     return bow_dict, bow
 
@@ -159,38 +154,34 @@ def main():
     print(calculate_doc_prob(training_model, testing_model, alpha))
 
 def calculate_doc_prob(training_model, testing_model, alpha):
-    dict_tr = training_model[0]
-    bow_tr = training_model[1]
-    dict_test = testing_model[0]
-    bow_test = testing_model[1]
-    logprob = 0
-    total_word_cnt = 0
-    for i in bow_tr:
-        total_word_cnt += i
-    uniq_word_cnt = len(dict_tr.keys())
+    train_dict = training_model[0]
+    train_bow = training_model[1]
+    test_dict = testing_model[0]
+    test_bow = testing_model[1]
     
-    for key_test in dict_test:
-        if key_test in dict_tr:
-            logprob += bow_test[dict_test[key_test]] * math.log((bow_tr[dict_tr[key_test]] + alpha)/(total_word_cnt + alpha*uniq_word_cnt))
-        else:
-            logprob += bow_test[dict_test[key_test]] * math.log((alpha)/(total_word_cnt + alpha*uniq_word_cnt))
-        
+    N = sum(train_bow)
+    d = len(train_dict)
+    
+    logprob = 0
+    for word in test_dict:
+        train_x_num = train_bow[train_dict[word]] if word in train_dict else 0
+        test_x_num = test_bow[test_dict[word]]
+        logprob += test_x_num * math.log((train_x_num + alpha) / (N + alpha*d))
+
     return logprob
 
 def create_BOW(sentence):
     bow_dict = {}
     bow = []
-
-    sentence = sentence.lower()
-    sentence = replace_non_alphabetic_chars_to_space(sentence)
-    words = sentence.split(' ')
-    for token in words:
-        if len(token) < 1: continue
-        if token not in bow_dict:
-            new_idx = len(bow)
-            bow.append(0)
-            bow_dict[token] = new_idx
-        bow[bow_dict[token]] += 1
+    
+    sentence = replace_non_alphabetic_chars_to_space(sentence.lower())
+    for word in sentence.split():
+        if len(word) < 1: continue
+        if word in bow_dict:
+            bow[bow_dict[word]] += 1
+        else:
+            bow_dict[word] = len(bow)
+            bow.append(1)
 
     return bow_dict, bow
 
@@ -243,37 +234,34 @@ def normalize_log_prob(prob1, prob2):
     return (prob1, prob2)
 
 def calculate_doc_prob(training_model, testing_model, alpha):
+    train_dict = training_model[0]
+    train_bow = training_model[1]
+    test_dict = testing_model[0]
+    test_bow = testing_model[1]
+    
+    N = sum(train_bow)
+    d = len(train_dict)
+    
     logprob = 0
-
-    num_tokens_training = sum(training_model[1])
-    num_words_training = len(training_model[0])
-
-    for word in testing_model[0]:
-        word_freq = testing_model[1][testing_model[0][word]]
-        word_freq_in_training = 0
-        if word in training_model[0]:
-            word_freq_in_training = training_model[1][training_model[0][word]]
-        for i in range(0, word_freq):
-            logprob += math.log(word_freq_in_training + alpha)
-            logprob -= math.log(num_tokens_training + num_words_training * alpha)
+    for word in test_dict:
+        train_x_num = train_bow[train_dict[word]] if word in train_dict else 0
+        test_x_num = test_bow[test_dict[word]]
+        logprob += test_x_num * math.log((train_x_num + alpha) / (N + alpha*d))
 
     return logprob
 
 def create_BOW(sentence):
     bow_dict = {}
     bow = []
-
-    sentence = sentence.lower()
-    sentence = replace_non_alphabetic_chars_to_space(sentence)
-    print(sentence)
-    words = sentence.split(' ')
-    for token in words:
-        if len(token) < 1: continue
-        if token not in bow_dict:
-            new_idx = len(bow)
-            bow.append(0)
-            bow_dict[token] = new_idx
-        bow[bow_dict[token]] += 1
+    
+    sentence = replace_non_alphabetic_chars_to_space(sentence.lower())
+    for word in sentence.split():
+        if len(word) < 1: continue
+        if word in bow_dict:
+            bow[bow_dict[word]] += 1
+        else:
+            bow_dict[word] = len(bow)
+            bow.append(1)
 
     return bow_dict, bow
 
@@ -348,36 +336,34 @@ def normalize_log_prob(prob1, prob2):
     return (prob1, prob2)
 
 def calculate_doc_prob(training_model, testing_model, alpha):
+    train_dict = training_model[0]
+    train_bow = training_model[1]
+    test_dict = testing_model[0]
+    test_bow = testing_model[1]
+    
+    N = sum(train_bow)
+    d = len(train_dict)
+    
     logprob = 0
-
-    num_tokens_training = sum(training_model[1])
-    num_words_training = len(training_model[0])
-
-    for word in testing_model[0]:
-        word_freq = testing_model[1][testing_model[0][word]]
-        word_freq_in_training = 0
-        if word in training_model[0]:
-            word_freq_in_training = training_model[1][training_model[0][word]]
-        for i in range(0, word_freq):
-            logprob += math.log(word_freq_in_training + alpha)
-            logprob -= math.log(num_tokens_training + num_words_training * alpha)
+    for word in test_dict:
+        train_x_num = train_bow[train_dict[word]] if word in train_dict else 0
+        test_x_num = test_bow[test_dict[word]]
+        logprob += test_x_num * math.log((train_x_num + alpha) / (N + alpha*d))
 
     return logprob
 
 def create_BOW(sentence):
     bow_dict = {}
     bow = []
-
-    sentence = sentence.lower()
-    sentence = replace_non_alphabetic_chars_to_space(sentence)
-    words = sentence.split(' ')
-    for token in words:
-        if len(token) < 1: continue
-        if token not in bow_dict:
-            new_idx = len(bow)
-            bow.append(0)
-            bow_dict[token] = new_idx
-        bow[bow_dict[token]] += 1
+    
+    sentence = replace_non_alphabetic_chars_to_space(sentence.lower())
+    for word in sentence.split():
+        if len(word) < 1: continue
+        if word in bow_dict:
+            bow[bow_dict[word]] += 1
+        else:
+            bow_dict[word] = len(bow)
+            bow.append(1)
 
     return bow_dict, bow
 
