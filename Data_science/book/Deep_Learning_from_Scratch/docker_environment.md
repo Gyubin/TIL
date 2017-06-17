@@ -13,6 +13,9 @@ CPU-only로 설치한다.
     + `-p hostPort:containerPort` : 포트 설정이다. 컨테이너 외부로 jupyter notebook과 tensorboard 실행하기 위해 설정한다. 8888은 주피터, 6006은 텐서보드 용이다.
     + gcr.io 부분은 TensorFlowCPUImage 를 지칭한다. 이미지를 바로 지정해서 쉽게 사용
     + 컨테이너명을 'dl-scratch'라고 정했다. 원하는 것으로 변경
+- 나중에 도커를 재시작할 때는 
+    + `docker start dl-scratch` 로 컨테이너 시작하고
+    + `docker attach dl-scratch` 해서 접속하면 된다.
 
 ## 2. 기본 세팅
 
@@ -51,3 +54,8 @@ CPU-only로 설치한다.
     ```sh
     pip3 install tensorflow
     ```
+
+## 4. Jupyter notebook 실행
+
+- 이미 설치돼있다.
+- `jupyter notebook --allow-root` : 시작할 때 `--allow-root` 옵션을 준다. 따로 설정 안해주면 루트 권한을 모든 ip에 주기 때문에 실행이 막힌다. 그거를 일단 통과하기 위해 저 옵션을 준다. 사실 내 로컬에서만 돌기 때문에 루트 다 줘도 문제될 것은 없다.
