@@ -48,6 +48,20 @@ data.values # array([10, 20, 30, 40])
     mine + friend # 40 40 40
     ```
 
+- 하지만 위와 같은 덧셈은 만약 서로 매칭되는 인덱스가 없을 경우 NaN 값이 들어간다. 이 때는 add를 쓴다.
+    + 아래는 data 디렉토리 하위에 "SAMPLING_NPS_200"이라는 글자가 들어간 파일들을 골라서 read_csv로 파일을 읽는 코드다
+    + 거기서 "MSICK_CD"라는 컬럼 값을 기준으로 groupby를 하는데 값은 그 크기로 한다.
+    + 이 때 리턴값이 Series 객체인데 `add` 함수를 썼다. `fill_value = 0`으로 옵션을 줘서 인덱스 매칭이 안되면 0에서 더해지도록 한다. NaN 회피.
+
+    ```py
+    from os import listdir
+    files = listdir('./data')
+    result = pd.Series()
+    for raw_data in filter(lambda x: 'SAMPLING_NPS_200' in x, files):
+        temp = pd.read_csv('./data/' + raw_data, dtype=DTYPE_200, parse_dates=PARSE_DATES_200)
+        result = result.add(temp.groupby('MSICK_CD').size(), fill_value = 0)
+    ```
+
 ## 2. DataFrame
 
 ```py
@@ -68,8 +82,14 @@ df = DataFrame(data,
 - 생성: dict 형태의 data를 생성자에 넣어주면 된다. 컬럼명을 key, 값을 리스트에 담아서 넣는다.
 - 위의 예처럼 `columns` 매개변수를 따로 지정해주지 않아도 데이터프레임이 만들어지지만 컬럼 순서가 뒤죽박죽이 될 수 있기 때문에 순서를 지키고싶으면 정해주면 된다.
 - `index` 역시 안넣어줘도 자동으로 0부터 시작하는 인덱스가 가장 좌측에 표시되는데, 지정해주고싶으면 위처럼 하면 된다.
-- `df['foreigner']` 형태로 컬럼 단위로 접근 가능.
+- `df['foreigner']` 형태로 컬럼 단위로 접근 가능. 새로운 컬럼을 넣을 때도 역시 이렇게 접근해서 값을 리스트 형태로 대입해주면 된다.
 - `df.ix['02.06']` 형태로 행 단위로도 접근할 수 있다.
+    + `df.ix[0:10, 10:20]` : 행, 열 순서로 인덱싱 가능. 이 때 슬라이싱은 끝 인덱스 **"포함"**이다.
+    + 인덱싱해서 레이블 벡터를 뽑았다면 다음처럼 nX1 매트릭스로 만든다. `df.ix[:, 2].as_matrix().squeeze()` 
+    + feature data 역시 사용하기 쉽게 ndarray로 만든다. `df.ix[:, 0:1].as_matrix().reshape(-1, 2)`
+- 위 ix 함수는 deprecated 된다고 한다. 앞으로 `loc`, `iloc` 함수를 쓴다.
+    + `df.loc[0:10, column_name]` : 컬럼명을 문자열로 준다.
+    + `df.iloc[0:10, collumn_index]` : 컬럼명을 인덱스값으로준다.
 - `df.T` : Transpose
 - `df.index`, `df.columns` : 전체 인덱스와 컬럼값을 확인할 수 있다.
 
@@ -78,3 +98,15 @@ df = DataFrame(data,
 - `pip install pandas-datareader` : 설치
 - `import pandas_datareader.data as web`
 - `gs = web.DataReader("078930.KS", "yahoo", start, end)`
+
+## 3. 자주 쓰이는 함수
+
+- `pd.read_csv('file_name.csv', header=None, skiprows=2)`
+    + 첫 번째 매개변수로 파일명
+    + `header=None` : 첫 째줄을 헤더로 인식하지 않고 그냥 데이터만 가져온다.
+    + `skiprows=2` : 2행 미포함 이전까지를 읽지 않는다. 즉 0, 1행을 무시
+    + `dtype={'a':str, 'b': int, 'c': float}` : 정해놓은 데이터 타입이 있는데 그냥 읽어오면 가장 적합한 데이터타입으로 자동 캐스팅된다. 만약 직접 타입을 지정해주고싶으면 dtype을 사용.
+    + `parse_dates=['col1', 'col2']` : 특정 컬럼을 리스트 값으로 지정해놓으면 DataFrame으로 읽어올 때 그 컬럼을 알아서 dates 객체로 파싱한다. 따로 csv에는 date 타입으로 적을 수 없기 때문에 문자열이나 float 형으로 들어가있는 값을 사용할 때 파싱해서 쓴다.
+- Series 객체든 DataFrame 객체든 `.to_csv()` 함수를 호출할 수 있다.
+    + 매개변수로 아무것도 주지 않으면 문자열을 리턴하고,
+    + 경로와 파일명까지 문자열로 지정해주면 바로 파일을 쓴다.
