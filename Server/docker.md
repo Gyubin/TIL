@@ -89,3 +89,19 @@ wo*
     + `docker commit -a "Gyubin Son <geubin0414@gmail.com>" -m "kaldi install" kaldi kaldi-pure:0.1`
     + `-m "blah blah"`: commit 내용을 적어준다.
     + `<container-name> <image-name>:<tag>` : 이미지로 만들 컨테이너명과 새로 만들어질 이미지의 이름과 태그를 설정
+
+## 3. Network
+
+```sh
+docker network create hello-network # network
+docker run --name db -d --network hello-network mongo # db
+docker run --name web -d -p 80:80 --network hello-network nginx # webserver
+```
+
+- container끼리 연결해야할 상황이 있다. 웹서버 컨테이너와 db컨테이너는 서로 연결되어야한다. 이 때 사용하는 것이 network다.
+- `docker network create {network-name}` : 네트워크 생성
+- `docker run --name db -d --network hello-network mongo` : mongo 이미지로 db라는 컨테이너명으로 생성하는데 hello-network와 연결한다.
+- `docker run --name web -d -p 80:80 --netwrok hello-network nginx` nginx 이미지로 web 이름의 컨테이너를 생성하는데 포트는 양쪽 모두 80포트로 연결하고, hello-network와 연결한다.
+- `docker exec -it web bash` : web 컨테이너에서 bash를 실행한다.
+- `ping db` : 쉽게 연결된 컨테이너 이름으로 접근 가능하다.
+    + `apt-get install iputils-ping` : ping이 없으면 설치
