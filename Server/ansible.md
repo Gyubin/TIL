@@ -114,7 +114,7 @@
 
 ## 4. 실제 사용하기
 
-### 4.1 기본
+### 4.1 기본 명령어들
 
 - uptime 확인 : `ansible all -m shell -a 'uptime' -k`
 - 디스크 용량 확인 : `ansible all -m shell -a 'df -h'`
@@ -130,7 +130,49 @@
     + `yum list installed | grep httpd`
     + `systemctl status httpd`
 
-### 4.2 여러 작업 연결 및 자동화
+### 4.2 Playbook 기본 및 예제
 
 - PlayBook : 다양한 명령어들을 모아서 하나의 파일을 만들고 Ansible이 실행하게 되는데 이 파일을 PlayBook이라고 한다.
-- To be continue
+- 다수의 서버에 웹서비스를 설치 및 기동해야할 때 편리하다.
+    + 한 번의 명령어로 모든 서버에 한 번에 설치 및 실행 가능
+    + 하나 하나 ssh로 접속해서 설치, 설정할 필요 없음
+- 플레이북에 쓰여진 기능을 shell script로 할 수 있지 않느냐라고 생각할 수 있는데 약간 더 편리해졌다.
+    + 예를 들어 아래 스크립트를 그냥 실행하게 되면 계속해서 중복해서 입력되게 된다. 물론 if 조건문을 활용해서 방지할 수는 있지만 불편하다.
+
+    ```sh
+    echo -e "[bloter]\n192.168.1.13" >> /etc/ansible/hosts
+    cat /etc/ansible/hosts
+    ```
+
+- ansible을 활용하면 좀 더 쉬워진다. `vi bloter.yml` 명령어로 파일을 다음처럼 편집한다.
+    + 아래처럼 입력하고 `ansible-playbook bloter.yml` 으로 실행
+    + ok 사인이 뜨고, changed에 몇 줄이 변했는지 적힌다. 다시 실행하면 변화가 없으니 changed=0 처럼 적힐 것이다.
+
+    ```yml
+    ---
+    - name: Ansible_vim
+      hosts: localhost
+
+      tasks:
+      - name: Add ansible hosts
+        blockinfile:
+          path: /etc/ansible/hosts
+          block: |
+            [bloter]
+            192.168.1.13
+    ```
+
+- 이번엔 nginx 예제: `vi nginx.yml`로 편집하고 아래 파일을 생성하면 ``ansible-playbook nginx.yml -k`로 실행한다.
+
+    ```yml
+    ---
+    - hosts: nginx
+      remote_user: root
+      tasks:
+        - name: install epel-release
+          yum: name=epel-release state=latest
+        - name: install nginx web server
+          yum: name=nginx state=present
+        - name: Start nginx web server
+          service: name=nginx state=started
+    ```
