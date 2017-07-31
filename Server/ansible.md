@@ -162,17 +162,99 @@
             192.168.1.13
     ```
 
-- 이번엔 nginx 예제: `vi nginx.yml`로 편집하고 아래 파일을 생성하면 ``ansible-playbook nginx.yml -k`로 실행한다.
+### 4.3 nginx 설치해보기
 
-    ```yml
-    ---
-    - hosts: nginx
-      remote_user: root
-      tasks:
-        - name: install epel-release
-          yum: name=epel-release state=latest
-        - name: install nginx web server
-          yum: name=nginx state=present
-        - name: Start nginx web server
-          service: name=nginx state=started
+- `curl -o index.html https://www.nginx.com` : 예제 페이지 다운로드
+- `ansible nginx -m shell -a "systemctl stop firewalld" -k` : 일단 nginx가 되는지 봐야하니 firewall을 중지시킨다.
+- `vi nginx.yml`로 편집하고 아래 파일을 생성하면 `ansible-playbook nginx.yml -k`로 실행한다.
+
+```yml
+---
+- hosts: nginx
+  remote_user: root
+  tasks:
+    - name: install epel-release
+      yum: name=epel-release state=latest
+    - name: install nginx web server
+      yum: name=nginx state=present
+    - name: Upload default index.html for web server
+      copy: src=index.html dest=/usr/share/nginx/html/ mode=0644
+    - name: Start nginx web server
+      service: name=nginx state=started
+```
+
+## 5. Vim 세팅
+
+- vim에서 syntax 하이라이팅 등을 사용하기 위해 다음처럼 세팅한다.
+- 먼저 vim-plug 설치(https://github.com/junegunn/vim-plug)
+
+    ```sh
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     ```
+
+- `vi ~/.vimrc` : 파일 편집해서 다음 내용 추가. [Ansible-vim](https://github.com/pearofducks/ansible-vim) 설치 코드가 아래에 들어있다. 사실 이거 빼고 나머지는 없어도 무방
+
+```
+call plug#begin('~/.vim/plugged')
+
+" Make sure you use single quotes
+
+" Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
+Plug 'junegunn/vim-easy-align'
+
+" Any valid git URL is allowed
+Plug 'https://github.com/junegunn/vim-github-dashboard.git'
+
+" Multiple Plug commands can be written in a single line using | separators
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+
+" On-demand loading
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+
+" Using a non-master branch
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+
+" Using a tagged release; wildcard allowed (requires git 1.9.2 or above)
+Plug 'fatih/vim-go', { 'tag': '*' }
+
+" Plugin options
+Plug 'nsf/gocode', { 'tag': 'v.20150303', 'rtp': 'vim' }
+
+" Plugin outside ~/.vim/plugged with post-update hook
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" Unmanaged plugin (manually installed and updated)
+Plug '~/my-prototype-plugin'
+
+" Ansible-vim
+Plug 'pearofducks/ansible-vim'
+
+" Initialize plugin system
+call plug#end()
+```
+
+- 기존 vi 에디터로는 플러그인이 동작이 안해서 vim(vi improved)을 설치해야한다. 그리고 플러그인을 설치할 때 git을 이용하므로 git도 함께 설치
+
+    ```sh
+    yum install vim-enhanced -y
+    yum install git -y
+    ```
+
+- 플러그인 설치하기
+    + `vim` 으로 일단 에디터 접속해서
+    + `:PlugInstall` 명령어 실행
+- vi 명령어로 vim을 호출하도록 설정
+    + `vi ~/.bashrc`
+    + `alias vi='vim'`
+- `su -` : 환경설정 다시 불러오기. 로그오프 안해도 됨.
+
+## 6. 팁
+
+### 6.1 디버그 쉽게 하기
+
+- 디버그할 때 오류 메시지가 줄 글로 나오는 것을 예쁘게 출력되게 바꿀 수 있다.
+- `vi /etc/ansible/ansible.cfg`
+    + `stdout_callback = skippy` 이 부분을 주석 해제하고 skippy를 `debug`로 변경
+    + esc -> `/stdout` 엔터(vim 검색), n 누르면 다음, N 누르면 이전
