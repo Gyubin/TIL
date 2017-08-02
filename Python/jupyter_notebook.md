@@ -69,3 +69,16 @@ h를 누르면 키 도움 팝업이 뜬다. command 모드, edit 모드 별로 �
 jupyter nbconvert --to html notebook.ipynb
 jupyter nbconvert --to pdf notebook.ipynb
 ```
+
+## 6. Slideshow
+
+- 만든 노트북을 쉽게 슬라이드로 만들 수 있다.
+- 메뉴 -> View -> Cell Toolbar -> Slideshow
+- 셀에 원하는 속성을 넣어주면 된다.
+    + Slides : 메인 슬라이드 의미. 왼쪽, 오른쪽으로 넘어가는 메인 플로우.
+    + Sub-slides : 메인 슬라이드의 하위내용. 위 아래 커서로 이동 가능
+    + Fragments : 처음엔 숨겨지지만 버튼을 누르면 등장한다.
+    + Skip : 넘기는 셀
+    + Notes : speaker notes로 만들 수 있음
+- 슬라이드 파일로 만들기: `jupyter nbconvert notebook.ipynb --to slides`
+- 브라우저에 띄우기: `jupyter nbconvert notebook.ipynb --to slides --post serve`
