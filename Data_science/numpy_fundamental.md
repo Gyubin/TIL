@@ -174,3 +174,12 @@ y = x + v
 - 다만 약간의 규칙이 있다.
     + rank가 동일하지 않으면 같은 모양이 될 때까지 작은 행렬을 계속 붙인다(재사용한다)
     + 모든 차원에서 length가 같을 때 기본적으로 서로 호환. 매칭되는 차원에서 서로 길이가 다르다면 다른 한 쪽의 길이가 1이어야 함.
+
+## 4. 자주 쓰이는 함수들
+
+- `np.linalg.norm(matrix)` : 모든 원소들의 squared sum을 구하고 squared root 한다. Frobenius norm이라고도 불린다.
+- `np.array_split(matrix, num)` : matrix를 원하는대로 쪼개준다.
+- `np.concatenate(np.delete(X_train_folds, idx, axis))`
+    + np.delete는 matrix에서 원하는 idx를 axis 방향으로 없앤 값을 리턴한다.
+    + np.concatenate 함수에 matrix를 넣으면 쭉 펼쳐준다.
+    + 위 코드는 CS231n의 코드로, X_train_folds가 np.array_split의 결과값인 list 타입이다. 저기서 delete로 원하는 인덱스는 제외하고, 나머지를 concatenate해줘야 정상적인 matrix 형태가 나온다.
