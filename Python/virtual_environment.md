@@ -6,14 +6,16 @@
 
 이런 문제를 방지하기 위해 파이썬은 개발환경을 앱 단위로 분리하여 독립적인 상황에서 앱을 만들 수 있게 했다. 이 개발환경을 단순히 복사해서 사용할 수도 있다.
 
-## 필요 상황
+## 0. 필요 상황
 
 - 파이썬 패키지를 설치할 때 관리자 권한이 아니라 유저 권한으로 설치
 - 파이썬의 실행 환경을 맥 기본 환경의 것과 온전히 구분해서 깔끔하게 사용
 - python3을 실행할 때 그냥 python으로 실행
 - 개발환경과 실서버환경을 동일하게 맞춤
 
-## 사용법
+## 1. 기본 사용법
+
+### 1.1 pyvenv 사용
 
 python3는 기본으로 `pyvenv`라는 이름으로 가상 환경을 제공한다. 터미널에서 아래처럼 pyenv 명령어와 디렉토리를 정해주면 폴더가 생긴다. 내 경우엔 현재 디렉토리에 test_env라는 디렉토리명으로 가상환경을 만들었다.
 
@@ -32,11 +34,23 @@ $ deactivate  # 비활성화
 
 활성화된 상태에서 pip를 활용해서 여러 모듈들을 설치할 수 있으며 여기서 설치한 것들은 다른 가상환경 혹은 기본 환경에 영향을 미치지 않는다.
 
-## virtualenv wrapper
+### 1.2 Python3 venv 사용
+
+- Python3, pip 사용한다면(맥, 리눅스 기준)
+- `python3 -m venv ./env_name` 으로 가상환경 디렉토리 생성하고
+- `source ./env_name/bin/activate` 하면 가상환경 접속
+- `deactivate` 하면 가상환경 빠져나옴
+
+### 1.3 Anaconda
+
+- `conda create -n env_name lib1 lib2`
+- 가상환경 생성하면서 동시에 필요한 라이브러리 설치 가능
+
+## 2. virtualenv wrapper
 
 `virtualenvwrapper`는 virtualenv를 좀 더 쉽게 사용할 수 있도록 해주는 도구다. pip를 활용해서 설치한다.
 
-### 1. (실패) python3의 내장 pip 활용
+### 2.1 (실패) python3의 내장 pip 활용
 
 내 맥북엔 기본으로 python2가 깔려있고 python3를 설치파일로 깔아두었다. python3에선 pip가 내장이기 때문에(2.7.9 이상에선 버전2에서도 역시 내장) 바로 사용하면 된다. 사용하는 방식은 다음과 같다.([공식문서](https://docs.python.org/3/installing/))
 
@@ -50,7 +64,7 @@ $ python3 -m pip install virtualenvwrapper
 
 하지만 에러가 발생했다. virtualenvwrapper를 bash를 열 때마다 작동시키기 위해서 '.bashrc' 파일을 수정해야 했는데 그 과정에서 기본 설치된 버전인 python2가 동작하는 것 같다. pip를 python2에서 일반적으로 설치하는 과정으로 다시 설치해본다.
 
-### 2. (성공!) pip 수동 설치 후 wrapper 설치
+### 2.2 (성공!) pip 수동 설치 후 wrapper 설치
 
 우선 다음 [링크](https://bootstrap.pypa.io/get-pip.py)를 다른이름으로 저장해서 `get-pip.py` 파일을 받는다. 그리고 그 경로에서 파일을 실행한다.
 
@@ -67,7 +81,7 @@ $ sudo pip install virtualenvwrapper --ignore-installed six
 
 그러면 에러가 없이 정상적으로 설치가 된다!(아자!!!)
 
-### 3. 마무리하기 bash 설정
+### 2.3 마무리하기 bash 설정
 
 - virtualenv로 만드는 가상환경이 저장될 공간 설정(WORKON_HOME)
 - project 소스 파일이 저장될 공간 설정(PROJECT_HOME)
@@ -104,7 +118,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 $ source ~/.bashrc
 ```
 
-### 4. 사용하기
+### 2.4 사용하기
 
 - `workon` : 현재 `~/.virtualenvs` 디렉토리에 있는 가상환경 목록을 출력해준다.
 - `workon envname` : 가상환경을 activate하는 명령어다.
