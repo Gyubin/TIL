@@ -2,6 +2,19 @@
 
 파이썬에서 백엔드를 담당하는 대표적인 microframework. [튜토리얼](http://flask.pocoo.org/docs/0.11/tutorial/introduction/)을 따라하면서 정리한다.
 
+## 0. 웹 서버 개념
+
+- 초기 웹서버는 단순히 정적인 파일을 클라이언트에게 전달하는 역할이었다.
+- 동적으로 서버에서 어떤 연산을 해서 결과를 가공해서 주고싶었고, 그래서 나온게 **CGI**(Comman Gateway Interface)다.
+
+![cgi](https://upload.wikimedia.org/wikipedia/commons/7/7c/CGI_common_gateway_interface.png)
+
+- CGI는 단순히 클라이언트에서 어떤 입력(request)이 들어왔을 때 어떤 출력을 낼건지를 정의한 프로그램이다. 위 이미지에서처럼 예전엔 요청이 들어오면 CGI가 받아서, application server를 실행하는 형태로 이루어졌다.
+- 이젠 서버 컴퓨터 성능이 좋아져서 web server가 CGI의 기능을 흡수했다. 그것이 **WAS**(Web Application Server)다. JSP나 ASP가 WAS의 예다.
+- **WSGI**(Web Server Gateway Interface)는 파이썬에서만 쓰이는 WAS 통신규약이다. CGI의 superset으로 웹서버에서 받은 request에 대해 프로세스를 포크할건지 말건지를 정할 수 있다. 기존 CGI는 그냥 모든걸 포크한다.
+- WSGI는 서버와 미들웨어 사이, 미들웨어와 앱 사이에 껴있다.
+- 위 내용들을 알아서 처리해주는게 대표적으로 Flask와 Django다.
+
 ## 1. 설치 및 띄워보기
 
 - flask 설치: `pip install Flask`
