@@ -15,7 +15,9 @@
 - WSGI는 서버와 미들웨어 사이, 미들웨어와 앱 사이에 껴있다.
 - 위 내용들을 알아서 처리해주는게 대표적으로 Flask와 Django다.
 
-## 1. 설치 및 띄워보기
+## 1. 기본
+
+### 1.1 설치 및 띄워보기
 
 - flask 설치: `pip install Flask`
 - `hello.py` 파일을 만들고 `python hello.py` 실행
@@ -28,7 +30,63 @@
     @app.route("/")
     def hello():
         return "Hello World!"
+
+    if __name__ == '__main__':
+        app.run('0.0.0.0', 5000, debug=True)
     ```
+
+- `app`은 WSGI application을 의미
+- `'0.0.0.0'` : 어떤 IP로 내 서버에 접속해도 오케이
+- `debug=True` : 개발 모드로 서버를 실행하라는 의미로 파일이 변경되면 알아서 재시작해준다. 그리고 에러가 있을 때 디버깅이 쉽도록 브라우저에서 띄워준다. production에선 에러 정보가 잘못 사용될 여지가 있으므로 True 값을 주면 안됨
+
+### 1.2 url로 변수 받기
+
+```py
+@app.route('/user/<username>')
+def show_user_name(username):
+    return f'User { user }'
+
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    return f'Post { post_id }'
+```
+
+- `<type:var_name>` : 이렇게 라우팅을 하면 URL의 부분을 변수로 받아서 사용할 수 있다.
+- type : 자동으로 type casting해서 변수로 받아주고, 다른 타입이면 에러 일으킨다.
+    + `string` : 기본값
+    + `int` : 정수
+    + `float` : 실수
+    + `path` : 기본 string과 같지만 slash도 받는다
+    + `any` : matches one of the items provided
+    + `uuid` : accepts UUID strings
+
+### 1.3 url_for
+
+```py
+from flask import Flask, url_for
+app = Flask(__name__)
+
+@app.route('/')
+def index(): pass
+
+@app.route('/login')
+def login(): pass
+
+@app.route('/user/<username>')
+def profile(username): pass
+
+with app.test_request_context():
+    print(url_for('index')) # /
+    print(url_for('login')) # /login
+    print(url_for('login', non_exist_var='hihi')) # /login?non_exist_var=hihi
+    print(url_for('profile', username="Gyubin Son")) # /user/Gyubin%20Son
+```
+
+- `url_for` : 지정한 매개변수들이 나타내는 URL을 문자열로 만들어서 리턴
+- 첫 번째 매개변수인 문자열은 도메인 바로 다음에 오는, 파일에서는 함수명을 의미하고
+- 두 번째로 오는 매개변수는 변수명과 값이 매칭되어서 URL이 된다
+    + 변수가 함수 정의할 때 존재한다면 자연스럽게 URL이 만들어지고
+    + 변수명이 존재하지 않는거라면 해당 pair가 query string으로 만들어진다.
 
 ## 2. 디렉토리 구조
 
