@@ -91,7 +91,8 @@ with app.test_request_context():
 ## 2. 디렉토리 구조
 
 - `/flaskr` : 
-- `/flaskr/static` : CSS, JavaScript 파일이 위치
+- `/flaskr/static` : CSS, JavaScript, 이미지, 음성 파일 등이 위치
+    + `url_for('static', filename='style.css')` 형태로 불러쓸 수 있다.
 - `/flaskrtemplates` : Jinja2 템플릿이 위치.
 
 ## 3. Application module
@@ -145,7 +146,7 @@ def close_db(error):
 - `rv.row_factory = sqlite3.Row` : row를 딕셔너리로 다룰 수 있게 한다.
 - DB connection 싱글톤
     + DB connection은 긴 시간 지속되어야하고 오직 하나여야한다.
-    + Flask는 application context, request context 두 가지를 제공한다. 전자가 `g` 모듈, 후자가 `request` 모듈과 관계있다.
+    + Flask는 application context, request context 두 가지를 제공한다. 전자가 `g` 모듈, 후자가 `request` 모듈과 관계있다. request context는 `request`란 전역 객체로 언제 어디서나 접근할 수 있으며 항상 현재 수행되고 있는 스레드의 proxy로 동작. 즉 그 순간의 request로 매번 대입되기 때문에 편하게 사용하면 됨
     + 연결을 끊을 때는 `teardown_appcontext()` 데코레이터를 사용한다. 마킹된 함수는 application context가 tear down 될 때 항상 호출된다. 즉 app context는 request가 오기 전에 만들어지고, request가 끝날 때 사라진단 뜻이다.
 
 ## 4. Database Schema
