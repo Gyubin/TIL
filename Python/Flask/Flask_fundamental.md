@@ -323,3 +323,40 @@ def logout():
 
 - 위 구조는 layout이 재사용되는 구조다. view function이 layout을 렌더링하는 것이 아니라 `extends`가 들어있는 코드를 렌더링한다.
 - layout 파일에서 `{% block body %} {% endblock %}` 이부분이 대치되는데 동일한 이름의 블락이 대치된다.
+
+## 8. File upload
+
+```py
+from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'GET':
+        return render_template('upload.html')
+    else:
+        f = request.files['file']
+        f.save(secure_filename(f.filename))
+        return 'file uploaded successfully'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+- `upload` : GET, POST 두 방식으로 받고 각각 다르게 처리. 업로드 템플릿을 보여줄지, 파일 업로드를 할지
+- 아래 html form에서 POST method로 보내면 POST로 받는다.
+- `request.files['file']` : 여기서 `file`은 아래 html에서 input의 name과 매칭된다.
+- `secure_filename` 함수는 유저가 업로드하는 파일을 믿지 않기 때문에 사용하는 함수이고, 자세한 내용은 [공식문서](http://flask.pocoo.org/docs/0.12/patterns/fileuploads/)를 참조
+- 마지막 return 문은 단순히 저 문자열을 브라우저에 띄워줌
+
+```html
+<html>
+  <body>
+    <form action="http://localhost:5000/" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" />
+      <input type="submit" />
+    </form>
+  </body>
+</html>
+```
