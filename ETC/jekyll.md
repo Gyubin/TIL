@@ -151,7 +151,16 @@ jekyll은 블로깅 플랫폼이라기보단 하나의 웹 프레임워크에 �
     + `author`: 글쓴이
     + `comment`: true로 두면 댓글 기능 가능. disqus 이용하면 좋다.
     + [추가 정보](http://jekyllrb.com/docs/frontmatter/ )
-- disqus는 아래 코드를 `_layouts` 폴더의 `post.html`에 삽입한다. Front Matter에서 `comment: true`로 두는 것 잊지 말자.
+- `_posts` 폴더에 글 파일을 넣으면 됨
+- 파일에서 Front Matter로 정의돼있는 것은 html 파일에서 호출해서 사용할 수 있다. `{{ page.title }}` 처럼 호출해서 쓰고, 내용 자체는 `{{ content }}`로 하면 된다.
+- 사용할 layout을 자유롭게 만들고, 위처럼 liquid 문법으로 원하는 값들을 불러쓰면 되는 것
+- 만들어진 해당 글의 html 파일이 저장되는 곳
+    + 디폴트는 설정한 날짜로 디렉토리가 만들어져서 html 파일이 저장
+    + Front Matter 중 `permalink: /wow` 형태로 추가해주면 `_site` 폴더에 바로 해당 permalink 이름의 html파일이 만들어져서 저 주소로 바로 접근할 수 있다.
+
+## 7. Disqus
+
+disqus는 아래 코드를 `_layouts` 폴더의 `post.html`에 삽입한다. Front Matter에서 `comment: true`로 두는 것 잊지 말자.
 
     ```html
     {% if page.comments %}
