@@ -17,21 +17,6 @@
     cat ~/.gitconfig
     ```
 
-- ssh 설정
-    + 첫 번째 명령어로 ssh key를 생성하고, 둘째 명령어로 파일 내용을 보고 처음부터 이메일 부분 직전까지 복사한다.
-    + GitHub 홈페이지에서 **Settings**의 ssh 메뉴에서 새로운 키를 등록한다. 타이틀은 마음대로 해도 되고, 내용 부분에 위에서 복사한 내용을 붙인다.
-
-    ```sh
-    ssh-keygen -t rsa -C "myemail@email.com"
-    cat ~/.ssh/id_rsa.pub
-    ```
-
-- ssh 잘 됐는지 확인하기.
-    + `ssh -T git@github.com` 명령어를 쉘에 입력해서 잘 됐는지 테스트한다.
-    + 처음 나오는 항목은 그냥 엔터 치고 넘어가고
-    + 두 번째 비밀번호는 입력해준다.
-    + successfully 무엇무엇 내용이 나오면 성공.
-
 ### 1.3 init, add, commit, diff
 
 - `git init` : 버전 관리할 폴더에 처음에 딱 한 번만 해준다. 이 디렉토리를 git으로 버전관리하겠다는 의미.
