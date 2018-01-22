@@ -105,3 +105,59 @@ docker run --name web -d -p 80:80 --network hello-network nginx # webserver
 - `docker exec -it web bash` : web 컨테이너에서 bash를 실행한다.
 - `ping db` : 쉽게 연결된 컨테이너 이름으로 접근 가능하다.
     + `apt-get install iputils-ping` : ping이 없으면 설치
+
+## 4. NVIDIA-Docker
+
+참고 링크: [Towards Data Science](https://towardsdatascience.com/using-docker-to-set-up-a-deep-learning-environment-on-aws-6af37a78c551)
+
+AWS AMI Deep Learning, Ubuntu CUDA8 인스턴스에서 다음처럼 설치했다. Docker로 GPU 메모리 제한은 못 걸고, 코드로 해야 여러 사람이 같이 사용 가능하다.
+
+- 드라이버 업데이트
+
+    ```sh
+    sudo add-apt-repository ppa:graphics-drivers/ppa -y
+    sudo apt-get update
+    sudo apt-get install -y nvidia-375 nvidia-settings nvidia-modprobe
+    ```
+
+- Docker 설치
+
+    ```sh
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+       $(lsb_release -cs) \
+       stable"
+    sudo apt-get update
+    sudo apt-get install -y docker-ce
+    ```
+
+- NVIDIA-Docker 설치. 버전 1은 아래 코드처럼 하고, **버전 2는 다음 [링크](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-\(version-2.0\))를 참고한다.**
+
+    ```sh
+    # Version 1
+    sudo wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+    sudo dpkg -i /tmp/nvidia-docker_1.0.1-1_amd64.deb && rm /tmp/nvidia-docker_1.0.1-1_amd64.deb
+    ```
+
+- 확인하기. 다음처럼 실행해서 표 형태로 나오면 성공
+
+    ```sh
+    sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
+    ```
+
+- TensorFlow 공식 이미지 사용하기
+    + 프로세스 만들기: `sudo nvidia-docker run -it --name tf_gyubin tensorflow/tensorflow:latest-gpu bash`
+    + pip3가 설치가 안돼있을 것. 아래 명령어들로 pip3 설치하고, 가상환경 만들어서 tensorflow-gpu 설치해서 실행해보면 된다.
+
+    ```sh
+    apt-get update
+    apt-get -y install python3-pip
+    ```
+
+- 도커에서 학습 등의 프로세스가 진행되고 있다면 종료가 아니라 그냥 detach 하고, 다시 접근할 때 attach 한다. detach는 tmux에서 하듯 `Ctrl+p Ctrl+q` 순서대로 눌러준다.
+- 종료 후(`exit` 연타하면 됨) 해당 컨테이너를 재시작하려면
+    + `sudo nvidia-docker ps -a` : 모든 컨테이너 목록을 보여준다. `-a` 없이 쓰면 실행 중인 목록만 보여준다.
+    + 원하는 컨테이너가 stop이거나 exited 상태라면 `sudo nvidia-docker start <container-name>`명령으로 시작해준다. 시작이 되면 UP으로 변경될 것이다.
+    + 실행 중일 때 재부팅을 하려면 `restart`
+    + 실행된 컨테이너에 접속: `sudo nvidia-docker attach <container-name>`
