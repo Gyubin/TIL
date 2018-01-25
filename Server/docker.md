@@ -146,8 +146,9 @@ AWS AMI Deep Learning, Ubuntu CUDA8 인스턴스에서 다음처럼 설치했다
     sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
     ```
 
-- TensorFlow 공식 이미지 사용하기
-    + 프로세스 만들기: `sudo nvidia-docker run -it --name tf_gyubin tensorflow/tensorflow:latest-gpu bash`
+- TensorFlow 공식 이미지로 만들기
+    + `sudo nvidia-docker run -it --mount type=bind,source="$(pwd)"/bookcorpus,target=/bookcorpus --name tf_gyubin tensorflow/tensorflow:latest-gpu bash`
+    + mount 부분 옵션은 도커 컨테이너 밖에 있는 데이터를 도커 내에서 사용할 때 사용한다. 위 명령어에선 현재 디렉토리의 bookcorpus 디렉토리를 도커 컨테이너 내의 /bookcorpus 디렉토리 path로 사용할 수 있도록 만들어준다.
     + pip3가 설치가 안돼있을 것. 아래 명령어들로 pip3 설치하고, 가상환경 만들어서 tensorflow-gpu 설치해서 실행해보면 된다.
 
     ```sh
