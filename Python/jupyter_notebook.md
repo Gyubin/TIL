@@ -82,3 +82,44 @@ jupyter nbconvert --to pdf notebook.ipynb
     + Notes : speaker notes로 만들 수 있음
 - 슬라이드 파일로 만들기: `jupyter nbconvert notebook.ipynb --to slides`
 - 브라우저에 띄우기: `jupyter nbconvert notebook.ipynb --to slides --post serve`
+
+## 7. Jupyter Server
+
+서버에서 jupyter notebook server를 실행하는 방법
+
+- 키 파일을 만든다.
+
+    ```sh
+    mkdir ~/.ssl
+    cd ~/.ssl
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout "cert.key" -out "cert.pem" -batch
+    ```
+
+- 주피터 서버 비밀번호를 만든다. `ipython` 실행해서 다음 코드로 비밀번호를 생성하고, sha로 시작하는 해싱 코드를 복사해둔다.
+
+    ```py
+    from IPython.lib import passwd
+    passwd()
+    # type your password
+    exit
+    ```
+
+- jupyter config
+    + 파일 생성: `jupyter notebook --generate-config`
+    + 파일 편집해서 아래 내용 추가: `vi ~/.jupyter/jupyter_notebook_config.py`
+
+    ```py
+    c = get_config()
+    c.NotebookApp.certfile = u'/home/ubuntu/.ssl/cert.pem'
+    c.NotebookApp.keyfile = u'/home/ubuntu/.ssl/cert.key'
+    c.IPKernelApp.pylab = 'inline'
+    c.NotebookApp.ip = '*'
+    c.NotebookApp.open_browser = False
+    c.NotebookApp.password = 'sha1:fc216:3a35a98ed980b9...'
+    c.NotebookApp.port = 8888
+    ```
+
+- tmux로 세션 연 다음에 주피터 노트북 서버를 실행한다.
+    + `nohup jupyter notebook`
+    + nohup은 verbose를 출력하지 않고 파일로 기록해주는 역할을 한다.
+- ip와 port를 그대로 치지말고 꼭 `https`를 맨 앞에 붙여준다. 크롬은 ip 주소를 그대로 치면 http로 접속하기 때문에 ssl error가 날 수 있다.
